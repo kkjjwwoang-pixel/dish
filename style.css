@@ -1,0 +1,1185 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f5f5;
+    overflow: hidden;
+    height: 100vh;
+}
+
+.screen {
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.screen.active {
+    display: flex;
+}
+
+/* 타이틀 화면 */
+#title-screen {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.title-content {
+    text-align: center;
+}
+
+.title-content h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.subtitle {
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.btn-primary {
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    background: white;
+    color: #667eea;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
+}
+
+.btn-primary:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.btn-secondary {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background: rgba(0,0,0,0.2);
+    color: black;
+    border: 2px solid black;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+    background: black;
+    color: white;
+}
+
+/* 지도 화면 */
+#map-screen {
+    background: #e8f4f8;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.map-container {
+    text-align: center;
+}
+
+.map-container h2 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 2rem;
+}
+
+.world-map {
+    position: relative;
+    width: 600px;
+    height: 400px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.country {
+    padding: 20px 40px;
+    background: #ddd;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.country.active {
+    background: #4CAF50;
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+}
+
+.country:hover {
+    transform: scale(1.05);
+}
+
+.country-label {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.stamp {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 1.5rem;
+}
+
+/* 일본 스테이지 */
+#japan-stage {
+    background: #ffffff;
+    flex-direction: column;
+}
+
+/* 중국 스테이지 */
+#china-stage {
+    background: #ffffff;
+    flex-direction: column;
+}
+
+.stage-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.stage-header {
+    padding: 20px 30px;
+    background: #f8f8f8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.stage-header h2 {
+    color: #333;
+    font-size: 1.8rem;
+}
+
+.stage-content {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    position: relative;
+}
+
+/* 말풍선 */
+.speech-bubble {
+    position: absolute;
+    top: 20px;
+    left: 50px;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+}
+
+.speech-bubble.show {
+    opacity: 1;
+}
+
+.speech-bubble-content {
+    background: white;
+    border: 2.4px solid #4CAF50;
+    border-radius: 18px;
+    padding: 32px 40px;
+    box-shadow: 0 4.8px 14.4px rgba(0, 0, 0, 0.15);
+    max-width: 840px;
+    min-width: 300px;
+    width: fit-content;
+    position: relative;
+    display: inline-block;
+    margin-left: 0;
+    padding-left: 40px;
+}
+
+.speech-bubble-content p {
+    margin: 0;
+    color: #333;
+    font-size: 1.32rem;
+    line-height: 1.92;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.next-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
+    margin-top: 15px;
+    display: block;
+    margin-left: 0;
+    margin-right: auto;
+    pointer-events: auto;
+}
+
+.next-btn:hover {
+    background: #45a049;
+    transform: scale(1.05);
+}
+
+.next-btn:active {
+    transform: scale(0.95);
+}
+
+/* 여러 버튼 컨테이너 */
+.next-buttons-container {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.next-buttons-container .next-btn {
+    margin: 0;
+    flex: 1;
+    min-width: 120px;
+    max-width: 200px;
+}
+
+.speech-bubble-tail {
+    position: absolute;
+    top: -12px;
+    left: 30px;
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-bottom: 12px solid #4CAF50;
+}
+
+.speech-bubble-tail::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: -9.6px;
+    width: 0;
+    height: 0;
+    border-left: 9.6px solid transparent;
+    border-right: 9.6px solid transparent;
+    border-bottom: 9.6px solid white;
+}
+
+/* 드롭 존 영역 */
+.drop-zone-area {
+    flex: 1;
+    position: relative;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.table-setting {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+/* 배경 요소들 */
+.top-cheftable {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-size: contain;
+    background-position: top center;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    /* 크기는 JavaScript에서 이미지 natural size에 맞게 동적으로 설정 */
+}
+
+.debug-mode .top-cheftable {
+    pointer-events: auto;
+}
+
+.table-mat {
+    position: absolute;
+    left: 8%;
+    top: 35%;
+    width: 200px;
+    height: 300px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    pointer-events: none;
+}
+
+.debug-mode .table-mat {
+    pointer-events: auto;
+}
+
+.card-napkin {
+    position: absolute;
+    left: 10%;
+    top: 60%;
+    width: 80px;
+    height: 120px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    transform: rotate(-5deg);
+    pointer-events: none;
+}
+
+.debug-mode .card-napkin {
+    pointer-events: auto;
+}
+
+.soup-bowl-image {
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    transform: translate(-100%, -50%);
+    z-index: 5;
+    pointer-events: none;
+}
+
+.debug-mode .soup-bowl-image {
+    pointer-events: auto;
+}
+
+.soup-bowl-image img {
+    display: block;
+    width: auto;
+    height: auto;
+    pointer-events: none;
+}
+
+.debug-mode .soup-bowl-image img {
+    pointer-events: auto;
+}
+
+/* 중국 테이블 이미지 */
+.china-table-image {
+    position: absolute;
+    left: 50%;
+    top: 47%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.china-table-image img {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* 중국 테이블 이미지 1 (위에 배치) */
+.china-table-image-1 {
+    position: absolute;
+    left: -35%;
+    top: -189%;
+    transform: translateX(0);
+    z-index: 2;
+    pointer-events: auto;
+    cursor: grab;
+    user-select: none;
+}
+
+.china-table-image-1:active {
+    cursor: grabbing;
+}
+
+.china-table-image-1 img {
+    display: block;
+    width: auto;
+    height: auto;
+    transform-origin: center center;
+    transition: transform 0.1s ease-out;
+}
+
+/* 중국 식기 이미지들 */
+.china-utensil {
+    position: absolute;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.debug-mode .china-utensil {
+    pointer-events: auto;
+}
+
+.china-utensil img {
+    display: block;
+    width: auto;
+    height: auto;
+    pointer-events: none;
+}
+
+.debug-mode .china-utensil img {
+    pointer-events: auto;
+}
+
+/* 중국 식기 위치 배치 */
+.cn-spoon {
+    left: 70%;
+    top: 40%;
+    transform: translate(-50%, -50%);
+}
+
+.cn-chopstick {
+    left: 30%;
+    top: 40%;
+    transform: translate(-50%, -50%);
+}
+
+.cn-rice {
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%, -50%);
+}
+
+.cn-dish {
+    left: 50%;
+    top: 60%;
+    transform: translate(-50%, -50%);
+}
+
+/* 디버그 모드 */
+.debug-toggle-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #333;
+    color: white;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 10000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s;
+}
+
+.debug-toggle-btn:hover {
+    background: #555;
+    transform: scale(1.1);
+}
+
+.debug-panel {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 300px;
+    background: white;
+    border: 2px solid #333;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 10001;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.debug-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #333;
+    color: white;
+    border-radius: 6px 6px 0 0;
+}
+
+.debug-header h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.debug-close-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.debug-close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.debug-content {
+    padding: 15px;
+}
+
+.debug-info {
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+.debug-info p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.debug-info span {
+    font-weight: bold;
+    color: #4CAF50;
+}
+
+.debug-controls label {
+    display: block;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.debug-controls input[type="range"] {
+    width: 100%;
+    margin-top: 5px;
+}
+
+.debug-controls span {
+    display: inline-block;
+    min-width: 50px;
+    font-weight: bold;
+    color: #333;
+}
+
+.debug-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.debug-btn {
+    flex: 1;
+    padding: 10px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.debug-btn:hover {
+    background: #45a049;
+}
+
+.debug-btn:active {
+    transform: scale(0.95);
+}
+
+/* 디버그 모드에서 선택 가능한 요소 */
+.debug-mode .china-utensil,
+.debug-mode .china-utensil img,
+.debug-mode .china-table-image-1,
+.debug-mode .china-table-image-1 img,
+.debug-mode .china-table-image,
+.debug-mode .china-table-image img,
+.debug-mode .soup-bowl-image,
+.debug-mode .soup-bowl-image img,
+.debug-mode .hand-draggable,
+.debug-mode .hand-draggable img,
+.debug-mode .top-cheftable,
+.debug-mode .card-napkin,
+.debug-mode .drop-zone .dropped-item,
+.debug-mode .drop-zone .dropped-item img,
+.debug-mode .cheftable-rice-bowl,
+.debug-mode .cheftable-rice-bowl img,
+.debug-mode #grab-image,
+.debug-mode #grab-image img {
+    cursor: pointer;
+    outline: 2px dashed transparent;
+    transition: outline 0.2s;
+}
+
+.debug-mode .china-utensil:hover,
+.debug-mode .china-utensil img:hover,
+.debug-mode .china-table-image-1:hover,
+.debug-mode .china-table-image-1 img:hover,
+.debug-mode .china-table-image:hover,
+.debug-mode .china-table-image img:hover,
+.debug-mode .soup-bowl-image:hover,
+.debug-mode .soup-bowl-image img:hover,
+.debug-mode .hand-draggable:hover,
+.debug-mode .hand-draggable img:hover,
+.debug-mode .top-cheftable:hover,
+.debug-mode .card-napkin:hover,
+.debug-mode .drop-zone .dropped-item:hover,
+.debug-mode .drop-zone .dropped-item img:hover,
+.debug-mode .cheftable-rice-bowl:hover,
+.debug-mode .cheftable-rice-bowl img:hover,
+.debug-mode #grab-image:hover,
+.debug-mode #grab-image img:hover {
+    outline: 2px dashed #4CAF50;
+}
+
+.debug-mode .china-utensil.selected,
+.debug-mode .china-utensil.selected img,
+.debug-mode .china-table-image-1.selected,
+.debug-mode .china-table-image-1.selected img,
+.debug-mode .china-table-image.selected,
+.debug-mode .china-table-image.selected img,
+.debug-mode .soup-bowl-image.selected,
+.debug-mode .soup-bowl-image.selected img,
+.debug-mode .hand-draggable.selected,
+.debug-mode .hand-draggable.selected img,
+.debug-mode .top-cheftable.selected,
+.debug-mode .card-napkin.selected,
+.debug-mode .drop-zone .dropped-item.selected,
+.debug-mode .drop-zone .dropped-item.selected img,
+.debug-mode .cheftable-rice-bowl.selected,
+.debug-mode .cheftable-rice-bowl.selected img,
+.debug-mode #grab-image.selected,
+.debug-mode #grab-image.selected img {
+    outline: 3px solid #4CAF50;
+    outline-offset: 2px;
+}
+
+/* 손 이미지 (드래그 가능) */
+.hand-draggable {
+    position: absolute;
+    left: 20px;
+    bottom: -300px;
+    z-index: 1000;
+    pointer-events: auto;
+    cursor: grab;
+    user-select: none;
+}
+
+.hand-draggable:active {
+    cursor: grabbing;
+}
+
+.hand-draggable img {
+    display: block;
+    width: auto;
+    height: auto;
+    pointer-events: none;
+    transition: transform 0.1s ease-out;
+}
+
+.grab-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    font-weight: bold;
+    color: #4CAF50;
+    z-index: 100;
+    pointer-events: none;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.grab-image-container {
+    position: absolute;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.grab-image-container img {
+    display: block;
+    width: auto;
+    height: auto;
+}
+
+.grab-drop-zone {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: calc(100% - 80px);
+    height: calc(100% - 80px);
+    display: flex;
+    border: 3px dashed #4CAF50;
+    background: rgba(76, 175, 80, 0.1);
+    pointer-events: auto;
+    z-index: 1001;
+}
+
+.grab-zone-left,
+.grab-zone-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #4CAF50;
+    border-right: 2px solid #4CAF50;
+    transition: background 0.2s;
+}
+
+.grab-zone-right {
+    border-right: none;
+}
+
+.grab-zone-left.drag-over {
+    background: rgba(76, 175, 80, 0.3);
+}
+
+.grab-zone-right.drag-over {
+    background: rgba(76, 175, 80, 0.3);
+}
+
+/* 밥그릇 드롭존 (숟가락/젓가락용) */
+.rice-bowl-drop-zone {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    border: 3px dashed #4CAF50;
+    background: rgba(76, 175, 80, 0.1);
+    pointer-events: auto;
+    z-index: 100;
+}
+
+.rice-bowl-zone-left,
+.rice-bowl-zone-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #4CAF50;
+    border-right: 2px solid #4CAF50;
+    transition: background 0.2s;
+}
+
+.rice-bowl-zone-right {
+    border-right: none;
+}
+
+.rice-bowl-zone-left.drag-over {
+    background: rgba(76, 175, 80, 0.3);
+}
+
+.rice-bowl-zone-right.drag-over {
+    background: rgba(76, 175, 80, 0.3);
+}
+
+/* 손가락 가이드 애니메이션 */
+.finger-guide {
+    position: absolute;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.finger-guide img {
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+    animation: fingerPulse 1s ease-in-out infinite;
+}
+
+@keyframes fingerPulse {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+/* 드롭 존들 */
+.drop-zone {
+    position: absolute;
+    border: 3px dashed #ccc;
+    border-radius: 10px;
+    background: rgba(200, 200, 200, 0.1);
+    transition: all 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 50px;
+    min-height: 50px;
+    overflow: visible;
+}
+
+.drop-zone.drag-over {
+    border-color: #4CAF50;
+    background: rgba(76, 175, 80, 0.2);
+    transform: scale(1.05);
+}
+
+.drop-zone.correct {
+    /* 초록색으로 바뀌지 않도록 스타일 제거 */
+}
+
+.drop-zone-label {
+    font-size: 0.9rem;
+    color: #999;
+    font-weight: bold;
+}
+
+.drop-zone.filled {
+    border: none;
+    background: transparent;
+}
+
+.drop-zone.filled .drop-zone-label {
+    display: none;
+}
+
+/* 밥그릇 드롭 존 (중앙) */
+#drop-rice-bowl {
+    left: 50%;
+    top: 55%;
+    transform: translate(-50%, -50%);
+    /* 크기는 JavaScript에서 이미지 natural size에 맞게 동적으로 설정 */
+}
+
+/* 국그릇 드롭 존 (밥그릇 옆) */
+#drop-soup-bowl {
+    /* 위치는 JavaScript에서 이미지 크기에 맞게 동적으로 설정 */
+    /* 크기는 JavaScript에서 이미지 natural size에 맞게 동적으로 설정 */
+}
+
+/* 숟가락 드롭 존 (밥그릇 오른쪽) */
+#drop-spoon {
+    left: 58%;
+    top: 50%;
+    transform: translateY(-50%);
+    /* 크기는 JavaScript에서 이미지 natural size에 맞게 동적으로 설정 */
+}
+
+/* 젓가락 드롭 존 (밥그릇 밑) */
+#drop-chopsticks {
+    left: 50%;
+    top: 50%;
+    /* 위치와 회전은 JavaScript에서 동적으로 설정 */
+    /* 크기는 JavaScript에서 이미지 natural size에 맞게 동적으로 설정 */
+}
+
+/* 슬롯 메뉴 */
+.slot-menu {
+    width: 350px;
+    background: #f5f5f5;
+    border-left: 2px solid #e0e0e0;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* 젓가락 정보 메뉴 */
+.info-menu {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 380px;
+    height: 100vh;
+    background: white;
+    border-left: 2px solid #4CAF50;
+    border-radius: 0;
+    padding: 25px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    display: none;
+    overflow-y: auto;
+}
+
+.info-menu-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #666;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s;
+}
+
+.info-menu-close:hover {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.info-menu h3 {
+    color: #4CAF50;
+    margin: 0 0 15px 0;
+    font-size: 1.3rem;
+    font-weight: bold;
+    padding-right: 30px;
+}
+
+.info-menu-image {
+    width: 100%;
+    margin-bottom: 15px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.info-menu-image img {
+    max-width: 50px;
+    height: auto;
+    border-radius: 8px;
+    transform: rotate(90deg);
+}
+
+.info-menu-content {
+    color: #333;
+    line-height: 1.6;
+    margin-top: 10px;
+}
+
+.info-menu-content p {
+    margin: 0 0 12px 0;
+    font-size: 0.9rem;
+}
+
+.info-menu-content p:last-child {
+    margin-bottom: 0;
+}
+
+.slot-menu h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+}
+
+.slot-items {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.slot-item {
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    cursor: grab;
+    transition: all 0.3s;
+    text-align: center;
+    user-select: none;
+}
+
+.slot-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border-color: #4CAF50;
+}
+
+.slot-item:active {
+    cursor: grabbing;
+}
+
+.slot-item.dragging {
+    opacity: 0.5;
+}
+
+.slot-item.highlight-pulse {
+    border: 3px solid #4CAF50 !important;
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.6) !important;
+}
+
+.slot-item.highlight-pulse .item-icon {
+    animation: pulseHighlight 1s ease-in-out infinite;
+}
+
+@keyframes pulseHighlight {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.08);
+    }
+}
+
+.hand-draggable.highlight-pulse img {
+    animation: pulseHighlight 1.5s ease-in-out infinite;
+}
+
+.drop-zone.highlight-pulse {
+    border-color: #4CAF50 !important;
+}
+
+.drop-zone.highlight-pulse .dropped-item img {
+    animation: pulseHighlight 1.5s ease-in-out infinite;
+}
+
+.item-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 10px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slot-item span {
+    display: block;
+    color: #333;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+/* 드롭된 아이템 */
+.dropped-item {
+    position: absolute;
+    pointer-events: auto;
+    width: auto;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    transition: opacity 0.2s;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.dropped-item:hover {
+    opacity: 0.7;
+}
+
+.dropped-item:active {
+    cursor: grabbing;
+}
+
+.dropped-item.dragging {
+    opacity: 0.5;
+}
+
+.dropped-item img {
+    display: block;
+    width: auto;
+    height: auto;
+    pointer-events: none;
+}
+
+/* 셰프테이블에서 나타나는 밥그릇 */
+.cheftable-rice-bowl {
+    position: absolute;
+    cursor: grab;
+    z-index: 10;
+}
+
+.cheftable-rice-bowl:active {
+    cursor: grabbing;
+}
+
+.cheftable-rice-bowl img {
+    display: block;
+    width: auto;
+    height: auto;
+    pointer-events: none;
+}
+
+/* 알림 모달 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    max-width: 400px;
+}
+
+.modal-content p {
+    font-size: 1.3rem;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .title-content h1 {
+        font-size: 2.5rem;
+    }
+    
+    .subtitle {
+        font-size: 1rem;
+    }
+    
+    .stage-content {
+        flex-direction: column;
+    }
+    
+    .slot-menu {
+        width: 100%;
+        height: 200px;
+        border-left: none;
+        border-top: 2px solid #e0e0e0;
+    }
+    
+    .slot-items {
+        flex-direction: row;
+        overflow-x: auto;
+    }
+    
+    .slot-item {
+        min-width: 120px;
+    }
+}
+
