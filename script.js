@@ -5759,21 +5759,49 @@ function saveAllDebugPositions() {
         const dropChopsticks2 = japanStage.querySelector('#drop-chopsticks-2');
         if (dropChopsticks2) allElements.push(dropChopsticks2);
         
-        // 그림자 이미지
+        // 그림자 이미지 (display: none이어도 저장되도록 일시적으로 표시)
         const shadowDish2 = japanStage.querySelector('.shadow-dish2');
-        if (shadowDish2) allElements.push(shadowDish2);
+        if (shadowDish2) {
+            const wasHidden2 = shadowDish2.style.display === 'none' || window.getComputedStyle(shadowDish2).display === 'none';
+            if (wasHidden2) shadowDish2.style.display = 'block';
+            allElements.push(shadowDish2);
+        }
         const shadowDish3 = japanStage.querySelector('.shadow-dish3');
-        if (shadowDish3) allElements.push(shadowDish3);
+        if (shadowDish3) {
+            const wasHidden3 = shadowDish3.style.display === 'none' || window.getComputedStyle(shadowDish3).display === 'none';
+            if (wasHidden3) shadowDish3.style.display = 'block';
+            allElements.push(shadowDish3);
+        }
         const shadowDish4 = japanStage.querySelector('.shadow-dish4');
-        if (shadowDish4) allElements.push(shadowDish4);
+        if (shadowDish4) {
+            const wasHidden4 = shadowDish4.style.display === 'none' || window.getComputedStyle(shadowDish4).display === 'none';
+            if (wasHidden4) shadowDish4.style.display = 'block';
+            allElements.push(shadowDish4);
+        }
         const shadowDish5 = japanStage.querySelector('.shadow-dish5');
-        if (shadowDish5) allElements.push(shadowDish5);
+        if (shadowDish5) {
+            const wasHidden5 = shadowDish5.style.display === 'none' || window.getComputedStyle(shadowDish5).display === 'none';
+            if (wasHidden5) shadowDish5.style.display = 'block';
+            allElements.push(shadowDish5);
+        }
         const shadowDish = japanStage.querySelector('.shadow-dish');
-        if (shadowDish) allElements.push(shadowDish);
+        if (shadowDish) {
+            const wasHidden = shadowDish.style.display === 'none' || window.getComputedStyle(shadowDish).display === 'none';
+            if (wasHidden) shadowDish.style.display = 'block';
+            allElements.push(shadowDish);
+        }
         const shadowSpoon = japanStage.querySelector('.shadow-spoon');
-        if (shadowSpoon) allElements.push(shadowSpoon);
+        if (shadowSpoon) {
+            const wasHiddenSpoon = shadowSpoon.style.display === 'none' || window.getComputedStyle(shadowSpoon).display === 'none';
+            if (wasHiddenSpoon) shadowSpoon.style.display = 'block';
+            allElements.push(shadowSpoon);
+        }
         const shadowChopsticks = japanStage.querySelector('.shadow-chopsticks');
-        if (shadowChopsticks) allElements.push(shadowChopsticks);
+        if (shadowChopsticks) {
+            const wasHiddenChopsticks = shadowChopsticks.style.display === 'none' || window.getComputedStyle(shadowChopsticks).display === 'none';
+            if (wasHiddenChopsticks) shadowChopsticks.style.display = 'block';
+            allElements.push(shadowChopsticks);
+        }
         
         // cheftable-rice-bowl-japan
         const cheftableRiceBowlJapan = japanStage.querySelector('.cheftable-rice-bowl');
@@ -5839,6 +5867,19 @@ function saveAllDebugPositions() {
         const dropChopsticksChina = chinaStage.querySelector('#drop-chopsticks');
         if (dropChopsticksChina) allElements.push(dropChopsticksChina);
     }
+    
+    // 그림자 요소들의 원래 display 상태 저장 (나중에 복원하기 위해)
+    const shadowDisplayStates = new Map();
+    allElements.forEach(element => {
+        if (element.classList.contains('image-shadow')) {
+            const computedDisplay = window.getComputedStyle(element).display;
+            shadowDisplayStates.set(element, computedDisplay);
+            // 일시적으로 표시 (위치 정보를 제대로 가져오기 위해)
+            if (computedDisplay === 'none') {
+                element.style.display = 'block';
+            }
+        }
+    });
     
     // 모든 요소 저장
     let savedCount = 0;
@@ -5982,6 +6023,15 @@ function saveAllDebugPositions() {
     
     // localStorage에 저장
     localStorage.setItem('debugPositions', JSON.stringify(debugPositions));
+    
+    // 그림자 요소들의 원래 display 상태 복원
+    shadowDisplayStates.forEach((originalDisplay, element) => {
+        if (originalDisplay === 'none') {
+            element.style.display = 'none';
+        } else {
+            element.style.display = originalDisplay;
+        }
+    });
     
     alert(`전체 ${savedCount}개 요소의 위치, 크기, 회전이 저장되었습니다!`);
 }
