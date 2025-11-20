@@ -1,14 +1,86 @@
+@font-face {
+    font-family: 'Orchidea Couture';
+    src: url('Orchidea Couture.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: '강원교육모두';
+    src: url('강원교육모두 Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: '강원교육모두';
+    src: url('강원교육모두 Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: '강원교육모두', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold;
+    color: #905431;
     background: #f5f5f5;
     overflow: hidden;
     height: 100vh;
+}
+
+/* 상단 헤더 */
+.top-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10000;
+    background: transparent;
+    border: none;
+}
+
+.header-content {
+    padding: 30px 20px 40px 20px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    position: relative;
+}
+
+.header-square {
+    width: 24vw;
+    height: 3.8vw;
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    background: #F5F3E5;
+    border: none;
+    align-self: flex-start;
+    border-radius: 0 0 10px 10px;
+}
+
+.header-title {
+    font-family: 'Orchidea Couture', serif;
+    font-size: 3.5rem;
+    font-weight: normal;
+    color: #905431;
+    margin: 0;
+    position: absolute;
+    left: 50%;
+    top: -6.5px;
+    transform: translateX(-50%);
+    text-align: center;
 }
 
 .screen {
@@ -26,7 +98,7 @@ body {
 
 /* 타이틀 화면 */
 #title-screen {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #E3C199;
     justify-content: center;
     align-items: center;
     color: white;
@@ -34,33 +106,86 @@ body {
 
 .title-content {
     text-align: center;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.title-map-image,
+.title-spoon-image,
+.title-chopsticks-image,
+.title-cheftable-image {
+    position: absolute;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.title-map-image {
+    width: 40vw;
+    height: auto;
+    top: 10vw;
+    left: 10vw;
+    opacity: 0.8;
+}
+
+.title-spoon-image {
+    width: 15vw;
+    height: auto;
+    top: 20vw;
+    right: 15vw;
+    opacity: 1;
+}
+
+.title-chopsticks-image {
+    width: 15vw;
+    height: auto;
+    bottom: 20vw;
+    left: 15vw;
+    opacity: 0.7;
+}
+
+.title-cheftable-image {
+    width: 25vw;
+    height: auto;
+    bottom: 10vw;
+    right: 10vw;
+    opacity: 0.8;
 }
 
 .title-content h1 {
     font-size: 3.5rem;
     margin-bottom: 1rem;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    position: relative;
+    z-index: 2;
 }
 
 .subtitle {
     font-size: 1.3rem;
     margin-bottom: 2rem;
     opacity: 0.9;
+    position: relative;
+    z-index: 2;
 }
 
 .btn-primary {
     padding: 15px 40px;
     font-size: 1.2rem;
-    background: white;
+    font-family: '강원교육모두', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold;
+    background: #F5F3E5;
     color: #667eea;
     border: none;
     border-radius: 50px;
     cursor: pointer;
     transition: all 0.3s;
-    font-weight: bold;
+    position: relative;
+    z-index: 2;
 }
 
 .btn-primary:hover {
+    background: #B56B41;
+    color: white;
     transform: scale(1.05);
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
@@ -68,8 +193,10 @@ body {
 .btn-secondary {
     padding: 10px 20px;
     font-size: 1rem;
-    background: rgba(0,0,0,0.2);
-    color: black;
+    font-family: '강원교육모두', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold;
+    background: #F5F3E5;
+    color: #905431;
     border: 2px solid black;
     border-radius: 25px;
     cursor: pointer;
@@ -95,7 +222,8 @@ body {
 
 .map-container h2 {
     font-size: 2.5rem;
-    color: #333;
+    font-weight: 300;
+    color: #905431;
     margin-bottom: 2rem;
 }
 
@@ -134,7 +262,7 @@ body {
 .country-label {
     margin-top: 20px;
     font-size: 1.2rem;
-    color: #333;
+    color: #905431;
 }
 
 .stamp {
@@ -146,13 +274,13 @@ body {
 
 /* 일본 스테이지 */
 #japan-stage {
-    background: #ffffff;
+    background: transparent;
     flex-direction: column;
 }
 
 /* 중국 스테이지 */
 #china-stage {
-    background: #ffffff;
+    background: transparent;
     flex-direction: column;
 }
 
@@ -163,20 +291,6 @@ body {
     flex-direction: column;
 }
 
-.stage-header {
-    padding: 20px 30px;
-    background: #f8f8f8;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid #e0e0e0;
-}
-
-.stage-header h2 {
-    color: #333;
-    font-size: 1.8rem;
-}
-
 .stage-content {
     flex: 1;
     display: flex;
@@ -184,10 +298,40 @@ body {
     position: relative;
 }
 
+.back-to-map-btn {
+    position: static;
+    margin: 0;
+    margin-top: -10px;
+    padding: 12px 24px !important;
+    font-size: 1.1rem !important;
+    z-index: 10001;
+    border: none !important;
+}
+
+.back-to-map-btn:hover {
+    background: #B56B41 !important;
+    color: white;
+}
+
+.reset-btn {
+    position: static;
+    margin: 0;
+    margin-top: -10px;
+    padding: 12px 24px !important;
+    font-size: 1.1rem !important;
+    z-index: 10001;
+    border: none !important;
+}
+
+.reset-btn:hover {
+    background: #B56B41 !important;
+    color: white;
+}
+
 /* 말풍선 */
 .speech-bubble {
     position: absolute;
-    top: 20px;
+    top: 110px;
     left: 50px;
     z-index: 100;
     opacity: 0;
@@ -200,11 +344,11 @@ body {
 }
 
 .speech-bubble-content {
-    background: white;
-    border: 2.4px solid #4CAF50;
+    background: #F5F3E5;
+    border: none;
     border-radius: 18px;
     padding: 32px 40px;
-    box-shadow: 0 4.8px 14.4px rgba(0, 0, 0, 0.15);
+    box-shadow: 4px 6px 16px rgba(0, 0, 0, 0.25), 2px 3px 8px rgba(0, 0, 0, 0.15);
     max-width: 840px;
     min-width: 300px;
     width: fit-content;
@@ -216,7 +360,7 @@ body {
 
 .speech-bubble-content p {
     margin: 0;
-    color: #333;
+    color: #905431;
     font-size: 1.32rem;
     line-height: 1.92;
     white-space: pre-wrap;
@@ -224,24 +368,27 @@ body {
 }
 
 .next-btn {
-    background: #4CAF50;
-    color: white;
+    background: #F5F3E5;
+    color: #905431;
     border: none;
-    border-radius: 8px;
-    padding: 10px 20px;
-    font-size: 1rem;
+    border-radius: 15px;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-family: '강원교육모두', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold;
     cursor: pointer;
     transition: all 0.3s;
-    font-weight: bold;
     margin-top: 15px;
     display: block;
     margin-left: 0;
     margin-right: auto;
     pointer-events: auto;
+    box-shadow: 3px 4px 12px rgba(0, 0, 0, 0.2), 1.5px 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .next-btn:hover {
-    background: #45a049;
+    background: #B56B41;
+    color: white;
     transform: scale(1.05);
 }
 
@@ -267,32 +414,20 @@ body {
 
 .speech-bubble-tail {
     position: absolute;
-    top: -12px;
-    left: 30px;
+    left: -12px;
+    top: 30px;
     width: 0;
     height: 0;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    border-bottom: 12px solid #4CAF50;
-}
-
-.speech-bubble-tail::after {
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: -9.6px;
-    width: 0;
-    height: 0;
-    border-left: 9.6px solid transparent;
-    border-right: 9.6px solid transparent;
-    border-bottom: 9.6px solid white;
+    border-top: 18px solid transparent;
+    border-bottom: 18px solid transparent;
+    border-right: 27px solid #F5F3E5;
 }
 
 /* 드롭 존 영역 */
 .drop-zone-area {
     flex: 1;
     position: relative;
-    background: #ffffff;
+    background: #e3c199;
     overflow: hidden;
 }
 
@@ -323,8 +458,8 @@ body {
     position: absolute;
     left: 8%;
     top: 35%;
-    width: 200px;
-    height: 300px;
+    width: 10.42vw;
+    height: 15.63vw;
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
@@ -339,8 +474,8 @@ body {
     position: absolute;
     left: 10%;
     top: 60%;
-    width: 80px;
-    height: 120px;
+    width: 4.17vw;
+    height: 6.25vw;
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
@@ -350,6 +485,79 @@ body {
 
 .debug-mode .card-napkin {
     pointer-events: auto;
+}
+
+/* 그림자 이미지들 (가장 낮은 z-index) */
+.image-shadow {
+    position: absolute;
+    z-index: 0; /* 원본 이미지(z-index: 5)보다 뒤, 배경 위 */
+    pointer-events: none;
+    opacity: 1; /* 확실히 보이도록 */
+}
+
+/* 밥그릇, 수저 그림자는 기본적으로 숨김 (드롭존에 배치되었을 때만 표시) */
+.shadow-dish,
+.shadow-spoon,
+.shadow-chopsticks {
+    display: none;
+}
+
+.debug-mode .image-shadow {
+    pointer-events: auto; /* 디버그 모드에서 선택 가능 */
+    cursor: pointer;
+    outline: 2px dashed transparent;
+    transition: outline 0.2s;
+}
+
+.debug-mode .image-shadow:hover {
+    outline: 2px dashed #4CAF50;
+}
+
+.debug-mode .image-shadow.selected {
+    outline: 3px solid #4CAF50;
+    outline-offset: 2px;
+}
+
+.image-shadow img {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    pointer-events: none;
+    opacity: 1; /* 확실히 보이도록 */
+}
+
+.debug-mode .image-shadow img {
+    pointer-events: auto; /* 디버그 모드에서 선택 가능 */
+}
+
+/* dish2 그림자 (soup-bowl-image와 같은 위치) */
+.shadow-dish2 {
+    left: 50%;
+    top: 40%;
+    transform: translate(calc(-100% - 3vw), calc(-50% + 6vw));
+}
+
+/* dish3, 4, 5 그림자 (japan-dish-3, 4, 5와 같은 위치) */
+.shadow-dish3,
+.shadow-dish4,
+.shadow-dish5 {
+    /* 위치는 japan-dish-3, 4, 5와 동일하게 설정 (JavaScript나 인라인 스타일로 설정됨) */
+}
+
+/* dish 그림자 (rice-bowl drop zone과 같은 위치) */
+.shadow-dish {
+    /* 위치는 drop-rice-bowl과 동일하게 설정 */
+}
+
+/* spoon 그림자 (drop-spoon과 같은 위치) */
+.shadow-spoon {
+    /* 위치는 drop-spoon과 동일하게 설정 */
+}
+
+/* chopsticks 그림자 (drop-chopsticks와 같은 위치) */
+.shadow-chopsticks {
+    /* 위치는 drop-chopsticks와 동일하게 설정 */
 }
 
 .soup-bowl-image {
@@ -490,7 +698,7 @@ body {
 }
 
 .debug-toggle-btn:hover {
-    background: #555;
+    background: #B56B41;
     transform: scale(1.1);
 }
 
@@ -538,7 +746,8 @@ body {
 }
 
 .debug-close-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: #B56B41;
+    color: white;
 }
 
 .debug-content {
@@ -589,17 +798,20 @@ body {
 .debug-btn {
     flex: 1;
     padding: 10px;
-    background: #4CAF50;
-    color: white;
+    background: #F5F3E5;
+    color: #905431;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
+    font-family: '강원교육모두', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold;
     transition: background 0.2s;
 }
 
 .debug-btn:hover {
-    background: #45a049;
+    background: #B56B41;
+    color: white;
 }
 
 .debug-btn:active {
@@ -615,6 +827,8 @@ body {
 .debug-mode .china-table-image img,
 .debug-mode .soup-bowl-image,
 .debug-mode .soup-bowl-image img,
+.debug-mode .spoonspot-image,
+.debug-mode .spoonspot-image img,
 .debug-mode .hand-draggable,
 .debug-mode .hand-draggable img,
 .debug-mode .top-cheftable,
@@ -624,7 +838,13 @@ body {
 .debug-mode .cheftable-rice-bowl,
 .debug-mode .cheftable-rice-bowl img,
 .debug-mode #grab-image,
-.debug-mode #grab-image img {
+.debug-mode #grab-image img,
+.debug-mode .japan-dish-3,
+.debug-mode .japan-dish-3 img,
+.debug-mode .japan-dish-4,
+.debug-mode .japan-dish-4 img,
+.debug-mode .japan-dish-5,
+.debug-mode .japan-dish-5 img {
     cursor: pointer;
     outline: 2px dashed transparent;
     transition: outline 0.2s;
@@ -638,6 +858,8 @@ body {
 .debug-mode .china-table-image img:hover,
 .debug-mode .soup-bowl-image:hover,
 .debug-mode .soup-bowl-image img:hover,
+.debug-mode .spoonspot-image:hover,
+.debug-mode .spoonspot-image img:hover,
 .debug-mode .hand-draggable:hover,
 .debug-mode .hand-draggable img:hover,
 .debug-mode .top-cheftable:hover,
@@ -647,7 +869,13 @@ body {
 .debug-mode .cheftable-rice-bowl:hover,
 .debug-mode .cheftable-rice-bowl img:hover,
 .debug-mode #grab-image:hover,
-.debug-mode #grab-image img:hover {
+.debug-mode #grab-image img:hover,
+.debug-mode .japan-dish-3:hover,
+.debug-mode .japan-dish-3 img:hover,
+.debug-mode .japan-dish-4:hover,
+.debug-mode .japan-dish-4 img:hover,
+.debug-mode .japan-dish-5:hover,
+.debug-mode .japan-dish-5 img:hover {
     outline: 2px dashed #4CAF50;
 }
 
@@ -659,6 +887,8 @@ body {
 .debug-mode .china-table-image.selected img,
 .debug-mode .soup-bowl-image.selected,
 .debug-mode .soup-bowl-image.selected img,
+.debug-mode .spoonspot-image.selected,
+.debug-mode .spoonspot-image.selected img,
 .debug-mode .hand-draggable.selected,
 .debug-mode .hand-draggable.selected img,
 .debug-mode .top-cheftable.selected,
@@ -668,16 +898,69 @@ body {
 .debug-mode .cheftable-rice-bowl.selected,
 .debug-mode .cheftable-rice-bowl.selected img,
 .debug-mode #grab-image.selected,
-.debug-mode #grab-image.selected img {
+.debug-mode #grab-image.selected img,
+.debug-mode .japan-dish-3.selected,
+.debug-mode .japan-dish-3.selected img,
+.debug-mode .japan-dish-4.selected,
+.debug-mode .japan-dish-4.selected img,
+.debug-mode .japan-dish-5.selected,
+.debug-mode .japan-dish-5.selected img {
     outline: 3px solid #4CAF50;
     outline-offset: 2px;
+}
+
+/* dish 3, 4, 5 이미지 (드래그 불가능, 디버그 모드에서만 수정 가능) */
+.japan-dish-3,
+.japan-dish-4,
+.japan-dish-5 {
+    position: absolute;
+    pointer-events: none; /* 드래그 불가능 */
+}
+
+.debug-mode .japan-dish-3,
+.debug-mode .japan-dish-4,
+.debug-mode .japan-dish-5 {
+    pointer-events: auto; /* 디버그 모드에서만 선택 가능 */
+}
+
+/* spoonspot 이미지 (드래그 불가능, 디버그 모드에서만 수정 가능) */
+.spoonspot-image {
+    position: absolute;
+    pointer-events: none; /* 드래그 불가능 */
+    z-index: 0; /* 드랍된 아이템과 드랍존보다 아래 레이어 */
+}
+
+.debug-mode .spoonspot-image {
+    pointer-events: auto; /* 디버그 모드에서만 선택 가능 */
+}
+
+.spoonspot-image img {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    pointer-events: none;
+    position: relative;
+    z-index: 0;
+}
+
+.debug-mode .spoonspot-image img {
+    pointer-events: auto; /* 디버그 모드에서 선택 가능 */
+}
+
+.japan-dish-3 img,
+.japan-dish-4 img,
+.japan-dish-5 img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 /* 손 이미지 (드래그 가능) */
 .hand-draggable {
     position: absolute;
-    left: 20px;
-    bottom: -300px;
+    left: 1.04vw;
+    bottom: -15.63vw;
     z-index: 1000;
     pointer-events: auto;
     cursor: grab;
@@ -696,14 +979,15 @@ body {
     transition: transform 0.1s ease-out;
 }
 
-.grab-text {
+.grab-text,
+#grab-text-china {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 2rem;
     font-weight: bold;
-    color: #4CAF50;
+    color: #905431;
     z-index: 100;
     pointer-events: none;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
@@ -728,8 +1012,8 @@ body {
     width: calc(100% - 80px);
     height: calc(100% - 80px);
     display: flex;
-    border: 3px dashed #4CAF50;
-    background: rgba(76, 175, 80, 0.1);
+    border: 3px dashed #F5F3E5;
+    background: rgba(200, 200, 200, 0.1);
     pointer-events: auto;
     z-index: 1001;
 }
@@ -742,8 +1026,8 @@ body {
     justify-content: center;
     font-size: 1.5rem;
     font-weight: bold;
-    color: #4CAF50;
-    border-right: 2px solid #4CAF50;
+    color: #905431;
+    border-right: 2px dashed #F5F3E5;
     transition: background 0.2s;
 }
 
@@ -752,11 +1036,12 @@ body {
 }
 
 .grab-zone-left.drag-over {
-    background: rgba(76, 175, 80, 0.3);
+    background: rgba(245, 243, 229, 0.2);
+    border-right: 2px dashed #905431;
 }
 
 .grab-zone-right.drag-over {
-    background: rgba(76, 175, 80, 0.3);
+    background: rgba(245, 243, 229, 0.2);
 }
 
 /* 밥그릇 드롭존 (숟가락/젓가락용) */
@@ -767,8 +1052,8 @@ body {
     width: 100%;
     height: 100%;
     display: flex;
-    border: 3px dashed #4CAF50;
-    background: rgba(76, 175, 80, 0.1);
+    border: 3px dashed #F5F3E5;
+    background: rgba(200, 200, 200, 0.1);
     pointer-events: auto;
     z-index: 100;
 }
@@ -781,8 +1066,8 @@ body {
     justify-content: center;
     font-size: 1.5rem;
     font-weight: bold;
-    color: #4CAF50;
-    border-right: 2px solid #4CAF50;
+    color: #905431;
+    border-right: 2px dashed #F5F3E5;
     transition: background 0.2s;
 }
 
@@ -791,11 +1076,12 @@ body {
 }
 
 .rice-bowl-zone-left.drag-over {
-    background: rgba(76, 175, 80, 0.3);
+    background: rgba(245, 243, 229, 0.2);
+    border-right: 2px dashed #905431;
 }
 
 .rice-bowl-zone-right.drag-over {
-    background: rgba(76, 175, 80, 0.3);
+    background: rgba(245, 243, 229, 0.2);
 }
 
 /* 손가락 가이드 애니메이션 */
@@ -824,7 +1110,7 @@ body {
 /* 드롭 존들 */
 .drop-zone {
     position: absolute;
-    border: 3px dashed #ccc;
+    border: 3px dashed #F5F3E5;
     border-radius: 10px;
     background: rgba(200, 200, 200, 0.1);
     transition: all 0.3s;
@@ -834,11 +1120,12 @@ body {
     min-width: 50px;
     min-height: 50px;
     overflow: visible;
+    z-index: 5; /* spoonspot-image보다 위에 표시 */
 }
 
 .drop-zone.drag-over {
-    border-color: #4CAF50;
-    background: rgba(76, 175, 80, 0.2);
+    border: 2px dashed #905431;
+    background: rgba(245, 243, 229, 0.2);
     transform: scale(1.05);
 }
 
@@ -848,7 +1135,7 @@ body {
 
 .drop-zone-label {
     font-size: 0.9rem;
-    color: #999;
+    color: #905431;
     font-weight: bold;
 }
 
@@ -893,28 +1180,63 @@ body {
 
 /* 슬롯 메뉴 */
 .slot-menu {
-    width: 350px;
-    background: #f5f5f5;
-    border-left: 2px solid #e0e0e0;
+    position: fixed;
+    top: 80px;
+    right: 0;
+    bottom: 20px;
+    width: 300px;
+    background: #F5F3E5;
+    border-left: none;
+    border-radius: 20px 0 0 20px;
     padding: 20px;
     overflow-y: auto;
+    z-index: 9999;
+    display: none;
 }
+
+.slot-menu-tab {
+    position: fixed;
+    right: 300px;
+    top: 120px;
+    width: 2vw;
+    height: 10vw;
+    background: #F5F3E5;
+    border-radius: 10px 0 0 10px;
+    z-index: 10000;
+    pointer-events: none;
+}
+
 
 /* 젓가락 정보 메뉴 */
 .info-menu {
     position: fixed;
-    top: 0;
-    right: -400px;
-    width: 380px;
-    height: 100vh;
-    background: white;
-    border-left: 2px solid #4CAF50;
-    border-radius: 0;
+    top: 80px;
+    right: -300px;
+    bottom: 20px;
+    width: 300px;
+    background: #F5F3E5;
+    border-left: none;
+    border-radius: 20px 0 0 20px;
     padding: 25px;
+    padding-top: 20px;
+    padding-bottom: 30px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
+    z-index: 10002;
     display: none;
     overflow-y: auto;
+    overflow-x: visible;
+}
+
+.info-menu-tab {
+    position: absolute;
+    left: -2vw;
+    top: 150px;
+    width: 2vw;
+    height: 10vw;
+    background: #F5F3E5;
+    border-radius: 10px 0 0 10px;
+    z-index: 10003;
+    pointer-events: none;
 }
 
 .info-menu-close {
@@ -924,7 +1246,7 @@ body {
     background: none;
     border: none;
     font-size: 28px;
-    color: #666;
+    color: #905431;
     cursor: pointer;
     width: 30px;
     height: 30px;
@@ -936,16 +1258,45 @@ body {
 }
 
 .info-menu-close:hover {
-    background: #f0f0f0;
-    color: #333;
+    background: #B56B41;
+    color: white;
+}
+
+.info-menu-title {
+    color: #905431;
+    margin-bottom: 35px;
+    font-size: 1.8rem;
+    padding-left: 50px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    line-height: 1;
+    margin-top: 0;
+}
+
+.info-menu-title::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: calc(50% - 5.5px);
+    transform: translateY(-50%);
+    width: 24px;
+    height: 2px;
+    display: block;
+    background: #905431;
+    box-shadow: 
+        0 8px 0 #905431,
+        0 16px 0 #905431;
 }
 
 .info-menu h3 {
-    color: #4CAF50;
-    margin: 0 0 15px 0;
-    font-size: 1.3rem;
+    color: #905431;
+    margin: 0 0 8px 0;
+    font-size: 1.4rem;
     font-weight: bold;
     padding-right: 30px;
+    padding-left: 10px;
+    text-align: center;
 }
 
 .info-menu-image {
@@ -955,24 +1306,44 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    padding-left: 10px;
+    position: relative;
+}
+
+.info-menu-image::before {
+    content: '';
+    display: block;
+    width: 100%;
+    max-width: 240px;
+    aspect-ratio: 5 / 4;
+    background: white;
+    border-radius: 8px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
 }
 
 .info-menu-image img {
-    max-width: 50px;
+    max-width: 35px;
     height: auto;
     border-radius: 8px;
     transform: rotate(90deg);
+    position: relative;
+    z-index: 1;
 }
 
 .info-menu-content {
-    color: #333;
+    color: #905431;
     line-height: 1.6;
     margin-top: 10px;
+    padding-left: 10px;
 }
 
 .info-menu-content p {
     margin: 0 0 12px 0;
-    font-size: 0.9rem;
+    font-size: 1.0rem;
 }
 
 .info-menu-content p:last-child {
@@ -980,9 +1351,29 @@ body {
 }
 
 .slot-menu h3 {
-    color: #333;
-    margin-bottom: 20px;
-    font-size: 1.3rem;
+    color: #905431;
+    margin-bottom: 60px;
+    font-size: 1.8rem;
+    padding-left: 50px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    line-height: 1;
+}
+
+.slot-menu h3::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: calc(50% - 5.5px);
+    transform: translateY(-50%);
+    width: 24px;
+    height: 2px;
+    display: block;
+    background: #905431;
+    box-shadow: 
+        0 8px 0 #905431,
+        0 16px 0 #905431;
 }
 
 .slot-items {
@@ -993,19 +1384,26 @@ body {
 
 .slot-item {
     background: white;
-    border: 2px solid #ddd;
-    border-radius: 10px;
-    padding: 15px;
+    border: 2px dashed transparent;
+    border-radius: 18px;
+    padding: 20px 12px;
     cursor: grab;
     transition: all 0.3s;
     text-align: center;
     user-select: none;
+    max-width: 240px;
+    min-height: 192px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
 }
 
 .slot-item:hover {
     transform: translateY(-3px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    border-color: #4CAF50;
+    border: 2px dashed #905431;
 }
 
 .slot-item:active {
@@ -1017,8 +1415,8 @@ body {
 }
 
 .slot-item.highlight-pulse {
-    border: 3px solid #4CAF50 !important;
-    box-shadow: 0 0 20px rgba(76, 175, 80, 0.6) !important;
+    border: 2px dashed #905431 !important;
+    box-shadow: none !important;
 }
 
 .slot-item.highlight-pulse .item-icon {
@@ -1039,7 +1437,7 @@ body {
 }
 
 .drop-zone.highlight-pulse {
-    border-color: #4CAF50 !important;
+    border: 2px dashed #905431 !important;
 }
 
 .drop-zone.highlight-pulse .dropped-item img {
@@ -1047,9 +1445,9 @@ body {
 }
 
 .item-icon {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto 10px;
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 8px;
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
@@ -1060,9 +1458,11 @@ body {
 
 .slot-item span {
     display: block;
-    color: #333;
+    color: #905431;
     font-weight: bold;
-    font-size: 0.9rem;
+    font-size: 1.1rem;
+    padding: 8px 0;
+    margin-top: auto;
 }
 
 /* 드롭된 아이템 */
@@ -1147,7 +1547,7 @@ body {
 
 .modal-content p {
     font-size: 1.3rem;
-    color: #333;
+    color: #905431;
     margin-bottom: 20px;
     font-weight: bold;
 }

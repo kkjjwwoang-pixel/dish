@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japan - World Dining Etiquette</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 상단 헤더 -->
+    <header class="top-header">
+        <div class="header-content">
+            <button id="back-to-map-japan" class="btn-secondary back-to-map-btn">지도 돌아가기</button>
+            <div class="header-square"></div>
+            <h1 class="header-title">Japan</h1>
+            <button id="reset-stage-btn" class="btn-secondary reset-btn">다시하기</button>
+        </div>
+    </header>
+
+    <!-- 일본 스테이지 -->
+    <div id="japan-stage" class="screen active">
+        <div class="stage-container">
+            <div class="stage-content">
+                <!-- 말풍선 -->
+                <div id="speech-bubble" class="speech-bubble">
+                    <div class="speech-bubble-content">
+                        <p id="speech-text"></p>
+                    </div>
+                    <div class="speech-bubble-tail"></div>
+                    <button id="next-speech-btn" class="next-btn" style="display: none;">다음</button>
+                </div>
+                
+                <!-- 드롭 존 영역 -->
+                <div class="drop-zone-area">
+                    <div class="table-setting">
+                        <!-- 상단 cheftable -->
+                        <div class="top-cheftable" style="background-image: url('cheftable.png');"></div>
+                        
+                        <!-- 테이블 세팅 -->
+                        <div class="table-mat"></div>
+                        <div class="card-napkin" style="background-image: url('reciepts.png');">
+                        </div>
+                        
+                        <!-- 그림자 이미지들 (가장 낮은 z-index) -->
+                        <div class="image-shadow shadow-dish2">
+                            <img src="dish2_s.png" alt="dish2 shadow">
+                        </div>
+                        <div class="image-shadow shadow-dish3">
+                            <img src="dish3_s.png" alt="dish3 shadow">
+                        </div>
+                        <div class="image-shadow shadow-dish4">
+                            <img src="dish4_s.png" alt="dish4 shadow">
+                        </div>
+                        <div class="image-shadow shadow-dish5">
+                            <img src="dish5_s.png" alt="dish5 shadow">
+                        </div>
+                        <div class="image-shadow shadow-dish">
+                            <img src="dish_s.png" alt="dish shadow">
+                        </div>
+                        <div class="image-shadow shadow-spoon">
+                            <img src="spoon_s.png" alt="spoon shadow">
+                        </div>
+                        <div class="image-shadow shadow-chopsticks">
+                            <img src="chopsticks_s.png" alt="chopsticks shadow">
+                        </div>
+                        
+                        <!-- 국그릇 (기본 배치 이미지) -->
+                        <div class="soup-bowl-image">
+                            <img src="dish2.png" alt="국그릇">
+                        </div>
+                        
+                        <!-- dish 3, 4, 5 이미지 (드래그 불가능, 디버그 모드에서만 수정 가능) -->
+                        <div class="japan-dish-3">
+                            <img src="dish3.png" alt="dish 3">
+                        </div>
+                        <div class="japan-dish-4">
+                            <img src="dish4.png" alt="dish 4">
+                        </div>
+                        <div class="japan-dish-5">
+                            <img src="dish5.png" alt="dish 5">
+                        </div>
+                        
+                        <!-- 손 이미지 (드래그 가능) -->
+                        <div class="hand-draggable" id="hand-draggable">
+                            <img src="hand.png" alt="손">
+                        </div>
+                        
+                        <!-- 드롭 존들 -->
+                        <div class="drop-zone" id="drop-rice-bowl" data-item="rice-bowl">
+                            <div class="grab-text" id="grab-text" style="display: none;">집기</div>
+                            <!-- 밥그릇 드롭존 (숟가락/젓가락용) -->
+                            <div id="rice-bowl-drop-zone" class="rice-bowl-drop-zone" style="display: none;">
+                                <div class="rice-bowl-zone-left">꽂기</div>
+                                <div class="rice-bowl-zone-right">집기</div>
+                            </div>
+                        </div>
+                        <div class="drop-zone" id="drop-spoon" data-item="spoon">
+                        </div>
+                        <!-- spoonspot 이미지 (드래그 불가) -->
+                        <div class="spoonspot-image" id="spoonspot-1">
+                            <img src="spoonstpot.png" alt="spoonspot">
+                        </div>
+                        <div class="spoonspot-image" id="spoonspot-2">
+                            <img src="spoonstpot.png" alt="spoonspot">
+                        </div>
+                        <div class="drop-zone" id="drop-chopsticks" data-item="chopsticks">
+                        </div>
+                        <div class="drop-zone" id="drop-chopsticks-2" data-item="chopsticks">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 젓가락 정보 슬롯 메뉴 -->
+                <div id="chopsticks-info-menu" class="info-menu">
+                    <div class="info-menu-tab"></div>
+                    <button class="info-menu-close" onclick="closeChopsticksInfoMenu()">×</button>
+                    <h2 class="info-menu-title">INFO</h2>
+                    <h3>젓가락 사용 예절</h3>
+                    <div class="info-menu-image">
+                        <img src="chopsticks.png" alt="젓가락">
+                    </div>
+                    <div class="info-menu-content">
+                        <p>일본에서는 젓가락을 밥그릇에 꽂으면 안 됩니다. 이는 매우 무례한 행동으로 간주됩니다.</p>
+                        <p>젓가락을 밥그릇에 꽂는 것은 장례식에서 사용하는 방식이므로, 식사 중에는 절대 피해야 합니다.</p>
+                        <p>젓가락은 밥그릇 옆에 가로로 놓거나 젓가락 받침에 올려두는 것이 올바른 예절입니다.</p>
+                    </div>
+                </div>
+                
+                <!-- 식기 손으로 들고 먹는 것 정보 메뉴 -->
+                <div id="utensil-holding-info-menu" class="info-menu">
+                    <div class="info-menu-tab"></div>
+                    <button class="info-menu-close" onclick="closeUtensilHoldingInfoMenu()">×</button>
+                    <h2 class="info-menu-title">INFO</h2>
+                    <h3>식기 사용 예절</h3>
+                    <div class="info-menu-image">
+                        <img src="spoon.png" alt="숟가락">
+                    </div>
+                    <div class="info-menu-content">
+                        <p>일본에서는 밥그릇을 손으로 들고 먹는 것이 올바른 예절입니다.</p>
+                        <p>밥그릇을 들고 숟가락이나 젓가락으로 먹는 것이 정상적인 식사 방법입니다.</p>
+                        <p>밥그릇을 들지 않고 테이블에 그대로 두고 먹는 것은 예의에 어긋납니다.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 알림 모달 -->
+    <div id="alert-modal" class="modal">
+        <div class="modal-content">
+            <p id="alert-message"></p>
+            <button id="close-alert" class="btn-primary">확인</button>
+        </div>
+    </div>
+
+    <!-- 디버그 모드 UI -->
+    <div id="debug-panel" class="debug-panel" style="display: none;">
+        <div class="debug-header">
+            <h3>디버그 모드</h3>
+            <button id="close-debug" class="debug-close-btn">×</button>
+        </div>
+        <div class="debug-content">
+            <div class="debug-info">
+                <p>선택된 요소: <span id="debug-selected-element">없음</span></p>
+            </div>
+            <div class="debug-controls">
+                <label>
+                    X 좌표: <input type="number" id="debug-x-value" step="0.1" style="width: 80px; margin-right: 5px;">vw
+                    <input type="range" id="debug-x-slider" min="-500" max="500" value="50" step="0.1">
+                </label>
+                <label>
+                    Y 좌표: <input type="number" id="debug-y-value" step="0.1" style="width: 80px; margin-right: 5px;">vw
+                    <input type="range" id="debug-y-slider" min="-500" max="500" value="50" step="0.1">
+                </label>
+                <label>
+                    크기: <input type="number" id="debug-size-value" step="0.1" style="width: 80px; margin-right: 5px;">vw
+                    <input type="range" id="debug-size-slider" min="0.01" max="500" value="4.17" step="0.1">
+                </label>
+                <label>
+                    회전: <input type="number" id="debug-rotation-value" step="1" style="width: 80px; margin-right: 5px;">°
+                    <input type="range" id="debug-rotation-slider" min="-360" max="360" value="0" step="1">
+                </label>
+                <div class="debug-buttons">
+                    <button id="debug-save-btn" class="debug-btn">선택 저장</button>
+                    <button id="debug-save-all-btn" class="debug-btn">전체 저장</button>
+                    <button id="debug-reset-btn" class="debug-btn">초기화</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 슬롯 메뉴 (일본 스테이지) -->
+    <div class="slot-menu" id="slot-menu-japan">
+        <div class="slot-menu-tab"></div>
+        <h3>INVENTORY</h3>
+        <div class="slot-items">
+            <div class="slot-item" draggable="true" data-item="spoon" data-image="spoon.png">
+                <div class="item-icon" style="background-image: url('spoon.png');"></div>
+                <span>숟가락</span>
+            </div>
+            <div class="slot-item" draggable="true" data-item="chopsticks" data-image="chopsticks.png">
+                <div class="item-icon" style="background-image: url('chopsticks.png');"></div>
+                <span>젓가락</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 디버그 모드 토글 버튼 -->
+    <button id="debug-toggle-btn" class="debug-toggle-btn">🔧</button>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

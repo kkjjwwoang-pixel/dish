@@ -13,6 +13,21 @@ const screens = {
     china: document.getElementById('china-stage')
 };
 
+// 각 파일에서 존재하는 스테이지만 초기화 (DOM 로드 후)
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('japan-stage')) {
+        const slotMenuJapan = document.getElementById('slot-menu-japan');
+        if (slotMenuJapan) slotMenuJapan.style.display = 'block';
+        initializeJapanStage();
+    }
+
+    if (document.getElementById('china-stage')) {
+        const slotMenuChina = document.getElementById('slot-menu-china');
+        if (slotMenuChina) slotMenuChina.style.display = 'block';
+        initializeChinaStage();
+    }
+});
+
 let currentScreen = 'title';
 let japanCompleted = false;
 let chinaCompleted = false;
@@ -37,39 +52,79 @@ const placedItems = {};
 // 화면 전환 함수
 function showScreen(screenName) {
     Object.values(screens).forEach(screen => {
+        if (screen) {
         screen.classList.remove('active');
+        }
     });
+    
+    // 헤더 버튼 표시/숨김 처리
+    const backToMapJapan = document.getElementById('back-to-map-japan');
+    const backToMapChina = document.getElementById('back-to-map-china');
+    const resetStageBtn = document.getElementById('reset-stage-btn');
+    
+    if (backToMapJapan) backToMapJapan.style.display = 'none';
+    if (backToMapChina) backToMapChina.style.display = 'none';
+    if (resetStageBtn) resetStageBtn.style.display = 'none';
+    
+    // 슬롯 메뉴 표시/숨김 처리
+    const slotMenuJapan = document.getElementById('slot-menu-japan');
+    const slotMenuChina = document.getElementById('slot-menu-china');
+    
+    if (slotMenuJapan) slotMenuJapan.style.display = 'none';
+    if (slotMenuChina) slotMenuChina.style.display = 'none';
+    
+    // 헤더 제목 업데이트
+    const headerTitle = document.querySelector('.header-title');
+    if (headerTitle) {
+        if (screenName === 'japan') {
+            headerTitle.textContent = 'Japan';
+        } else if (screenName === 'china') {
+            headerTitle.textContent = 'China';
+        } else {
+            headerTitle.textContent = 'World Dining Etiquette';
+        }
+    }
     
     if (screens[screenName]) {
         screens[screenName].classList.add('active');
         currentScreen = screenName;
+        
+        // 스테이지에 따라 해당 버튼 표시
+        if (screenName === 'japan' && backToMapJapan) {
+            backToMapJapan.style.display = 'block';
+            if (slotMenuJapan) slotMenuJapan.style.display = 'block';
+            if (resetStageBtn) resetStageBtn.style.display = 'block';
+        } else if (screenName === 'china' && backToMapChina) {
+            backToMapChina.style.display = 'block';
+            if (slotMenuChina) slotMenuChina.style.display = 'block';
+            if (resetStageBtn) resetStageBtn.style.display = 'block';
+        }
     }
 }
 
 // 시작하기 버튼
-document.getElementById('start-btn').addEventListener('click', () => {
+const startBtn = document.getElementById('start-btn');
+if (startBtn) {
+    startBtn.addEventListener('click', () => {
     showScreen('map');
 });
+}
 
 // 일본 클릭
-document.querySelector('.country.korea').addEventListener('click', () => {
-    // 다른 스테이지 완전히 초기화
-    resetStage('china');
-    // 일본 스테이지도 초기화
-    resetStage('japan');
-    showScreen('japan');
-    initializeJapanStage();
-});
+const japanCountry = document.querySelector('.country.korea');
+if (japanCountry) {
+    japanCountry.addEventListener('click', () => {
+        window.location.href = 'japan.html';
+    });
+}
 
 // 중국 클릭
-document.querySelector('.country.china').addEventListener('click', () => {
-    // 다른 스테이지 완전히 초기화
-    resetStage('japan');
-    // 중국 스테이지도 초기화
-    resetStage('china');
-    showScreen('china');
-    initializeChinaStage();
-});
+const chinaCountry = document.querySelector('.country.china');
+if (chinaCountry) {
+    chinaCountry.addEventListener('click', () => {
+        window.location.href = 'china.html';
+    });
+}
 
 // 스테이지 완전 초기화 함수
 function resetStage(stageName) {
@@ -224,13 +279,36 @@ function resetStage(stageName) {
 }
 
 // 지도 돌아가기 버튼
-document.getElementById('back-to-map-japan').addEventListener('click', () => {
-    showScreen('map');
-});
+const backToMapJapan = document.getElementById('back-to-map-japan');
+if (backToMapJapan) {
+    backToMapJapan.addEventListener('click', () => {
+        window.location.href = 'index.html';
+    });
+}
 
-document.getElementById('back-to-map-china').addEventListener('click', () => {
-    showScreen('map');
-});
+const backToMapChina = document.getElementById('back-to-map-china');
+if (backToMapChina) {
+    backToMapChina.addEventListener('click', () => {
+        window.location.href = 'index.html';
+    });
+}
+
+// 다시하기 버튼 클릭 이벤트
+const resetStageBtn = document.getElementById('reset-stage-btn');
+if (resetStageBtn) {
+    resetStageBtn.addEventListener('click', () => {
+        const japanStage = document.getElementById('japan-stage');
+        const chinaStage = document.getElementById('china-stage');
+        
+        if (japanStage && japanStage.classList.contains('active')) {
+            resetStage('japan');
+            initializeJapanStage();
+        } else if (chinaStage && chinaStage.classList.contains('active')) {
+            resetStage('china');
+            initializeChinaStage();
+        }
+    });
+}
 
 // 일본 스테이지 초기화
 function initializeJapanStage() {
@@ -252,6 +330,9 @@ function initializeJapanStage() {
     
     // 배치된 아이템 초기화
     Object.keys(placedItems).forEach(key => delete placedItems[key]);
+    
+    // 그림자 이미지 숨기기 (초기화 시)
+    updateShadowVisibility();
     
     // 셰프테이블 밥그릇 제거 (일본 스테이지만)
     const cheftableRiceBowl = japanStage ? japanStage.querySelector('.cheftable-rice-bowl') : null;
@@ -299,6 +380,12 @@ function initializeJapanStage() {
     
     // 드롭 존 크기를 실제 이미지 사이즈에 맞게 조정
     adjustDropZonesToImageSize();
+    
+    // 저장된 디버그 위치 적용 (이미지 로드 후 적용되도록 지연)
+    setTimeout(() => {
+        applyDebugPositions();
+        syncShadowPositions();
+    }, 200);
     
     // 손 이미지 드래그 기능 초기화
     initializeHandDragging();
@@ -386,7 +473,8 @@ function adjustDropZonesToImageSize() {
     const imageMapping = {
         'drop-rice-bowl': 'dish.png',
         'drop-spoon': 'spoon.png',
-        'drop-chopsticks': 'chopsticks.png'
+        'drop-chopsticks': 'chopsticks.png',
+        'drop-chopsticks-2': 'chopsticks.png'
     };
     
     // 모든 이미지 로드 후 위치 조정
@@ -405,11 +493,11 @@ function adjustDropZonesToImageSize() {
             const naturalWidth = this.naturalWidth;
             const naturalHeight = this.naturalHeight;
             
-            // 드롭 존 크기를 이미지 natural size의 80%로 설정 (20% 축소)
+            // 드롭 존 크기를 이미지 natural size의 80%로 설정 (20% 축소) - vw 단위
             const scaledWidth = naturalWidth * 0.8;
             const scaledHeight = naturalHeight * 0.8;
-            dropZone.style.width = `${scaledWidth}px`;
-            dropZone.style.height = `${scaledHeight}px`;
+            dropZone.style.width = `${pxToVw(scaledWidth)}vw`;
+            dropZone.style.height = `${pxToVw(scaledHeight)}vw`;
             
             // 이미지 정보 저장 (스케일된 크기)
             images[dropZoneId] = {
@@ -421,11 +509,13 @@ function adjustDropZonesToImageSize() {
             
             // 모든 이미지가 로드되면 위치 조정
             if (loadedCount === totalImages) {
-                adjustDropZonePositions(images);
-                // 드랍존 위치 설정 후 저장된 디버그 위치 적용
+                // 먼저 저장된 디버그 위치 적용
+                applyDebugPositions();
+                // 저장되지 않은 드랍존만 기본 위치 설정
                 setTimeout(() => {
-                    applyDebugPositions();
-                }, 50);
+                    adjustDropZonePositions(images);
+                    syncShadowPositions();
+                }, 100);
             }
         };
         
@@ -437,8 +527,8 @@ function adjustDropZonesToImageSize() {
             const naturalHeight = img.naturalHeight;
             const scaledWidth = naturalWidth * 0.8;
             const scaledHeight = naturalHeight * 0.8;
-            dropZone.style.width = `${scaledWidth}px`;
-            dropZone.style.height = `${scaledHeight}px`;
+            dropZone.style.width = `${pxToVw(scaledWidth)}vw`;
+            dropZone.style.height = `${pxToVw(scaledHeight)}vw`;
             
             images[dropZoneId] = {
                 width: scaledWidth,
@@ -452,6 +542,7 @@ function adjustDropZonesToImageSize() {
                 // 드랍존 위치 설정 후 저장된 디버그 위치 적용
                 setTimeout(() => {
                     applyDebugPositions();
+                    syncShadowPositions();
                 }, 50);
             }
         }
@@ -465,19 +556,23 @@ function adjustDropZonesToImageSize() {
             const naturalWidth = this.naturalWidth;
             const naturalHeight = this.naturalHeight;
             
-            // 상단 cheftable 크기를 이미지 natural size의 80%로 설정 (20% 축소)
-            topCheftable.style.width = `${naturalWidth * 0.75}px`;
-            topCheftable.style.height = `${naturalHeight * 0.75}px`;
+            // 상단 cheftable 크기를 이미지 natural size의 75%로 설정 (25% 축소) - vw 단위
+            const widthVw = pxToVw(naturalWidth * 0.75);
+            const heightVw = pxToVw(naturalHeight * 0.75);
+            topCheftable.style.width = `${widthVw}vw`;
+            topCheftable.style.height = `${heightVw}vw`;
         };
         
         img.src = 'cheftable.png';
         
         // 이미 로드된 경우 즉시 실행
-        if (img.complete) {
+        if (img.complete && img.naturalWidth > 0) {
             const naturalWidth = img.naturalWidth;
             const naturalHeight = img.naturalHeight;
-            topCheftable.style.width = `${naturalWidth * 0.8}px`;
-            topCheftable.style.height = `${naturalHeight * 0.8}px`;
+            const widthVw = pxToVw(naturalWidth * 0.75);
+            const heightVw = pxToVw(naturalHeight * 0.75);
+            topCheftable.style.width = `${widthVw}vw`;
+            topCheftable.style.height = `${heightVw}vw`;
         }
     }
     
@@ -489,9 +584,9 @@ function adjustDropZonesToImageSize() {
             const naturalWidth = this.naturalWidth;
             const naturalHeight = this.naturalHeight;
             
-            // reciept 크기를 이미지 natural size의 80%로 설정 (20% 축소)
-            cardNapkin.style.width = `${naturalWidth * 0.7}px`;
-            cardNapkin.style.height = `${naturalHeight * 0.7}px`;
+            // reciept 크기를 이미지 natural size의 80%로 설정 (20% 축소) - vw 단위
+            cardNapkin.style.width = `${pxToVw(naturalWidth * 0.7)}vw`;
+            cardNapkin.style.height = `${pxToVw(naturalHeight * 0.7)}vw`;
         };
         
         img.src = 'reciepts.png';
@@ -500,12 +595,12 @@ function adjustDropZonesToImageSize() {
         if (img.complete) {
             const naturalWidth = img.naturalWidth;
             const naturalHeight = img.naturalHeight;
-            cardNapkin.style.width = `${naturalWidth * 0.8}px`;
-            cardNapkin.style.height = `${naturalHeight * 0.8}px`;
+            cardNapkin.style.width = `${pxToVw(naturalWidth * 0.8)}vw`;
+            cardNapkin.style.height = `${pxToVw(naturalHeight * 0.8)}vw`;
         }
     }
     
-    // 국그릇 이미지 크기 조정 (20% 축소)
+    // 국그릇 이미지 크기 조정 (20% 축소) - 위치는 CSS에서 고정되어 있음
     const soupBowlImage = document.querySelector('.soup-bowl-image img');
     if (soupBowlImage) {
         const img = new Image();
@@ -513,25 +608,12 @@ function adjustDropZonesToImageSize() {
             const naturalWidth = this.naturalWidth;
             const naturalHeight = this.naturalHeight;
             
-            // 국그릇 크기를 이미지 natural size의 80%로 설정 (20% 축소)
-            soupBowlImage.style.width = `${naturalWidth * 0.8}px`;
-            soupBowlImage.style.height = `${naturalHeight * 0.8}px`;
+            // 국그릇 크기를 이미지 natural size의 80%로 설정 (20% 축소) - vw 단위
+            soupBowlImage.style.width = `${pxToVw(naturalWidth * 0.8)}vw`;
+            soupBowlImage.style.height = `${pxToVw(naturalHeight * 0.8)}vw`;
             
-            // 밥그릇 위치를 기준으로 국그릇 위치 조정
-            const riceBowl = document.getElementById('drop-rice-bowl');
-            if (riceBowl) {
-                const riceBowlRect = riceBowl.getBoundingClientRect();
-                const tableSetting = document.querySelector('.table-setting');
-                const tableSettingRect = tableSetting.getBoundingClientRect();
-                
-                const soupBowlContainer = soupBowlImage.parentElement;
-                const riceBowlCenterX = riceBowlRect.left - tableSettingRect.left + riceBowlRect.width / 2;
-                const soupBowlWidth = naturalWidth * 0.8;
-                const soupBowlHeight = naturalHeight * 0.8;
-                
-                // 밥그릇 왼쪽에 배치 (간격 20px)
-                soupBowlContainer.style.marginLeft = `-${riceBowlRect.width / 2 + soupBowlWidth / 2 + 20}px`;
-            }
+            // 그림자 이미지 크기도 설정
+            syncShadowPositions();
         };
         
         img.src = 'dish2.png';
@@ -540,10 +622,256 @@ function adjustDropZonesToImageSize() {
         if (img.complete) {
             const naturalWidth = img.naturalWidth;
             const naturalHeight = img.naturalHeight;
-            soupBowlImage.style.width = `${naturalWidth * 0.8}px`;
-            soupBowlImage.style.height = `${naturalHeight * 0.8}px`;
+            soupBowlImage.style.width = `${pxToVw(naturalWidth * 0.8)}vw`;
+            soupBowlImage.style.height = `${pxToVw(naturalHeight * 0.8)}vw`;
+            syncShadowPositions();
         }
     }
+    
+    // 그림자 이미지 초기 크기 설정
+    const shadowImages = {
+        'dish2_s.png': '.shadow-dish2 img',
+        'dish3_s.png': '.shadow-dish3 img',
+        'dish4_s.png': '.shadow-dish4 img',
+        'dish5_s.png': '.shadow-dish5 img',
+        'dish_s.png': '.shadow-dish img',
+        'spoon_s.png': '.shadow-spoon img',
+        'chopsticks_s.png': '.shadow-chopsticks img'
+    };
+    
+    Object.keys(shadowImages).forEach(shadowSrc => {
+        const selector = shadowImages[shadowSrc];
+        const shadowImg = document.querySelector(selector);
+        if (shadowImg) {
+            const img = new Image();
+            img.onload = function() {
+                const naturalWidth = this.naturalWidth;
+                const naturalHeight = this.naturalHeight;
+                // 그림자 이미지 크기를 원본의 80%로 설정
+                shadowImg.style.width = `${pxToVw(naturalWidth * 0.8)}vw`;
+                shadowImg.style.height = `${pxToVw(naturalHeight * 0.8)}vw`;
+                // 위치 동기화
+                setTimeout(() => syncShadowPositions(), 50);
+            };
+            img.src = shadowSrc;
+            
+            // 이미 로드된 경우 즉시 실행
+            if (img.complete && img.naturalWidth > 0) {
+                const naturalWidth = img.naturalWidth;
+                const naturalHeight = img.naturalHeight;
+                shadowImg.style.width = `${pxToVw(naturalWidth * 0.8)}vw`;
+                shadowImg.style.height = `${pxToVw(naturalHeight * 0.8)}vw`;
+                setTimeout(() => syncShadowPositions(), 50);
+            }
+        }
+    });
+}
+
+// 그림자 이미지 표시/숨김 제어 (드롭존에 아이템이 배치되었을 때만 표시)
+function updateShadowVisibility() {
+    const japanStage = document.getElementById('japan-stage');
+    if (!japanStage) return;
+    
+    // 밥그릇 그림자 (drop-rice-bowl에 rice-bowl이 배치되었을 때만 표시)
+    const dropRiceBowl = japanStage.querySelector('#drop-rice-bowl');
+    const shadowDish = japanStage.querySelector('.shadow-dish');
+    if (shadowDish) {
+        const hasRiceBowl = dropRiceBowl && dropRiceBowl.querySelector('.dropped-item[data-item-type="rice-bowl"]');
+        shadowDish.style.display = hasRiceBowl ? 'block' : 'none';
+    }
+    
+    // 숟가락 그림자 (drop-spoon에 spoon이 배치되었을 때만 표시)
+    const dropSpoon = japanStage.querySelector('#drop-spoon');
+    const shadowSpoon = japanStage.querySelector('.shadow-spoon');
+    if (shadowSpoon) {
+        const hasSpoon = dropSpoon && dropSpoon.querySelector('.dropped-item[data-item-type="spoon"]');
+        shadowSpoon.style.display = hasSpoon ? 'block' : 'none';
+    }
+    
+    // 젓가락 그림자 (drop-chopsticks 또는 drop-chopsticks-2에 chopsticks가 배치되었을 때만 표시)
+    const dropChopsticks = japanStage.querySelector('#drop-chopsticks');
+    const dropChopsticks2 = japanStage.querySelector('#drop-chopsticks-2');
+    const shadowChopsticks = japanStage.querySelector('.shadow-chopsticks');
+    if (shadowChopsticks) {
+        // 저장된 디버그 위치 확인
+        const savedPositions = JSON.parse(localStorage.getItem('debugPositions') || '{}');
+        const hasSavedPosition = savedPositions['shadow-chopsticks'];
+        
+        const hasChopsticks1 = dropChopsticks && dropChopsticks.querySelector('.dropped-item[data-item-type="chopsticks"]');
+        const hasChopsticks2 = dropChopsticks2 && dropChopsticks2.querySelector('.dropped-item[data-item-type="chopsticks"]');
+        const hasChopsticks = hasChopsticks1 || hasChopsticks2;
+        
+        if (hasChopsticks) {
+            shadowChopsticks.style.display = 'block';
+            // 저장된 디버그 위치가 있으면 위치 업데이트 건너뛰기 (applyDebugPositions에서 이미 적용됨)
+            if (!hasSavedPosition) {
+                // 젓가락이 배치된 드롭존의 위치를 따라가도록 설정
+                const targetDropZone = hasChopsticks1 ? dropChopsticks : dropChopsticks2;
+                if (targetDropZone) {
+                    const computed = window.getComputedStyle(targetDropZone);
+                    shadowChopsticks.style.left = computed.left;
+                    shadowChopsticks.style.top = computed.top;
+                    shadowChopsticks.style.width = computed.width;
+                    shadowChopsticks.style.height = computed.height;
+                    // transform에 오프셋 추가
+                    const shadowOffsetX = -3;
+                    const shadowOffsetY = 6;
+                    const originalTransform = computed.transform;
+                    if (originalTransform && originalTransform !== 'none') {
+                        shadowChopsticks.style.transform = `${originalTransform} translate(${shadowOffsetX}vw, ${shadowOffsetY}vw)`;
+                    } else {
+                        shadowChopsticks.style.transform = `translate(${shadowOffsetX}vw, ${shadowOffsetY}vw)`;
+                    }
+                    // 그림자 이미지 크기도 설정
+                    const shadowChopsticksImg = shadowChopsticks.querySelector('img');
+                    if (shadowChopsticksImg) {
+                        shadowChopsticksImg.style.width = computed.width;
+                        shadowChopsticksImg.style.height = computed.height;
+                    }
+                }
+            }
+        } else {
+            shadowChopsticks.style.display = 'none';
+        }
+    }
+}
+
+// 그림자 이미지 위치를 해당 아이템과 동기화
+function syncShadowPositions() {
+    const japanStage = document.getElementById('japan-stage');
+    if (!japanStage) return;
+    
+    // 저장된 디버그 위치 확인
+    const savedPositions = JSON.parse(localStorage.getItem('debugPositions') || '{}');
+    
+    // 그림자 오프셋 (모든 그림자 이미지에 적용)
+    const shadowOffsetX = -3; // vw
+    const shadowOffsetY = 6; // vw
+    
+    // dish2 그림자 (soup-bowl-image와 동기화)
+    const soupBowlImage = japanStage.querySelector('.soup-bowl-image');
+    const shadowDish2 = japanStage.querySelector('.shadow-dish2');
+    // 저장된 위치가 있으면 동기화 건너뛰기
+    if (soupBowlImage && shadowDish2 && !savedPositions['shadow-dish2']) {
+        const computed = window.getComputedStyle(soupBowlImage);
+        shadowDish2.style.left = computed.left;
+        shadowDish2.style.top = computed.top;
+        // 기존 transform에 오프셋 추가
+        const originalTransform = computed.transform;
+        if (originalTransform && originalTransform !== 'none') {
+            // transform 값에서 translate 부분을 찾아 오프셋 추가
+            shadowDish2.style.transform = `${originalTransform} translate(${shadowOffsetX}vw, ${shadowOffsetY}vw)`;
+        } else {
+            shadowDish2.style.transform = `translate(${shadowOffsetX}vw, ${shadowOffsetY}vw)`;
+        }
+        shadowDish2.style.display = 'block'; // 확실히 표시
+        // 그림자 이미지 크기도 동기화
+        const soupBowlImg = soupBowlImage.querySelector('img');
+        const shadowDish2Img = shadowDish2.querySelector('img');
+        if (soupBowlImg && shadowDish2Img) {
+            const imgComputed = window.getComputedStyle(soupBowlImg);
+            const width = imgComputed.width;
+            const height = imgComputed.height;
+            if (width && width !== '0px' && height && height !== '0px') {
+                shadowDish2Img.style.width = width;
+                shadowDish2Img.style.height = height;
+            }
+            shadowDish2Img.style.display = 'block'; // 확실히 표시
+        }
+    }
+    
+    // dish3, 4, 5 그림자 동기화
+    ['3', '4', '5'].forEach(num => {
+        const dishElement = japanStage.querySelector(`.japan-dish-${num}`);
+        const shadowElement = japanStage.querySelector(`.shadow-dish${num}`);
+        // 저장된 위치가 있으면 동기화 건너뛰기
+        if (dishElement && shadowElement && !savedPositions[`shadow-dish${num}`]) {
+            const computed = window.getComputedStyle(dishElement);
+            shadowElement.style.left = computed.left;
+            shadowElement.style.top = computed.top;
+            // 기존 transform에 오프셋 추가
+            const originalTransform = computed.transform;
+            if (originalTransform && originalTransform !== 'none') {
+                shadowElement.style.transform = `${originalTransform} translate(${shadowOffsetX}vw, ${shadowOffsetY}vw)`;
+            } else {
+                shadowElement.style.transform = `translate(${shadowOffsetX}vw, ${shadowOffsetY}vw)`;
+            }
+            shadowElement.style.width = computed.width;
+            shadowElement.style.height = computed.height;
+            shadowElement.style.display = 'block'; // 확실히 표시
+            // 그림자 이미지 크기도 동기화
+            const dishImg = dishElement.querySelector('img');
+            const shadowImg = shadowElement.querySelector('img');
+            if (dishImg && shadowImg) {
+                const imgComputed = window.getComputedStyle(dishImg);
+                const width = imgComputed.width;
+                const height = imgComputed.height;
+                if (width && width !== '0px' && height && height !== '0px') {
+                    shadowImg.style.width = width;
+                    shadowImg.style.height = height;
+                }
+                shadowImg.style.display = 'block'; // 확실히 표시
+            }
+        }
+    });
+    
+    // drop-zone 그림자 동기화
+    const dropRiceBowl = japanStage.querySelector('#drop-rice-bowl');
+    const shadowDish = japanStage.querySelector('.shadow-dish');
+    // 저장된 위치가 있으면 동기화 건너뛰기
+    if (dropRiceBowl && shadowDish && !savedPositions['shadow-dish']) {
+        const computed = window.getComputedStyle(dropRiceBowl);
+        shadowDish.style.left = computed.left;
+        shadowDish.style.top = computed.top;
+        // 기존 transform에 오프셋 추가
+        const originalTransform = computed.transform;
+        if (originalTransform && originalTransform !== 'none') {
+            shadowDish.style.transform = `${originalTransform} translate(${shadowOffsetX}vw, ${shadowOffsetY}vw)`;
+        } else {
+            shadowDish.style.transform = `translate(${shadowOffsetX}vw, ${shadowOffsetY}vw)`;
+        }
+        shadowDish.style.width = computed.width;
+        shadowDish.style.height = computed.height;
+        shadowDish.style.display = 'block'; // 확실히 표시
+        const shadowDishImg = shadowDish.querySelector('img');
+        if (shadowDishImg) {
+            shadowDishImg.style.width = computed.width;
+            shadowDishImg.style.height = computed.height;
+            shadowDishImg.style.display = 'block'; // 확실히 표시
+        }
+    }
+    
+    const dropSpoon = japanStage.querySelector('#drop-spoon');
+    const shadowSpoon = japanStage.querySelector('.shadow-spoon');
+    // 저장된 위치가 있으면 동기화 건너뛰기
+    if (dropSpoon && shadowSpoon && !savedPositions['shadow-spoon']) {
+        const computed = window.getComputedStyle(dropSpoon);
+        shadowSpoon.style.left = computed.left;
+        shadowSpoon.style.top = computed.top;
+        // 기존 transform에 오프셋 추가
+        const originalTransform = computed.transform;
+        if (originalTransform && originalTransform !== 'none') {
+            shadowSpoon.style.transform = `${originalTransform} translate(${shadowOffsetX}vw, ${shadowOffsetY}vw)`;
+        } else {
+            shadowSpoon.style.transform = `translate(${shadowOffsetX}vw, ${shadowOffsetY}vw)`;
+        }
+        shadowSpoon.style.width = computed.width;
+        shadowSpoon.style.height = computed.height;
+        shadowSpoon.style.display = 'block'; // 확실히 표시
+        const shadowSpoonImg = shadowSpoon.querySelector('img');
+        if (shadowSpoonImg) {
+            shadowSpoonImg.style.width = computed.width;
+            shadowSpoonImg.style.height = computed.height;
+            shadowSpoonImg.style.display = 'block'; // 확실히 표시
+        }
+    }
+    
+    const dropChopsticks = japanStage.querySelector('#drop-chopsticks');
+    const dropChopsticks2 = japanStage.querySelector('#drop-chopsticks-2');
+    const shadowChopsticks = japanStage.querySelector('.shadow-chopsticks');
+    // 저장된 위치가 있으면 동기화 건너뛰기
+    // 젓가락 그림자는 updateShadowVisibility에서 위치를 설정하므로 여기서는 건너뜀
+    // (updateShadowVisibility가 젓가락이 배치된 드롭존의 위치를 따라가도록 처리)
 }
 
 // 드롭 존 위치를 이미지 크기에 맞게 조정하여 겹치지 않게 배치
@@ -551,6 +879,7 @@ function adjustDropZonePositions(images) {
     const riceBowl = document.getElementById('drop-rice-bowl');
     const spoon = document.getElementById('drop-spoon');
     const chopsticks = document.getElementById('drop-chopsticks');
+    const chopsticks2 = document.getElementById('drop-chopsticks-2');
     
     if (!riceBowl || !spoon || !chopsticks) return;
     
@@ -565,32 +894,53 @@ function adjustDropZonePositions(images) {
     const chopsticksWidth = images['drop-chopsticks'].width;
     const chopsticksHeight = images['drop-chopsticks'].height;
     
-    // 숟가락: 밥그릇 오른쪽 (더 오른쪽으로 이동하여 젓가락 공간 확보)
+    // 숟가락: 밥그릇 오른쪽 (더 오른쪽으로 이동하여 젓가락 공간 확보) - vw 단위
     // 저장된 위치가 있으면 기본 위치 설정 건너뛰기
     if (!savedPositions['drop-zone-spoon-japan']) {
         spoon.style.left = '50%';
         spoon.style.top = '60%';
         spoon.style.transform = 'translate(0, -50%)';
-        spoon.style.marginLeft = `${riceBowlWidth / 2 + spoonWidth / 2 + 40}px`; // 간격을 40px로 증가
+        const marginLeftPx = riceBowlWidth / 2 + spoonWidth / 2 + 40; // 간격을 40px로 증가
+        spoon.style.marginLeft = `${pxToVw(marginLeftPx)}vw`; // vw 단위로 변환
     } else {
         // 저장된 위치가 있으면 margin 초기화
         spoon.style.marginLeft = '';
     }
     
-    // 젓가락: 밥그릇 밑 (왼쪽으로 90도 회전, 밥그릇 바로 아래)
+    // 젓가락: 50,50에 배치 (회전 제거)
     // 저장된 위치가 있으면 기본 위치 설정 건너뛰기
     if (!savedPositions['drop-zone-chopsticks-japan']) {
-        // 회전 후에는 width와 height가 바뀌므로, 회전된 상태의 크기를 고려
-        // 회전 후 실제 높이는 원래 width가 됨
-        const rotatedChopsticksHeight = chopsticksWidth; // 회전 후 높이
-        const spacing = riceBowlHeight / 2 + rotatedChopsticksHeight / 2 + 5; // 간격을 5px로 줄임
-        chopsticks.style.left = '50%';
-        chopsticks.style.top = '30%';
-        chopsticks.style.transform = 'translate(-50%, 0) rotate(-90deg)';
-        chopsticks.style.marginTop = `${spacing}px`;
+        chopsticks.style.left = '50vw';
+        chopsticks.style.top = '50vw';
+        chopsticks.style.transform = 'none';
+        chopsticks.style.transformOrigin = '';
+        chopsticks.style.marginTop = '';
+        chopsticks.style.marginLeft = '';
     } else {
         // 저장된 위치가 있으면 margin 초기화
         chopsticks.style.marginTop = '';
+        chopsticks.style.marginLeft = '';
+    }
+    
+    // 젓가락 2: 20,20에 배치
+    if (chopsticks2) {
+        if (!savedPositions['drop-zone-chopsticks-2-japan']) {
+            chopsticks2.style.left = '20vw';
+            chopsticks2.style.top = '20vw';
+            chopsticks2.style.transform = 'none';
+            chopsticks2.style.transformOrigin = '';
+            chopsticks2.style.marginTop = '';
+            chopsticks2.style.marginLeft = '';
+            // 크기 설정
+            const chopsticksWidth = images['drop-chopsticks-2']?.width || images['drop-chopsticks']?.width || 100;
+            const chopsticksHeight = images['drop-chopsticks-2']?.height || images['drop-chopsticks']?.height || 100;
+            chopsticks2.style.width = `${pxToVw(chopsticksWidth * 0.8)}vw`;
+            chopsticks2.style.height = `${pxToVw(chopsticksHeight * 0.8)}vw`;
+        } else {
+            // 저장된 위치가 있으면 margin 초기화
+            chopsticks2.style.marginTop = '';
+            chopsticks2.style.marginLeft = '';
+        }
     }
 }
 
@@ -690,11 +1040,33 @@ function handleRiceBowlDrop(e, action, zone) {
         return;
     }
     
+    // "식사를 시작해볼까요" 단계 확인 (allUtensilsPlaced === true && grab-image 없음)
+    const grabImage = document.getElementById('grab-image');
+    const isMealStartPhase = allUtensilsPlaced && !grabImage;
+    
     // 꽂기로 드롭한 경우 메시지 표시
     if (action === 'stick') {
         showSpeechBubble('그러면 안 돼요!', 3000);
         showUtensilHoldingInfoMenu();
     } else if (action === 'pick') {
+        // "식사를 시작해볼까요" 단계에서는 진행 막고 info 메뉴 표시
+        if (isMealStartPhase) {
+            showSpeechBubble('손으로 그릇을 먼저 집어야 해요', 3000);
+            showUtensilHoldingInfoMenu();
+            // 아이템은 사라지지 않도록 여기서 종료
+            zone.classList.remove('drag-over');
+            document.querySelectorAll('.rice-bowl-zone-left, .rice-bowl-zone-right').forEach(z => {
+                z.classList.remove('drag-over');
+            });
+            
+            // 밥그릇 드롭존 숨기기
+            const riceBowlDropZone = document.getElementById('rice-bowl-drop-zone');
+            if (riceBowlDropZone) {
+                riceBowlDropZone.style.display = 'none';
+            }
+            return;
+        }
+        
         // 집기로 드롭한 경우 메시지 표시하고 아이템은 유지
         showSpeechBubble('잘 드시니 기분이 좋네요', 3000);
         // 아이템은 사라지지 않도록 여기서 종료
@@ -763,6 +1135,60 @@ function handleDragStart(e) {
     this.classList.add('dragging');
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', this.innerHTML);
+    
+    // slot-item인 경우 드래그 이미지를 실제 드롭될 크기로 설정 (이미지만 드래그되도록)
+    if (this.classList.contains('slot-item')) {
+        const itemType = this.getAttribute('data-item');
+        const imageSrc = this.getAttribute('data-image');
+        
+        if (imageSrc) {
+            // 실제 이미지 파일 로드하여 natural size 확인
+            const img = new Image();
+            const createDragImage = (naturalWidth, naturalHeight) => {
+                // 드롭될 때의 크기 계산 (placeItemInZone과 동일한 로직)
+                const scaleFactor = itemType === 'spoon' ? 0.72 : 0.8;
+                const scaledWidthPx = naturalWidth * scaleFactor;
+                const scaledHeightPx = naturalHeight * scaleFactor;
+                
+                // vw로 변환 후 다시 px로 변환 (드래그 이미지는 px 단위 필요)
+                const widthVw = pxToVw(scaledWidthPx);
+                const heightVw = pxToVw(scaledHeightPx);
+                const widthPx = vwToPx(widthVw);
+                const heightPx = vwToPx(heightVw);
+                
+                // 임시 이미지 요소 생성
+                const dragImage = document.createElement('div');
+                dragImage.style.position = 'absolute';
+                dragImage.style.top = '-1000px';
+                dragImage.style.width = widthPx + 'px';
+                dragImage.style.height = heightPx + 'px';
+                dragImage.style.backgroundImage = `url('${imageSrc}')`;
+                dragImage.style.backgroundSize = 'contain';
+                dragImage.style.backgroundPosition = 'center';
+                dragImage.style.backgroundRepeat = 'no-repeat';
+                document.body.appendChild(dragImage);
+                
+                // 드래그 이미지 설정
+                e.dataTransfer.setDragImage(dragImage, widthPx / 2, heightPx / 2);
+                
+                setTimeout(() => {
+                    if (document.body.contains(dragImage)) {
+                        document.body.removeChild(dragImage);
+                    }
+                }, 0);
+            };
+            
+            img.onload = function() {
+                createDragImage(this.naturalWidth, this.naturalHeight);
+            };
+            img.src = imageSrc;
+            
+            // 이미 로드된 경우 즉시 실행
+            if (img.complete && img.naturalWidth > 0) {
+                createDragImage(img.naturalWidth, img.naturalHeight);
+            }
+        }
+    }
     
     // 셰프테이블에서 나타난 밥그릇인지 확인
     if (this.classList.contains('cheftable-rice-bowl')) {
@@ -923,6 +1349,8 @@ function handleDrop(e) {
             }
         }
         draggedDroppedItem.remove();
+        // 그림자 이미지 표시 업데이트 (원래 위치에서 제거됨)
+        updateShadowVisibility();
     } else if (source === 'slot' || source === 'cheftable') {
         // 슬롯 또는 셰프테이블에서 드래그한 경우
         if (!draggedElement) return;
@@ -954,6 +1382,9 @@ function handleDrop(e) {
     const slotElement = (source === 'slot' || source === 'cheftable') ? draggedElement : null;
     placeItemInZone(itemType, imageSrc, this, dropZoneId, correctZoneId, slotElement);
     
+    // 그림자 이미지 표시 업데이트 (새 위치에 배치됨)
+    updateShadowVisibility();
+    
     // 셰프테이블에서 온 경우 드롭 성공 후 제거
     if (source === 'cheftable' && draggedElement && draggedElement.classList.contains('cheftable-rice-bowl')) {
         setTimeout(() => {
@@ -980,14 +1411,15 @@ function placeItemInZone(itemType, imageSrc, dropZone, dropZoneId, correctZoneId
     const img = document.createElement('img');
     img.style.display = 'block';
     
-    // 이미지 크기 설정 함수 (드롭 존이 이미지 크기의 80%로 맞춰져 있으므로 80% 사용)
+    // 이미지 크기 설정 함수 (드롭 존이 이미지 크기의 80%로 맞춰져 있으므로 80% 사용) - vw 단위
     const setImageSize = function() {
         const naturalWidth = img.naturalWidth;
         const naturalHeight = img.naturalHeight;
         
-        // 원본 크기의 80%로 설정 (20% 축소)
-        img.style.width = `${naturalWidth * 0.8}px`;
-        img.style.height = `${naturalHeight * 0.8}px`;
+        // 숟가락은 원본 크기의 72%로 설정 (80% * 0.9 = 72%), 나머지는 80%로 설정 (20% 축소) - vw 단위
+        const scaleFactor = itemType === 'spoon' ? 0.72 : 0.8;
+        img.style.width = `${pxToVw(naturalWidth * scaleFactor)}vw`;
+        img.style.height = `${pxToVw(naturalHeight * scaleFactor)}vw`;
     };
     
     // 이미지 로드 이벤트 설정
@@ -1030,8 +1462,19 @@ function placeItemInZone(itemType, imageSrc, dropZone, dropZoneId, correctZoneId
         slotElement.style.pointerEvents = 'none';
     }
     
+    // 그림자 이미지 표시 업데이트 (드롭존에 배치되었을 때만 표시)
+    updateShadowVisibility();
+    
     // 정답 체크
-    if (dropZoneId === correctZoneId) {
+    // 젓가락의 경우 drop-chopsticks 또는 drop-chopsticks-2 둘 다 올바른 위치
+    let isCorrect = false;
+    if (itemType === 'chopsticks') {
+        isCorrect = dropZoneId === correctZoneId || dropZoneId === 'drop-chopsticks-2';
+    } else {
+        isCorrect = dropZoneId === correctZoneId;
+    }
+    
+    if (isCorrect) {
         dropZone.classList.add('correct');
         placedItems[itemType] = dropZoneId;
         
@@ -1161,11 +1604,42 @@ function returnToInventory(droppedItem, dropZoneId, itemType) {
         delete placedItems[itemType];
     }
     
+    // 그림자 이미지 표시 업데이트
+    updateShadowVisibility();
+    
+    // 현재 스테이지 확인
+    const stage = dropZone.closest('#japan-stage, #china-stage');
+    let slotItem = null;
+    
+    if (stage) {
+        const stageId = stage.id;
+        // 스테이지별 슬롯 메뉴 ID 사용
+        if (stageId === 'japan-stage') {
+            const slotMenu = document.getElementById('slot-menu-japan');
+            if (slotMenu) {
+                slotItem = slotMenu.querySelector(`.slot-item[data-item="${itemType}"]`);
+            }
+        } else if (stageId === 'china-stage') {
+            const slotMenu = document.getElementById('slot-menu-china');
+            if (slotMenu) {
+                slotItem = slotMenu.querySelector(`.slot-item[data-item="${itemType}"]`);
+            }
+        }
+        
+        // 슬롯 메뉴를 찾지 못한 경우 스테이지 내에서 직접 찾기
+        if (!slotItem) {
+            slotItem = stage.querySelector(`.slot-item[data-item="${itemType}"]`);
+        }
+    } else {
+        // 스테이지를 찾을 수 없으면 전체에서 찾기
+        slotItem = document.querySelector(`.slot-item[data-item="${itemType}"]`);
+    }
+    
     // 슬롯 아이템 다시 활성화
-    const slotItem = document.querySelector(`.slot-item[data-item="${itemType}"]`);
     if (slotItem) {
         slotItem.style.opacity = '1';
         slotItem.style.pointerEvents = 'auto';
+        slotItem.style.display = 'block'; // display도 확실히 설정
     }
 }
 
@@ -1174,7 +1648,13 @@ let allUtensilsPlaced = false;
 
 function checkAllCorrect() {
     const allItems = Object.keys(correctPositions);
-    const allCorrect = allItems.every(item => placedItems[item] === correctPositions[item]);
+    // 젓가락의 경우 drop-chopsticks 또는 drop-chopsticks-2 둘 다 올바른 위치
+    const allCorrect = allItems.every(item => {
+        if (item === 'chopsticks') {
+            return placedItems[item] === correctPositions[item] || placedItems[item] === 'drop-chopsticks-2';
+        }
+        return placedItems[item] === correctPositions[item];
+    });
     
     if (allCorrect && Object.keys(placedItems).length === allItems.length && !allUtensilsPlaced) {
         allUtensilsPlaced = true;
@@ -1233,6 +1713,7 @@ function highlightHandAndUtensils() {
     const chopsticksItem = document.querySelector('.slot-item[data-item="chopsticks"]');
     const spoonDropZone = document.getElementById('drop-spoon');
     const chopsticksDropZone = document.getElementById('drop-chopsticks');
+    const chopsticksDropZone2 = document.getElementById('drop-chopsticks-2');
     
     if (handElement) {
         handElement.classList.add('highlight-pulse');
@@ -1248,6 +1729,9 @@ function highlightHandAndUtensils() {
     }
     if (chopsticksDropZone) {
         chopsticksDropZone.classList.add('highlight-pulse');
+    }
+    if (chopsticksDropZone2) {
+        chopsticksDropZone2.classList.add('highlight-pulse');
     }
 }
 
@@ -1345,7 +1829,7 @@ function showChopsticksInfoMenu() {
     
     // 오른쪽에서 등장하는 애니메이션
     infoMenu.style.display = 'block';
-    infoMenu.style.right = '-400px'; // 초기 위치 (화면 밖)
+    infoMenu.style.right = '-300px'; // 초기 위치 (화면 밖)
     
     // 애니메이션 시작
     setTimeout(() => {
@@ -1361,7 +1845,7 @@ function closeChopsticksInfoMenu() {
     
     // 오른쪽으로 사라지는 애니메이션
     infoMenu.style.transition = 'right 0.5s ease-in';
-    infoMenu.style.right = '-400px';
+    infoMenu.style.right = '-300px';
     
     // 애니메이션 완료 후 숨김
     setTimeout(() => {
@@ -1376,7 +1860,7 @@ function showUtensilHoldingInfoMenu() {
     
     // 오른쪽에서 등장하는 애니메이션
     infoMenu.style.display = 'block';
-    infoMenu.style.right = '-400px'; // 초기 위치 (화면 밖)
+    infoMenu.style.right = '-300px'; // 초기 위치 (화면 밖)
     
     // 애니메이션 시작
     setTimeout(() => {
@@ -1392,7 +1876,7 @@ function closeUtensilHoldingInfoMenu() {
     
     // 오른쪽으로 사라지는 애니메이션
     infoMenu.style.transition = 'right 0.5s ease-in';
-    infoMenu.style.right = '-400px';
+    infoMenu.style.right = '-300px';
     
     // 애니메이션 완료 후 숨김
     setTimeout(() => {
@@ -1414,8 +1898,8 @@ function initializeHandDragging() {
         const naturalHeight = handImage.naturalHeight;
         const scaledWidth = naturalWidth * 0.8;
         const scaledHeight = naturalHeight * 0.8;
-        handImage.style.width = `${scaledWidth}px`;
-        handImage.style.height = `${scaledHeight}px`;
+        handImage.style.width = `${pxToVw(scaledWidth)}vw`;
+        handImage.style.height = `${pxToVw(scaledHeight)}vw`;
     };
     
     handImage.onload = setImageSize;
@@ -1437,8 +1921,10 @@ function initializeHandDragging() {
         startY = e.clientY;
         
         const rect = handElement.getBoundingClientRect();
-        currentX = rect.left;
-        currentY = rect.top;
+        const tableSetting = handElement.closest('.table-setting');
+        const tableSettingRect = tableSetting ? tableSetting.getBoundingClientRect() : { left: 0, top: 0 };
+        currentX = pxToVw(rect.left - tableSettingRect.left);
+        currentY = pxToVw(rect.top - tableSettingRect.top);
         
         handElement.style.transition = 'none';
         e.preventDefault();
@@ -1451,12 +1937,14 @@ function initializeHandDragging() {
         const deltaX = e.clientX - startX;
         const deltaY = e.clientY - startY;
         
-        // 위치 업데이트
-        const newX = currentX + deltaX;
-        const newY = currentY + deltaY;
+        // 위치 업데이트 (vw 단위)
+        const tableSetting = handElement.closest('.table-setting');
+        const tableSettingRect = tableSetting ? tableSetting.getBoundingClientRect() : { left: 0, top: 0 };
+        const newX = currentX + pxToVw(deltaX);
+        const newY = currentY + pxToVw(deltaY);
         
-        handElement.style.left = `${newX}px`;
-        handElement.style.top = `${newY}px`;
+        handElement.style.left = `${newX}vw`;
+        handElement.style.top = `${newY}vw`;
         handElement.style.bottom = 'auto';
         
         // 드래그 방향에 따라 회전 각도 계산 (거꾸로 뒤집히지 않도록 제한)
@@ -1488,8 +1976,8 @@ function initializeHandDragging() {
                 );
                 
                 if (isOverRiceBowl) {
-                    riceBowlDropZone.style.border = '3px dashed #4CAF50';
-                    riceBowlDropZone.style.background = 'rgba(76, 175, 80, 0.2)';
+                    riceBowlDropZone.style.border = '2px dashed #905431';
+                    riceBowlDropZone.style.background = 'rgba(245, 243, 229, 0.2)';
                     grabText.style.display = 'block';
                 } else {
                     riceBowlDropZone.style.border = '';
@@ -1538,8 +2026,10 @@ function initializeHandDragging() {
         startY = touch.clientY;
         
         const rect = handElement.getBoundingClientRect();
-        currentX = rect.left;
-        currentY = rect.top;
+        const tableSetting = handElement.closest('.table-setting');
+        const tableSettingRect = tableSetting ? tableSetting.getBoundingClientRect() : { left: 0, top: 0 };
+        currentX = pxToVw(rect.left - tableSettingRect.left);
+        currentY = pxToVw(rect.top - tableSettingRect.top);
         
         handElement.style.transition = 'none';
         e.preventDefault();
@@ -1552,11 +2042,14 @@ function initializeHandDragging() {
         const deltaX = touch.clientX - startX;
         const deltaY = touch.clientY - startY;
         
-        const newX = currentX + deltaX;
-        const newY = currentY + deltaY;
+        // 위치 업데이트 (vw 단위)
+        const tableSetting = handElement.closest('.table-setting');
+        const tableSettingRect = tableSetting ? tableSetting.getBoundingClientRect() : { left: 0, top: 0 };
+        const newX = currentX + pxToVw(deltaX);
+        const newY = currentY + pxToVw(deltaY);
         
-        handElement.style.left = `${newX}px`;
-        handElement.style.top = `${newY}px`;
+        handElement.style.left = `${newX}vw`;
+        handElement.style.top = `${newY}vw`;
         handElement.style.bottom = 'auto';
         
         let angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
@@ -1586,8 +2079,8 @@ function initializeHandDragging() {
                 );
                 
                 if (isOverRiceBowl) {
-                    riceBowlDropZone.style.border = '3px dashed #4CAF50';
-                    riceBowlDropZone.style.background = 'rgba(76, 175, 80, 0.2)';
+                    riceBowlDropZone.style.border = '2px dashed #905431';
+                    riceBowlDropZone.style.background = 'rgba(245, 243, 229, 0.2)';
                     grabText.style.display = 'block';
                 } else {
                     riceBowlDropZone.style.border = '';
@@ -1666,11 +2159,11 @@ function replaceWithGrabImage() {
     grabImg.onload = function() {
         const naturalWidth = this.naturalWidth;
         const naturalHeight = this.naturalHeight;
-        // 90% 크기로 설정
+        // 90% 크기로 설정 - vw 단위
         const scaledWidth = naturalWidth * 0.9;
         const scaledHeight = naturalHeight * 0.9;
-        this.style.width = `${scaledWidth}px`;
-        this.style.height = `${scaledHeight}px`;
+        this.style.width = `${pxToVw(scaledWidth)}vw`;
+        this.style.height = `${pxToVw(scaledHeight)}vw`;
     };
     
     if (grabImg.complete) {
@@ -1678,8 +2171,8 @@ function replaceWithGrabImage() {
         const naturalHeight = grabImg.naturalHeight;
         const scaledWidth = naturalWidth * 0.9;
         const scaledHeight = naturalHeight * 0.9;
-        grabImg.style.width = `${scaledWidth}px`;
-        grabImg.style.height = `${scaledHeight}px`;
+        grabImg.style.width = `${pxToVw(scaledWidth)}vw`;
+        grabImg.style.height = `${pxToVw(scaledHeight)}vw`;
     }
     
     grabImageContainer.appendChild(grabImg);
@@ -1712,9 +2205,11 @@ function replaceWithGrabImage() {
     const tableSettingRect = tableSetting.getBoundingClientRect();
     
     if (riceBowlRect) {
-        // 밥그릇 드롭존의 정확한 위치에 배치 (왼쪽으로 더 이동)
-        grabImageContainer.style.left = `${riceBowlRect.left - tableSettingRect.left + riceBowlRect.width / 2 - 140}px`;
-        grabImageContainer.style.top = `${riceBowlRect.top - tableSettingRect.top + riceBowlRect.height / 2}px`;
+        // 밥그릇 드롭존의 정확한 위치에 배치 (왼쪽으로 더 이동) - vw 단위
+        const leftVw = pxToVw(riceBowlRect.left - tableSettingRect.left + riceBowlRect.width / 2 - 140);
+        const topVw = pxToVw(riceBowlRect.top - tableSettingRect.top + riceBowlRect.height / 2);
+        grabImageContainer.style.left = `${leftVw}vw`;
+        grabImageContainer.style.top = `${topVw}vw`;
         grabImageContainer.style.transform = 'translate(-50%, -50%)';
     } else {
         // 밥그릇 위치를 찾을 수 없으면 중앙에 배치
@@ -1867,9 +2362,14 @@ function handleGrabDrop(e, action, zone) {
         return;
     }
     
+    // "식사를 시작해볼까요" 단계 확인 (allUtensilsPlaced === true && grab-image 없음)
+    const grabImage = document.getElementById('grab-image');
+    const isMealStartPhase = allUtensilsPlaced && !grabImage;
+    
     // 숟가락을 꽂기로 드롭한 경우도 메시지 표시
     if (itemType === 'spoon' && action === 'stick') {
         showSpeechBubble('그러면 안 돼요!', 3000);
+        showUtensilHoldingInfoMenu();
         // 드롭존에서 드래그 오버 클래스 제거
         zone.classList.remove('drag-over');
         document.querySelector('.grab-zone-left')?.classList.remove('drag-over');
@@ -1886,6 +2386,24 @@ function handleGrabDrop(e, action, zone) {
     
     // 집기 액션 처리
     if (action === 'pick') {
+        // "식사를 시작해볼까요" 단계에서는 진행 막고 info 메뉴 표시
+        if (isMealStartPhase) {
+            showSpeechBubble('손으로 그릇을 먼저 집어야 해요', 3000);
+            showUtensilHoldingInfoMenu();
+            // 드롭존에서 드래그 오버 클래스 제거
+            zone.classList.remove('drag-over');
+            document.querySelector('.grab-zone-left')?.classList.remove('drag-over');
+            document.querySelector('.grab-zone-right')?.classList.remove('drag-over');
+            
+            // grab 드롭존 숨기기
+            const grabDropZone = document.getElementById('grab-drop-zone');
+            if (grabDropZone) {
+                grabDropZone.style.display = 'none';
+            }
+            // 아이템은 사라지지 않도록 여기서 종료
+            return;
+        }
+        
         // 집기로 드롭한 경우 메시지 표시하고 아이템은 유지
         showSpeechBubble('잘 드시니 기분이 좋네요', 3000);
         // 드롭존에서 드래그 오버 클래스 제거
@@ -1963,8 +2481,8 @@ function adjustDropZonesToImageSizeChina() {
                 height = maxHeight;
             }
             
-            chinaTableImage2.style.width = `${width}px`;
-            chinaTableImage2.style.height = `${height}px`;
+            chinaTableImage2.style.width = `${pxToVw(width)}vw`;
+            chinaTableImage2.style.height = `${pxToVw(height)}vw`;
         };
         
         img2.onload = adjustSize2;
@@ -1990,8 +2508,8 @@ function adjustDropZonesToImageSizeChina() {
             const width = naturalWidth * 0.8;
             const height = naturalHeight * 0.8;
             
-            chinaTableImage1.style.width = `${width}px`;
-            chinaTableImage1.style.height = `${height}px`;
+            chinaTableImage1.style.width = `${pxToVw(width)}vw`;
+            chinaTableImage1.style.height = `${pxToVw(height)}vw`;
         };
         
         img1.onload = adjustSize1;
@@ -2025,8 +2543,8 @@ function adjustDropZonesToImageSizeChina() {
                 const width = naturalWidth * 0.8;
                 const height = naturalHeight * 0.8;
                 
-                utensilImg.style.width = `${width}px`;
-                utensilImg.style.height = `${height}px`;
+                utensilImg.style.width = `${pxToVw(width)}vw`;
+                utensilImg.style.height = `${pxToVw(height)}vw`;
             };
             
             img.onload = adjustSize;
@@ -2254,8 +2772,8 @@ function initializeHandDraggingChina() {
         const naturalHeight = handImage.naturalHeight;
         const scaledWidth = naturalWidth * 0.8;
         const scaledHeight = naturalHeight * 0.8;
-        handImage.style.width = `${scaledWidth}px`;
-        handImage.style.height = `${scaledHeight}px`;
+        handImage.style.width = `${pxToVw(scaledWidth)}vw`;
+        handImage.style.height = `${pxToVw(scaledHeight)}vw`;
     };
     
     handImage.onload = setImageSize;
@@ -2277,8 +2795,10 @@ function initializeHandDraggingChina() {
         startY = e.clientY;
         
         const rect = handElement.getBoundingClientRect();
-        currentX = rect.left;
-        currentY = rect.top;
+        const tableSetting = handElement.closest('.table-setting');
+        const tableSettingRect = tableSetting ? tableSetting.getBoundingClientRect() : { left: 0, top: 0 };
+        currentX = pxToVw(rect.left - tableSettingRect.left);
+        currentY = pxToVw(rect.top - tableSettingRect.top);
         
         handElement.style.transition = 'none';
         e.preventDefault();
@@ -2291,11 +2811,13 @@ function initializeHandDraggingChina() {
         const deltaX = e.clientX - startX;
         const deltaY = e.clientY - startY;
         
-        // 위치 업데이트
-        const newX = currentX + deltaX;
-        const newY = currentY + deltaY;
-        handElement.style.left = `${newX}px`;
-        handElement.style.top = `${newY}px`;
+        // 위치 업데이트 (vw 단위)
+        const tableSetting = handElement.closest('.table-setting');
+        const tableSettingRect = tableSetting ? tableSetting.getBoundingClientRect() : { left: 0, top: 0 };
+        const newX = currentX + pxToVw(deltaX);
+        const newY = currentY + pxToVw(deltaY);
+        handElement.style.left = `${newX}vw`;
+        handElement.style.top = `${newY}vw`;
         handElement.style.bottom = 'auto';
         
         // 회전 각도 계산 (드래그 방향 기준, -45도 ~ 45도 제한)
@@ -2315,11 +2837,15 @@ function initializeHandDraggingChina() {
             
             if (handCenterX >= dropZoneRect.left && handCenterX <= dropZoneRect.right &&
                 handCenterY >= dropZoneRect.top && handCenterY <= dropZoneRect.bottom) {
+                riceBowlDropZone.style.border = '2px dashed #905431';
+                riceBowlDropZone.style.background = 'rgba(245, 243, 229, 0.2)';
                 const grabText = document.getElementById('grab-text-china');
                 if (grabText) {
                     grabText.style.display = 'block';
                 }
             } else {
+                riceBowlDropZone.style.border = '';
+                riceBowlDropZone.style.background = '';
                 const grabText = document.getElementById('grab-text-china');
                 if (grabText) {
                     grabText.style.display = 'none';
@@ -2365,8 +2891,10 @@ function initializeHandDraggingChina() {
         startY = touch.clientY;
         
         const rect = handElement.getBoundingClientRect();
-        currentX = rect.left;
-        currentY = rect.top;
+        const tableSetting = handElement.closest('.table-setting');
+        const tableSettingRect = tableSetting ? tableSetting.getBoundingClientRect() : { left: 0, top: 0 };
+        currentX = pxToVw(rect.left - tableSettingRect.left);
+        currentY = pxToVw(rect.top - tableSettingRect.top);
         
         handElement.style.transition = 'none';
         e.preventDefault();
@@ -2379,10 +2907,13 @@ function initializeHandDraggingChina() {
         const deltaX = touch.clientX - startX;
         const deltaY = touch.clientY - startY;
         
-        const newX = currentX + deltaX;
-        const newY = currentY + deltaY;
-        handElement.style.left = `${newX}px`;
-        handElement.style.top = `${newY}px`;
+        // 위치 업데이트 (vw 단위)
+        const tableSetting = handElement.closest('.table-setting');
+        const tableSettingRect = tableSetting ? tableSetting.getBoundingClientRect() : { left: 0, top: 0 };
+        const newX = currentX + pxToVw(deltaX);
+        const newY = currentY + pxToVw(deltaY);
+        handElement.style.left = `${newX}vw`;
+        handElement.style.top = `${newY}vw`;
         handElement.style.bottom = 'auto';
         
         let angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
@@ -2401,11 +2932,15 @@ function initializeHandDraggingChina() {
             
             if (handCenterX >= dropZoneRect.left && handCenterX <= dropZoneRect.right &&
                 handCenterY >= dropZoneRect.top && handCenterY <= dropZoneRect.bottom) {
+                riceBowlDropZone.style.border = '2px dashed #905431';
+                riceBowlDropZone.style.background = 'rgba(245, 243, 229, 0.2)';
                 const grabText = document.getElementById('grab-text-china');
                 if (grabText) {
                     grabText.style.display = 'block';
                 }
             } else {
+                riceBowlDropZone.style.border = '';
+                riceBowlDropZone.style.background = '';
                 const grabText = document.getElementById('grab-text-china');
                 if (grabText) {
                     grabText.style.display = 'none';
@@ -2447,6 +2982,10 @@ function initializeHandDraggingChina() {
 function replaceWithGrabImageChina() {
     const handElement = document.getElementById('hand-draggable-china');
     const riceBowlDropZone = document.getElementById('drop-rice-bowl-china');
+        if (riceBowlDropZone) {
+            riceBowlDropZone.style.border = '';
+            riceBowlDropZone.style.background = '';
+        }
     
     if (!handElement || !riceBowlDropZone) return;
     
@@ -2472,17 +3011,19 @@ function replaceWithGrabImageChina() {
         const naturalHeight = this.naturalHeight;
         const scaledWidth = naturalWidth * 0.9;
         const scaledHeight = naturalHeight * 0.9;
-        img.style.width = `${scaledWidth}px`;
-        img.style.height = `${scaledHeight}px`;
+        img.style.width = `${pxToVw(scaledWidth)}vw`;
+        img.style.height = `${pxToVw(scaledHeight)}vw`;
         
-        // 밥그릇 드롭존 위치 기준으로 배치
+        // 밥그릇 드롭존 위치 기준으로 배치 - vw 단위
         const dropZoneRect = riceBowlDropZone.getBoundingClientRect();
         const tableSetting = document.querySelector('#china-stage .table-setting');
         const tableSettingRect = tableSetting ? tableSetting.getBoundingClientRect() : { left: 0, top: 0 };
         
         grabImage.style.position = 'absolute';
-        grabImage.style.left = `${dropZoneRect.left - tableSettingRect.left - 140}px`;
-        grabImage.style.top = `${dropZoneRect.top - tableSettingRect.top}px`;
+        const leftVw = pxToVw(dropZoneRect.left - tableSettingRect.left - 140);
+        const topVw = pxToVw(dropZoneRect.top - tableSettingRect.top);
+        grabImage.style.left = `${leftVw}vw`;
+        grabImage.style.top = `${topVw}vw`;
         grabImage.style.zIndex = '10';
     };
     
@@ -2774,6 +3315,10 @@ function handleRiceBowlDropChina(e, action, zone) {
         return;
     }
     
+    // "식사를 시작해볼까요" 단계 확인 (allUtensilsPlaced === true && grab-image-china 없음)
+    const grabImage = document.getElementById('grab-image-china');
+    const isMealStartPhase = allUtensilsPlaced && !grabImage;
+    
     // 꽂기로 드롭한 경우 메시지 표시
     if (action === 'stick') {
         showSpeechBubbleChina('그러면 안 돼요!', 3000);
@@ -2783,6 +3328,24 @@ function handleRiceBowlDropChina(e, action, zone) {
             showUtensilHoldingInfoMenuChina();
         }
     } else if (action === 'pick') {
+        // "식사를 시작해볼까요" 단계에서는 진행 막고 info 메뉴 표시
+        if (isMealStartPhase) {
+            showSpeechBubbleChina('손으로 그릇을 먼저 집어야 해요', 3000);
+            showUtensilHoldingInfoMenuChina();
+            // 아이템은 사라지지 않도록 여기서 종료
+            zone.classList.remove('drag-over');
+            document.querySelectorAll('#rice-bowl-drop-zone-china .rice-bowl-zone-left, #rice-bowl-drop-zone-china .rice-bowl-zone-right').forEach(z => {
+                z.classList.remove('drag-over');
+            });
+            
+            // 밥그릇 드롭존 숨기기
+            const riceBowlDropZone = document.getElementById('rice-bowl-drop-zone-china');
+            if (riceBowlDropZone) {
+                riceBowlDropZone.style.display = 'none';
+            }
+            return;
+        }
+        
         // 집기로 드롭한 경우 메시지 표시하고 아이템은 유지
         showSpeechBubbleChina('잘 드시니 기분이 좋네요', 3000);
         // 아이템은 사라지지 않도록 여기서 종료
@@ -2827,8 +3390,8 @@ function showRiceBowlFromCheftableChina() {
     img.onload = function() {
         const naturalWidth = this.naturalWidth;
         const naturalHeight = this.naturalHeight;
-        this.style.width = `${naturalWidth * 0.8}px`;
-        this.style.height = `${naturalHeight * 0.8}px`;
+        this.style.width = `${pxToVw(naturalWidth * 0.8)}vw`;
+        this.style.height = `${pxToVw(naturalHeight * 0.8)}vw`;
     };
     
     cheftableRiceBowl.appendChild(img);
@@ -2840,16 +3403,17 @@ function showRiceBowlFromCheftableChina() {
         const finalRect = document.getElementById('drop-rice-bowl-china')?.getBoundingClientRect();
         
         if (finalRect) {
-            const startTop = cheftableRect.bottom - tableSettingRect.top;
-            const endTop = finalRect.top - tableSettingRect.top;
+            const startTop = pxToVw(cheftableRect.bottom - tableSettingRect.top);
+            const endTop = pxToVw(finalRect.top - tableSettingRect.top);
             
-            cheftableRiceBowl.style.left = `${finalRect.left - tableSettingRect.left + finalRect.width / 2}px`;
-            cheftableRiceBowl.style.top = `${startTop}px`;
+            const leftVw = pxToVw(finalRect.left - tableSettingRect.left + finalRect.width / 2);
+            cheftableRiceBowl.style.left = `${leftVw}vw`;
+            cheftableRiceBowl.style.top = `${startTop}vw`;
             cheftableRiceBowl.style.transform = 'translate(-50%, 0)';
             cheftableRiceBowl.style.transition = 'top 1s ease-out';
             
             requestAnimationFrame(() => {
-                cheftableRiceBowl.style.top = `${endTop}px`;
+                cheftableRiceBowl.style.top = `${endTop}vw`;
             });
         }
     }, 100);
@@ -2860,6 +3424,8 @@ window.addEventListener('load', () => {
     // 스테이지가 이미 활성화되어 있다면 드롭 존 크기 조정
     if (document.getElementById('japan-stage')?.classList.contains('active')) {
         adjustDropZonesToImageSize();
+        // 그림자 이미지 동기화
+        setTimeout(() => syncShadowPositions(), 300);
     }
     if (document.getElementById('china-stage')?.classList.contains('active')) {
         adjustDropZonesToImageSizeChina();
@@ -3011,7 +3577,7 @@ function showChopsticksInfoMenuChina() {
     const infoMenu = document.getElementById('chopsticks-info-menu-china');
     if (!infoMenu) return;
     infoMenu.style.display = 'block';
-    infoMenu.style.right = '-400px';
+    infoMenu.style.right = '-300px';
     setTimeout(() => {
         infoMenu.style.transition = 'right 0.5s ease-out';
         infoMenu.style.right = '0';
@@ -3022,7 +3588,7 @@ function closeChopsticksInfoMenuChina() {
     const infoMenu = document.getElementById('chopsticks-info-menu-china');
     if (!infoMenu) return;
     infoMenu.style.transition = 'right 0.5s ease-in';
-    infoMenu.style.right = '-400px';
+    infoMenu.style.right = '-300px';
     setTimeout(() => {
         infoMenu.style.display = 'none';
     }, 500);
@@ -3032,7 +3598,7 @@ function showUtensilHoldingInfoMenuChina() {
     const infoMenu = document.getElementById('utensil-holding-info-menu-china');
     if (!infoMenu) return;
     infoMenu.style.display = 'block';
-    infoMenu.style.right = '-400px';
+    infoMenu.style.right = '-300px';
     setTimeout(() => {
         infoMenu.style.transition = 'right 0.5s ease-out';
         infoMenu.style.right = '0';
@@ -3043,7 +3609,7 @@ function closeUtensilHoldingInfoMenuChina() {
     const infoMenu = document.getElementById('utensil-holding-info-menu-china');
     if (!infoMenu) return;
     infoMenu.style.transition = 'right 0.5s ease-in';
-    infoMenu.style.right = '-400px';
+    infoMenu.style.right = '-300px';
     setTimeout(() => {
         infoMenu.style.display = 'none';
     }, 500);
@@ -3054,7 +3620,7 @@ function showFoodOrderInfoMenuChina() {
     const infoMenu = document.getElementById('food-order-info-menu-china');
     if (!infoMenu) return;
     infoMenu.style.display = 'block';
-    infoMenu.style.right = '-400px';
+    infoMenu.style.right = '-300px';
     setTimeout(() => {
         infoMenu.style.transition = 'right 0.5s ease-out';
         infoMenu.style.right = '0';
@@ -3066,7 +3632,7 @@ function closeFoodOrderInfoMenuChina() {
     const infoMenu = document.getElementById('food-order-info-menu-china');
     if (!infoMenu) return;
     infoMenu.style.transition = 'right 0.5s ease-in';
-    infoMenu.style.right = '-400px';
+    infoMenu.style.right = '-300px';
     setTimeout(() => {
         infoMenu.style.display = 'none';
     }, 500);
@@ -3077,7 +3643,7 @@ function showTableRotationInfoMenuChina() {
     const infoMenu = document.getElementById('table-rotation-info-menu-china');
     if (!infoMenu) return;
     infoMenu.style.display = 'block';
-    infoMenu.style.right = '-400px';
+    infoMenu.style.right = '-300px';
     setTimeout(() => {
         infoMenu.style.transition = 'right 0.5s ease-out';
         infoMenu.style.right = '0';
@@ -3089,7 +3655,7 @@ function closeTableRotationInfoMenuChina() {
     const infoMenu = document.getElementById('table-rotation-info-menu-china');
     if (!infoMenu) return;
     infoMenu.style.transition = 'right 0.5s ease-in';
-    infoMenu.style.right = '-400px';
+    infoMenu.style.right = '-300px';
     setTimeout(() => {
         infoMenu.style.display = 'none';
     }, 500);
@@ -3294,19 +3860,24 @@ function startFingerGuideAnimation(riceBowl) {
     const endX = dropZoneRect.left + dropZoneRect.width / 2 - tableSettingRect.left;
     const endY = dropZoneRect.top + dropZoneRect.height / 2 - tableSettingRect.top;
     
-    // 손가락 이미지 크기 설정
+    // 손가락 이미지 크기 설정 - vw 단위
     fingerImg.onload = function() {
         const naturalWidth = this.naturalWidth;
         const naturalHeight = this.naturalHeight;
         const scale = 0.15; // 손가락 가이드는 작게 (반으로 줄임)
-        this.style.width = `${naturalWidth * scale}px`;
-        this.style.height = `${naturalHeight * scale}px`;
+        this.style.width = `${pxToVw(naturalWidth * scale)}vw`;
+        this.style.height = `${pxToVw(naturalHeight * scale)}vw`;
     };
     
-    // 초기 위치 설정
+    // 초기 위치 설정 - vw 단위
+    const startXVw = pxToVw(startX);
+    const startYVw = pxToVw(startY);
+    const endXVw = pxToVw(endX);
+    const endYVw = pxToVw(endY);
+    
     fingerGuide.style.position = 'absolute';
-    fingerGuide.style.left = `${startX}px`;
-    fingerGuide.style.top = `${startY}px`;
+    fingerGuide.style.left = `${startXVw}vw`;
+    fingerGuide.style.top = `${startYVw}vw`;
     fingerGuide.style.transform = 'translate(-50%, -50%)';
     fingerGuide.style.zIndex = '1000';
     fingerGuide.style.pointerEvents = 'none';
@@ -3323,14 +3894,14 @@ function startFingerGuideAnimation(riceBowl) {
         
         // 드롭존으로 이동
         fingerGuide.style.transition = 'left 1s ease-in-out, top 1s ease-in-out';
-        fingerGuide.style.left = `${endX}px`;
-        fingerGuide.style.top = `${endY}px`;
+        fingerGuide.style.left = `${endXVw}vw`;
+        fingerGuide.style.top = `${endYVw}vw`;
         
         // 드롭존에서 잠시 대기 후 다시 밥그릇으로
         setTimeout(() => {
             fingerGuide.style.transition = 'left 0.5s ease-in-out, top 0.5s ease-in-out';
-            fingerGuide.style.left = `${startX}px`;
-            fingerGuide.style.top = `${startY}px`;
+            fingerGuide.style.left = `${startXVw}vw`;
+            fingerGuide.style.top = `${startYVw}vw`;
             
             setTimeout(() => {
                 animationCount++;
@@ -3382,26 +3953,24 @@ function showRiceBowlFromCheftable() {
         const cheftableRect = topCheftable.getBoundingClientRect();
         const tableSettingRect = tableSetting.getBoundingClientRect();
         
-        // 이미지 크기 설정
+        // 이미지 크기 설정 - vw 단위
         const naturalWidth = img.naturalWidth;
         const naturalHeight = img.naturalHeight;
         const scaledWidth = naturalWidth * 0.8;
         const scaledHeight = naturalHeight * 0.8;
-        img.style.width = `${scaledWidth}px`;
-        img.style.height = `${scaledHeight}px`;
+        img.style.width = `${pxToVw(scaledWidth)}vw`;
+        img.style.height = `${pxToVw(scaledHeight)}vw`;
         
-        // 초기 위치 (화면 상단 기준 15%)
-        const startTopPercent = -30; // 화면 상단에서 15%
-        const startTop = (window.innerHeight * startTopPercent / 100) - tableSettingRect.top;
-        const centerLeft = cheftableRect.left - tableSettingRect.left + cheftableRect.width / 2 + 300; // 오른쪽으로 100px 이동
+        // 초기 위치 (애니메이션 시작 위치) - vw 단위
+        const startTop = -12.7 - 5; // 최종 위치보다 조금 위에서 시작
+        const centerLeft = 69.4;
         
-        // 최종 위치 (화면 상단 기준 40%)
-        const endTopPercent = -15; // 화면 상단에서 40%
-        const endTop = (window.innerHeight * endTopPercent / 100) - tableSettingRect.top;
+        // 최종 위치 - vw 단위
+        const endTop = -12.7;
         
         riceBowl.style.position = 'absolute';
-        riceBowl.style.left = `${centerLeft}px`;
-        riceBowl.style.top = `${startTop}px`;
+        riceBowl.style.left = `${centerLeft}vw`;
+        riceBowl.style.top = `${startTop}vw`;
         riceBowl.style.transform = 'translate(-50%, 0)';
         riceBowl.style.opacity = '0';
         riceBowl.style.transition = 'opacity 0.5s ease-in, top 1s ease-out';
@@ -3411,7 +3980,7 @@ function showRiceBowlFromCheftable() {
         // 나타나는 애니메이션 (아래로 내려오기)
         setTimeout(() => {
             riceBowl.style.opacity = '1';
-            riceBowl.style.top = `${endTop}px`;
+            riceBowl.style.top = `${endTop}vw`;
         }, 50);
     };
     
@@ -3562,7 +4131,12 @@ function initializeDebugMode() {
     const debugYSlider = document.getElementById('debug-y-slider');
     const debugSizeSlider = document.getElementById('debug-size-slider');
     const debugRotationSlider = document.getElementById('debug-rotation-slider');
+    const debugXValue = document.getElementById('debug-x-value');
+    const debugYValue = document.getElementById('debug-y-value');
+    const debugSizeValue = document.getElementById('debug-size-value');
+    const debugRotationValue = document.getElementById('debug-rotation-value');
     const debugSaveBtn = document.getElementById('debug-save-btn');
+    const debugSaveAllBtn = document.getElementById('debug-save-all-btn');
     const debugResetBtn = document.getElementById('debug-reset-btn');
     
     // 저장된 위치 불러오기
@@ -3600,9 +4174,9 @@ function initializeDebugMode() {
         
         // 이미지가 클릭된 경우 부모 요소 찾기
         if (target.tagName === 'IMG') {
-            target = target.closest('.china-utensil, .china-table-image-1, .china-table-image, .soup-bowl-image, .hand-draggable, .top-cheftable, .card-napkin, .dropped-item, .cheftable-rice-bowl, #grab-image, .drop-zone');
+            target = target.closest('.china-utensil, .china-table-image-1, .china-table-image, .soup-bowl-image, .spoonspot-image, .hand-draggable, .top-cheftable, .card-napkin, .dropped-item, .cheftable-rice-bowl, #grab-image, .drop-zone, .japan-dish-3, .japan-dish-4, .japan-dish-5, .image-shadow');
         } else {
-            target = target.closest('.china-utensil, .china-table-image-1, .china-table-image, .soup-bowl-image, .hand-draggable, .top-cheftable, .card-napkin, .dropped-item, .cheftable-rice-bowl, #grab-image, .drop-zone');
+            target = target.closest('.china-utensil, .china-table-image-1, .china-table-image, .soup-bowl-image, .spoonspot-image, .hand-draggable, .top-cheftable, .card-napkin, .dropped-item, .cheftable-rice-bowl, #grab-image, .drop-zone, .japan-dish-3, .japan-dish-4, .japan-dish-5, .image-shadow');
         }
         
         if (target) {
@@ -3616,40 +4190,126 @@ function initializeDebugMode() {
     });
     
     // 슬라이더 이벤트
+    // X 좌표 슬라이더 이벤트
     debugXSlider.addEventListener('input', (e) => {
         if (!selectedDebugElement) return;
         const value = parseFloat(e.target.value);
-        document.getElementById('debug-x-value').textContent = value.toFixed(1);
+        debugXValue.value = value.toFixed(1);
         updateElementPosition(selectedDebugElement, value, null);
     });
     
+    // X 좌표 입력 필드 이벤트
+    debugXValue.addEventListener('input', (e) => {
+        if (!selectedDebugElement) return;
+        const value = parseFloat(e.target.value);
+        if (!isNaN(value)) {
+            // 슬라이더 범위를 동적으로 조정
+            const sliderMin = parseFloat(debugXSlider.min);
+            const sliderMax = parseFloat(debugXSlider.max);
+            if (value < sliderMin) {
+                debugXSlider.min = (value - 100).toString();
+            } else if (value > sliderMax) {
+                debugXSlider.max = (value + 100).toString();
+            }
+            debugXSlider.value = value;
+            e.target.value = value.toFixed(1);
+            updateElementPosition(selectedDebugElement, value, null);
+        }
+    });
+    
+    // Y 좌표 슬라이더 이벤트
     debugYSlider.addEventListener('input', (e) => {
         if (!selectedDebugElement) return;
         const value = parseFloat(e.target.value);
-        document.getElementById('debug-y-value').textContent = value.toFixed(1);
+        debugYValue.value = value.toFixed(1);
         updateElementPosition(selectedDebugElement, null, value);
+    });
+    
+    // Y 좌표 입력 필드 이벤트
+    debugYValue.addEventListener('input', (e) => {
+        if (!selectedDebugElement) return;
+        const value = parseFloat(e.target.value);
+        if (!isNaN(value)) {
+            // 슬라이더 범위를 동적으로 조정
+            const sliderMin = parseFloat(debugYSlider.min);
+            const sliderMax = parseFloat(debugYSlider.max);
+            if (value < sliderMin) {
+                debugYSlider.min = (value - 100).toString();
+            } else if (value > sliderMax) {
+                debugYSlider.max = (value + 100).toString();
+            }
+            debugYSlider.value = value;
+            e.target.value = value.toFixed(1);
+            updateElementPosition(selectedDebugElement, null, value);
+        }
     });
     
     // 크기 슬라이더 이벤트
     debugSizeSlider.addEventListener('input', (e) => {
         if (!selectedDebugElement) return;
         const value = parseFloat(e.target.value);
-        document.getElementById('debug-size-value').textContent = value;
+        debugSizeValue.value = value.toFixed(1);
         updateElementSize(selectedDebugElement, value);
+    });
+    
+    // 크기 입력 필드 이벤트
+    debugSizeValue.addEventListener('input', (e) => {
+        if (!selectedDebugElement) return;
+        const value = parseFloat(e.target.value);
+        if (!isNaN(value) && value > 0) {
+            // 슬라이더 범위를 동적으로 조정
+            const sliderMin = parseFloat(debugSizeSlider.min);
+            const sliderMax = parseFloat(debugSizeSlider.max);
+            if (value < sliderMin) {
+                debugSizeSlider.min = (value * 0.5).toString();
+            } else if (value > sliderMax) {
+                debugSizeSlider.max = (value * 2).toString();
+            }
+            debugSizeSlider.value = value;
+            e.target.value = value.toFixed(1);
+            updateElementSize(selectedDebugElement, value);
+        }
     });
     
     // 회전 슬라이더 이벤트
     debugRotationSlider.addEventListener('input', (e) => {
         if (!selectedDebugElement) return;
         const value = parseFloat(e.target.value);
-        document.getElementById('debug-rotation-value').textContent = value;
+        debugRotationValue.value = value;
         updateElementRotation(selectedDebugElement, value);
     });
     
-    // 저장 버튼
-    debugSaveBtn.addEventListener('click', () => {
+    // 회전 입력 필드 이벤트
+    debugRotationValue.addEventListener('input', (e) => {
         if (!selectedDebugElement) return;
+        const value = parseFloat(e.target.value);
+        if (!isNaN(value)) {
+            // 슬라이더 범위를 동적으로 조정
+            const sliderMin = parseFloat(debugRotationSlider.min);
+            const sliderMax = parseFloat(debugRotationSlider.max);
+            if (value < sliderMin) {
+                debugRotationSlider.min = (value - 180).toString();
+            } else if (value > sliderMax) {
+                debugRotationSlider.max = (value + 180).toString();
+            }
+            debugRotationSlider.value = value;
+            e.target.value = value;
+            updateElementRotation(selectedDebugElement, value);
+        }
+    });
+    
+    // 저장 버튼 (선택된 요소만)
+    debugSaveBtn.addEventListener('click', () => {
+        if (!selectedDebugElement) {
+            alert('저장할 요소를 선택해주세요.');
+            return;
+        }
         saveDebugPosition(selectedDebugElement);
+    });
+    
+    // 전체 저장 버튼
+    debugSaveAllBtn.addEventListener('click', () => {
+        saveAllDebugPositions();
     });
     
     // 초기화 버튼
@@ -3686,12 +4346,12 @@ function updateDebugPanel() {
         selectedElementSpan.textContent = '없음';
         debugXSlider.value = 50;
         debugYSlider.value = 50;
-        debugSizeSlider.value = 80;
+        debugSizeSlider.value = 4.17;
         debugRotationSlider.value = 0;
-        debugXValue.textContent = '50.0';
-        debugYValue.textContent = '50.0';
-        debugSizeValue.textContent = '80';
-        debugRotationValue.textContent = '0';
+        debugXValue.value = '50.00';
+        debugYValue.value = '50.00';
+        debugSizeValue.value = '4.17';
+        debugRotationValue.value = '0';
         return;
     }
     
@@ -3723,6 +4383,23 @@ function updateDebugPanel() {
         const stage = selectedDebugElement.closest('#japan-stage, #china-stage');
         elementName = stage && stage.id === 'china-stage' ? 'card-napkin-china' : 'card-napkin-japan';
     }
+    else if (classList.contains('japan-dish-3')) elementName = 'japan-dish-3';
+    else if (classList.contains('japan-dish-4')) elementName = 'japan-dish-4';
+    else if (classList.contains('japan-dish-5')) elementName = 'japan-dish-5';
+    else if (classList.contains('spoonspot-image')) {
+        elementName = selectedDebugElement.id || 'spoonspot-image';
+    }
+    else if (classList.contains('image-shadow')) {
+        // 그림자 이미지는 클래스명으로 식별
+        if (classList.contains('shadow-dish2')) elementName = 'shadow-dish2';
+        else if (classList.contains('shadow-dish3')) elementName = 'shadow-dish3';
+        else if (classList.contains('shadow-dish4')) elementName = 'shadow-dish4';
+        else if (classList.contains('shadow-dish5')) elementName = 'shadow-dish5';
+        else if (classList.contains('shadow-dish')) elementName = 'shadow-dish';
+        else if (classList.contains('shadow-spoon')) elementName = 'shadow-spoon';
+        else if (classList.contains('shadow-chopsticks')) elementName = 'shadow-chopsticks';
+        else elementName = 'image-shadow';
+    }
     else if (classList.contains('dropped-item')) {
         const itemType = selectedDebugElement.getAttribute('data-item-type');
         const stage = selectedDebugElement.closest('#japan-stage, #china-stage');
@@ -3734,69 +4411,249 @@ function updateDebugPanel() {
         elementName = stage && stage.id === 'china-stage' ? 'cheftable-rice-bowl-china' : 'cheftable-rice-bowl-japan';
     }
     else if (classList.contains('drop-zone')) {
-        const itemType = selectedDebugElement.getAttribute('data-item');
-        const stage = selectedDebugElement.closest('#japan-stage, #china-stage');
-        const stageName = stage && stage.id === 'china-stage' ? '-china' : '-japan';
-        elementName = `drop-zone-${itemType}${stageName}`;
+        // drop-chopsticks-2는 별도로 처리
+        if (id === 'drop-chopsticks-2') {
+            const stage = selectedDebugElement.closest('#japan-stage, #china-stage');
+            const stageName = stage && stage.id === 'china-stage' ? '-china' : '-japan';
+            elementName = `drop-zone-chopsticks-2${stageName}`;
+        } else {
+            const itemType = selectedDebugElement.getAttribute('data-item');
+            const stage = selectedDebugElement.closest('#japan-stage, #china-stage');
+            const stageName = stage && stage.id === 'china-stage' ? '-china' : '-japan';
+            elementName = `drop-zone-${itemType}${stageName}`;
+        }
     }
     
     selectedElementSpan.textContent = elementName;
     
-    // 현재 위치 가져오기
+    // vw 단위로 위치 읽기
     const computedStyle = window.getComputedStyle(selectedDebugElement);
-    const left = parseFloat(computedStyle.left) || 0;
-    const top = parseFloat(computedStyle.top) || 0;
+    let xVw = 0;
+    let yVw = 0;
     
-    // 퍼센트로 변환 (부모 요소 기준)
-    const parent = selectedDebugElement.parentElement;
-    const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight };
-    const xPercent = (left / parentRect.width) * 100;
-    const yPercent = (top / parentRect.height) * 100;
+    // 그림자 이미지는 transform 기반으로 위치 계산
+    if (classList.contains('image-shadow')) {
+        const left = computedStyle.left;
+        const top = computedStyle.top;
+        let baseX = 0;
+        let baseY = 0;
+        
+        // left/top을 vw로 변환
+        if (left.includes('vw')) {
+            baseX = parseFloat(left);
+        } else if (left.includes('%')) {
+            const parent = selectedDebugElement.parentElement;
+            const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight };
+            const leftPx = parseFloat(left) || 0;
+            baseX = pxToVw((leftPx / 100) * parentRect.width);
+        } else {
+            const leftPx = parseFloat(left) || 0;
+            baseX = pxToVw(leftPx);
+        }
+        
+        if (top.includes('vw')) {
+            baseY = parseFloat(top);
+        } else if (top.includes('%')) {
+            const parent = selectedDebugElement.parentElement;
+            const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight };
+            const topPx = parseFloat(top) || 0;
+            baseY = pxToVw((topPx / 100) * parentRect.height);
+        } else {
+            const topPx = parseFloat(top) || 0;
+            baseY = pxToVw(topPx);
+        }
+        
+        // transform에서 translate 오프셋 추출
+        const transform = computedStyle.transform;
+        let offsetX = 0;
+        let offsetY = 0;
+        
+        if (transform && transform !== 'none') {
+            // translate(...) 또는 translateX(...) translateY(...) 형태 파싱
+            const translateMatch = transform.match(/translate\(([^)]+)\)/);
+            if (translateMatch) {
+                const values = translateMatch[1].split(',').map(v => v.trim());
+                if (values.length >= 1) {
+                    const xValue = values[0];
+                    if (xValue.includes('vw')) {
+                        offsetX = parseFloat(xValue);
+                    } else if (xValue.includes('px')) {
+                        offsetX = pxToVw(parseFloat(xValue));
+                    } else if (xValue.includes('%')) {
+                        // %는 부모 요소 기준
+                        const parent = selectedDebugElement.parentElement;
+                        const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth };
+                        offsetX = pxToVw((parseFloat(xValue) / 100) * parentRect.width);
+                    } else {
+                        offsetX = pxToVw(parseFloat(xValue) || 0);
+                    }
+                }
+                if (values.length >= 2) {
+                    const yValue = values[1];
+                    if (yValue.includes('vw')) {
+                        offsetY = parseFloat(yValue);
+                    } else if (yValue.includes('px')) {
+                        offsetY = pxToVw(parseFloat(yValue));
+                    } else if (yValue.includes('%')) {
+                        const parent = selectedDebugElement.parentElement;
+                        const parentRect = parent ? parent.getBoundingClientRect() : { height: window.innerHeight };
+                        offsetY = pxToVw((parseFloat(yValue) / 100) * parentRect.height);
+                    } else {
+                        offsetY = pxToVw(parseFloat(yValue) || 0);
+                    }
+                }
+            }
+        }
+        
+        // base 위치 + transform 오프셋 = 실제 위치
+        xVw = baseX + offsetX;
+        yVw = baseY + offsetY;
+    } else {
+        // 일반 요소는 기존 로직 사용
+    const left = computedStyle.left;
+    const top = computedStyle.top;
     
-    debugXSlider.value = xPercent;
-    debugYSlider.value = yPercent;
-    debugXValue.textContent = xPercent.toFixed(1);
-    debugYValue.textContent = yPercent.toFixed(1);
+    // vw 단위인 경우
+    if (left.includes('vw')) {
+        xVw = parseFloat(left);
+    } else if (left.includes('%')) {
+        // %를 vw로 변환 (부모 요소 기준)
+        const parent = selectedDebugElement.parentElement;
+        const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight };
+        const leftPx = parseFloat(left) || 0;
+        xVw = pxToVw((leftPx / 100) * parentRect.width);
+    } else {
+        // px를 vw로 변환
+        const leftPx = parseFloat(left) || 0;
+        xVw = pxToVw(leftPx);
+    }
     
-    // 현재 크기 가져오기
+    if (top.includes('vw')) {
+        yVw = parseFloat(top);
+    } else if (top.includes('%')) {
+        const parent = selectedDebugElement.parentElement;
+        const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight };
+        const topPx = parseFloat(top) || 0;
+        yVw = pxToVw((topPx / 100) * parentRect.height);
+    } else {
+        const topPx = parseFloat(top) || 0;
+        yVw = pxToVw(topPx);
+        }
+    }
+    
+    debugXSlider.value = xVw;
+    debugYSlider.value = yVw;
+    debugXValue.value = xVw.toFixed(1);
+    debugYValue.value = yVw.toFixed(1);
+    
+    // 현재 크기 가져오기 (vw 기반)
     let img = selectedDebugElement.querySelector('img');
     
-    // 배경 이미지인 경우 (top-cheftable, card-napkin)
-    // 드랍존은 크기 조정 불가
-    if (!img && (selectedDebugElement.classList.contains('top-cheftable') || selectedDebugElement.classList.contains('card-napkin') || selectedDebugElement.classList.contains('drop-zone'))) {
-        // 배경 이미지나 드랍존은 크기 조정 불가
-        debugSizeSlider.value = 100;
-        debugSizeValue.textContent = '100';
+    // top-cheftable은 배경 이미지이지만 크기 조정 가능
+    if (selectedDebugElement.classList.contains('top-cheftable')) {
+        const computedStyle = window.getComputedStyle(selectedDebugElement);
+        const widthStr = computedStyle.width;
+        let sizeVw = 4.17;
+        
+        if (widthStr.includes('vw')) {
+            sizeVw = parseFloat(widthStr);
+        } else if (widthStr.includes('px')) {
+            const widthPx = parseFloat(widthStr) || 0;
+            sizeVw = pxToVw(widthPx);
+        } else if (widthStr.includes('%')) {
+            const parent = selectedDebugElement.parentElement;
+            const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth };
+            const widthPx = (parseFloat(widthStr) / 100) * parentRect.width;
+            sizeVw = pxToVw(widthPx);
+        }
+        
+        debugSizeSlider.value = sizeVw;
+        debugSizeValue.value = sizeVw.toFixed(1);
+        debugSizeSlider.disabled = false;
+    }
+    // card-napkin은 크기 조정 불가
+    else if (!img && selectedDebugElement.classList.contains('card-napkin')) {
+        debugSizeSlider.value = 4.17;
+        debugSizeValue.value = '4.17';
         debugSizeSlider.disabled = true;
+    } 
+    // 드랍존은 크기 조정 가능
+    else if (selectedDebugElement.classList.contains('drop-zone')) {
+        const dropZoneComputedStyle = window.getComputedStyle(selectedDebugElement);
+        const widthStr = dropZoneComputedStyle.width;
+        let sizeVw = 4.17;
+        
+        if (widthStr.includes('vw')) {
+            sizeVw = parseFloat(widthStr);
+        } else if (widthStr.includes('px')) {
+            const widthPx = parseFloat(widthStr) || 0;
+            sizeVw = pxToVw(widthPx);
+        } else if (widthStr.includes('%')) {
+            const parent = selectedDebugElement.parentElement;
+            const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth };
+            const widthPx = (parseFloat(widthStr) / 100) * parentRect.width;
+            sizeVw = pxToVw(widthPx);
+        }
+        
+        debugSizeSlider.value = sizeVw;
+        debugSizeValue.value = sizeVw.toFixed(1);
+        debugSizeSlider.disabled = false;
+    }
+    // spoonspot-image는 크기 조정 가능
+    else if (selectedDebugElement.classList.contains('spoonspot-image')) {
+        const spoonspotImg = selectedDebugElement.querySelector('img');
+        if (spoonspotImg) {
+            const imgComputedStyle = window.getComputedStyle(spoonspotImg);
+            const widthStr = imgComputedStyle.width;
+            let sizeVw = 4.17;
+            
+            if (widthStr.includes('vw')) {
+                sizeVw = parseFloat(widthStr);
+            } else if (widthStr.includes('px')) {
+                const widthPx = parseFloat(widthStr) || 0;
+                sizeVw = pxToVw(widthPx);
+            } else if (widthStr.includes('%')) {
+                const parent = spoonspotImg.parentElement;
+                const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth };
+                const widthPx = (parseFloat(widthStr) / 100) * parentRect.width;
+                sizeVw = pxToVw(widthPx);
+            }
+            
+            debugSizeSlider.value = sizeVw;
+            debugSizeValue.value = sizeVw.toFixed(1);
+            debugSizeSlider.disabled = false;
+        } else {
+            debugSizeSlider.disabled = false;
+        }
     } else {
         debugSizeSlider.disabled = false;
     }
     
     if (img) {
-        const computedStyle = window.getComputedStyle(img);
-        const currentWidth = parseFloat(computedStyle.width) || 0;
-        const currentHeight = parseFloat(computedStyle.height) || 0;
+        const imgComputedStyle = window.getComputedStyle(img);
+        const widthStr = imgComputedStyle.width;
+        let sizeVw = 4.17; // 기본값
         
-        // 원본 크기 가져오기 (이미지가 로드된 경우)
-        if (img.naturalWidth > 0 && img.naturalHeight > 0) {
-            const naturalWidth = img.naturalWidth;
-            const naturalHeight = img.naturalHeight;
-            
-            // 현재 크기를 원본 대비 퍼센트로 계산
-            const widthPercent = (currentWidth / naturalWidth) * 100;
-            const heightPercent = (currentHeight / naturalHeight) * 100;
-            const avgPercent = (widthPercent + heightPercent) / 2;
-            
-            debugSizeSlider.value = avgPercent;
-            debugSizeValue.textContent = Math.round(avgPercent);
-        } else {
-            // 이미지가 아직 로드되지 않은 경우 기본값
-            debugSizeSlider.value = 80;
-            debugSizeValue.textContent = '80';
+        // vw 단위인 경우
+        if (widthStr.includes('vw')) {
+            sizeVw = parseFloat(widthStr);
+        } else if (widthStr.includes('px')) {
+            // px를 vw로 변환
+            const widthPx = parseFloat(widthStr) || 0;
+            sizeVw = pxToVw(widthPx);
+        } else if (widthStr.includes('%')) {
+            // %를 vw로 변환 (부모 요소 기준)
+            const parent = img.parentElement;
+            const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth };
+            const widthPx = (parseFloat(widthStr) / 100) * parentRect.width;
+            sizeVw = pxToVw(widthPx);
         }
+        
+        debugSizeSlider.value = sizeVw;
+        debugSizeValue.value = sizeVw.toFixed(1);
     } else {
-        debugSizeSlider.value = 80;
-        debugSizeValue.textContent = '80';
+        debugSizeSlider.value = 4.17;
+        debugSizeValue.value = '4.17';
     }
     
     // 현재 회전 값 가져오기
@@ -3804,6 +4661,33 @@ function updateDebugPanel() {
     const rotationTransform = rotationComputedStyle.transform;
     let rotation = 0;
     
+    // 그림자 이미지는 부모 요소의 transform에서만 회전 추출
+    if (selectedDebugElement.classList.contains('image-shadow')) {
+        if (rotationTransform && rotationTransform !== 'none') {
+            // rotate(...deg) 형태 확인 (translate와 함께 있을 수 있음)
+            const rotateMatch = rotationTransform.match(/rotate\(([^)]+)\)/);
+            if (rotateMatch) {
+                const rotateValue = rotateMatch[1];
+                const degMatch = rotateValue.match(/(-?\d+(?:\.\d+)?)/);
+                if (degMatch) {
+                    rotation = Math.round(parseFloat(degMatch[1]));
+                }
+            } else {
+                // matrix() 형태에서 회전 각도 추출
+                const matrix = rotationTransform.match(/matrix\(([^)]+)\)/);
+                if (matrix) {
+                    const values = matrix[1].split(',').map(v => parseFloat(v.trim()));
+                    if (values.length >= 4) {
+                        // matrix(a, b, c, d, e, f)에서 회전 각도 계산
+                        const a = values[0];
+                        const b = values[1];
+                        rotation = Math.round(Math.atan2(b, a) * (180 / Math.PI));
+                    }
+                }
+            }
+        }
+    } else {
+        // 일반 요소는 기존 로직 사용
     if (rotationTransform && rotationTransform !== 'none') {
         // 먼저 rotate(...deg) 형태 확인
         const rotateMatch = rotationTransform.match(/rotate\(([^)]+)\)/);
@@ -3855,6 +4739,7 @@ function updateDebugPanel() {
                         const imgRotation = Math.round(Math.atan2(b, a) * (180 / Math.PI));
                         if (imgRotation !== 0) {
                             rotation = imgRotation;
+                            }
                         }
                     }
                 }
@@ -3862,22 +4747,112 @@ function updateDebugPanel() {
         }
     }
     
-    debugRotationSlider.value = rotation;
-    debugRotationValue.textContent = rotation;
+        debugRotationSlider.value = rotation;
+        debugRotationValue.value = rotation;
 }
 
-// 요소 위치 업데이트
+// px를 vw로 변환하는 헬퍼 함수
+function pxToVw(px) {
+    return (px / window.innerWidth) * 100;
+}
+
+// vw를 px로 변환하는 헬퍼 함수
+function vwToPx(vw) {
+    return (vw / 100) * window.innerWidth;
+}
+
+// 요소 위치 업데이트 (vw 기반)
 function updateElementPosition(element, x, y) {
+    // 그림자 이미지는 left/top을 직접 조정
+    if (element.classList.contains('image-shadow')) {
+        const computedStyle = window.getComputedStyle(element);
+        const currentTransform = computedStyle.transform;
+        
+        // 기존 transform에서 translate 부분 추출 (오프셋 유지)
+        let transformOffset = '';
+        if (currentTransform && currentTransform !== 'none') {
+            // translate(...) 부분 찾기
+            const translateMatch = currentTransform.match(/translate\([^)]+\)/);
+            if (translateMatch) {
+                transformOffset = translateMatch[0];
+            }
+        }
+        
+        // left/top 업데이트
     if (x !== null) {
-        element.style.left = `${x}%`;
+        element.style.left = `${x}vw`;
     }
     if (y !== null) {
-        element.style.top = `${y}%`;
+        element.style.top = `${y}vw`;
+        }
+        
+        // transform은 유지 (오프셋이 있는 경우)
+        if (transformOffset) {
+            // 기존 transform에서 translate를 제외한 나머지 부분 유지
+            const otherTransforms = currentTransform.replace(/translate\([^)]+\)/g, '').trim();
+            if (otherTransforms) {
+                element.style.transform = `${transformOffset} ${otherTransforms}`.trim();
+            } else {
+                element.style.transform = transformOffset;
+            }
+        }
+    } else {
+        // 일반 요소는 기존 로직 사용
+        if (x !== null) {
+            element.style.left = `${x}vw`;
+        }
+        if (y !== null) {
+            element.style.top = `${y}vw`;
+        }
+    }
+    
+    // 그림자 위치 동기화 (그림자 이미지가 아닌 경우에만)
+    if (!element.classList.contains('image-shadow')) {
+        syncShadowPositions();
     }
 }
 
 // 요소 회전 업데이트
 function updateElementRotation(element, rotationDegrees) {
+    // 그림자 이미지는 부모 요소에 회전 적용
+    if (element.classList.contains('image-shadow')) {
+        const computedStyle = window.getComputedStyle(element);
+        const currentTransform = computedStyle.transform;
+        let transformParts = [];
+        
+        // 기존 transform에서 translate 부분 추출 (오프셋 유지)
+        if (currentTransform && currentTransform !== 'none') {
+            // translate(...) 부분 찾기
+            const translateMatch = currentTransform.match(/translate\(([^)]+)\)/);
+            if (translateMatch) {
+                transformParts.push(`translate(${translateMatch[1]})`);
+            }
+            
+            // translateX(...) 또는 translateY(...) 부분 찾기
+            const translateXMatch = currentTransform.match(/translateX\(([^)]+)\)/);
+            const translateYMatch = currentTransform.match(/translateY\(([^)]+)\)/);
+            if (translateXMatch) {
+                transformParts.push(`translateX(${translateXMatch[1]})`);
+            }
+            if (translateYMatch) {
+                transformParts.push(`translateY(${translateYMatch[1]})`);
+            }
+        }
+        
+        // rotate 추가
+        if (rotationDegrees !== 0) {
+            transformParts.push(`rotate(${rotationDegrees}deg)`);
+        }
+        
+        // transform 결합
+        if (transformParts.length > 0) {
+            element.style.transform = transformParts.join(' ');
+        } else {
+            element.style.transform = 'none';
+        }
+        return;
+    }
+    
     const img = element.querySelector('img');
     
     // 이미지가 있으면 이미지에 회전 적용
@@ -3974,10 +4949,121 @@ function updateElementRotation(element, rotationDegrees) {
     }
 }
 
-// 요소 크기 업데이트
-function updateElementSize(element, sizePercent) {
-    // 배경 이미지는 크기 조정 불가
-    if (element.classList.contains('top-cheftable') || element.classList.contains('card-napkin')) {
+// 요소 크기 업데이트 (vw 기반)
+function updateElementSize(element, sizeVw) {
+    // card-napkin은 크기 조정 불가
+    if (element.classList.contains('card-napkin')) {
+        return;
+    }
+    
+    // 드랍존은 직접 크기 조정 (width와 height 모두 조정)
+    if (element.classList.contains('drop-zone')) {
+        // 드랍존의 현재 높이 비율 유지
+        const currentWidth = parseFloat(window.getComputedStyle(element).width) || 0;
+        const currentHeight = parseFloat(window.getComputedStyle(element).height) || 0;
+        let aspectRatio = 1;
+        
+        if (currentWidth > 0 && currentHeight > 0) {
+            aspectRatio = currentHeight / currentWidth;
+        } else {
+            // 드랍존에 매핑된 이미지로부터 비율 가져오기
+            const imageMapping = {
+                'drop-rice-bowl': 'dish.png',
+                'drop-spoon': 'spoon.png',
+                'drop-chopsticks': 'chopsticks.png',
+                'drop-chopsticks-2': 'chopsticks.png'
+            };
+            
+            const dropZoneId = element.id;
+            const imageSrc = imageMapping[dropZoneId];
+            
+            if (imageSrc) {
+                const img = new Image();
+                img.onload = function() {
+                    const naturalWidth = this.naturalWidth;
+                    const naturalHeight = this.naturalHeight;
+                    const aspectRatio = naturalHeight / naturalWidth;
+                    const heightVw = sizeVw * aspectRatio;
+                    element.style.width = `${sizeVw}vw`;
+                    element.style.height = `${heightVw}vw`;
+                };
+                img.src = imageSrc;
+                
+                // 이미 로드된 경우 즉시 실행
+                if (img.complete && img.naturalWidth > 0) {
+                    const naturalWidth = img.naturalWidth;
+                    const naturalHeight = img.naturalHeight;
+                    const aspectRatio = naturalHeight / naturalWidth;
+                    const heightVw = sizeVw * aspectRatio;
+                    element.style.width = `${sizeVw}vw`;
+                    element.style.height = `${heightVw}vw`;
+                } else {
+                    // 이미지가 아직 로드되지 않은 경우 기본 비율 사용
+                    element.style.width = `${sizeVw}vw`;
+                    element.style.height = `${sizeVw}vw`;
+                }
+                return;
+            }
+        }
+        
+        const heightVw = sizeVw * aspectRatio;
+        element.style.width = `${sizeVw}vw`;
+        element.style.height = `${heightVw}vw`;
+        return;
+    }
+    
+    // top-cheftable은 배경 이미지이므로 직접 크기 조정
+    if (element.classList.contains('top-cheftable')) {
+        // 배경 이미지의 비율을 유지하기 위해 원본 이미지 크기 확인
+        const img = new Image();
+        img.onload = function() {
+            const naturalWidth = this.naturalWidth;
+            const naturalHeight = this.naturalHeight;
+            const aspectRatio = naturalHeight / naturalWidth;
+            const heightVw = sizeVw * aspectRatio;
+            element.style.width = `${sizeVw}vw`;
+            element.style.height = `${heightVw}vw`;
+        };
+        img.src = 'cheftable.png';
+        // 이미 로드된 경우 즉시 실행
+        if (img.complete && img.naturalWidth > 0) {
+            const naturalWidth = img.naturalWidth;
+            const naturalHeight = img.naturalHeight;
+            const aspectRatio = naturalHeight / naturalWidth;
+            const heightVw = sizeVw * aspectRatio;
+            element.style.width = `${sizeVw}vw`;
+            element.style.height = `${heightVw}vw`;
+        } else {
+            // 이미지가 아직 로드되지 않은 경우 기본값 설정
+            element.style.width = `${sizeVw}vw`;
+            // 임시로 높이를 width와 동일하게 설정 (이미지 로드 후 업데이트됨)
+            element.style.height = `${sizeVw}vw`;
+        }
+        return;
+    }
+    
+    // spoonspot-image는 img 자식 요소의 크기 조정
+    if (element.classList.contains('spoonspot-image')) {
+        const img = element.querySelector('img');
+        if (!img) return;
+        
+        // 이미지가 로드될 때까지 대기
+        if (img.naturalWidth === 0 || img.naturalHeight === 0) {
+            img.onload = function() {
+                updateElementSize(element, sizeVw);
+            };
+            return;
+        }
+        
+        // 이미지 비율 유지하며 크기 조정
+        const naturalWidth = img.naturalWidth;
+        const naturalHeight = img.naturalHeight;
+        const aspectRatio = naturalHeight / naturalWidth;
+        const heightVw = sizeVw * aspectRatio;
+        
+        img.style.width = `${sizeVw}vw`;
+        img.style.height = `${heightVw}vw`;
+        img.style.maxWidth = `${sizeVw}vw`;
         return;
     }
     
@@ -3987,19 +5073,15 @@ function updateElementSize(element, sizePercent) {
     // 이미지가 로드될 때까지 대기
     if (img.naturalWidth === 0 || img.naturalHeight === 0) {
         img.onload = function() {
-            updateElementSize(element, sizePercent);
+            updateElementSize(element, sizeVw);
         };
         return;
     }
     
-    const naturalWidth = img.naturalWidth;
-    const naturalHeight = img.naturalHeight;
-    
-    const newWidth = (naturalWidth * sizePercent) / 100;
-    const newHeight = (naturalHeight * sizePercent) / 100;
-    
-    img.style.width = `${newWidth}px`;
-    img.style.height = `${newHeight}px`;
+    // vw 단위로 크기 설정
+    img.style.width = `${sizeVw}vw`;
+    img.style.height = 'auto';
+    img.style.maxWidth = `${sizeVw}vw`;
 }
 
 // 디버그 위치 저장
@@ -4031,6 +5113,23 @@ function saveDebugPosition(element) {
         const stage = element.closest('#japan-stage, #china-stage');
         elementName = stage && stage.id === 'china-stage' ? 'card-napkin-china' : 'card-napkin-japan';
     }
+    else if (classList.contains('japan-dish-3')) elementName = 'japan-dish-3';
+    else if (classList.contains('japan-dish-4')) elementName = 'japan-dish-4';
+    else if (classList.contains('japan-dish-5')) elementName = 'japan-dish-5';
+    else if (classList.contains('spoonspot-image')) {
+        elementName = element.id || 'spoonspot-image';
+    }
+    else if (classList.contains('image-shadow')) {
+        // 그림자 이미지는 클래스명으로 식별
+        if (classList.contains('shadow-dish2')) elementName = 'shadow-dish2';
+        else if (classList.contains('shadow-dish3')) elementName = 'shadow-dish3';
+        else if (classList.contains('shadow-dish4')) elementName = 'shadow-dish4';
+        else if (classList.contains('shadow-dish5')) elementName = 'shadow-dish5';
+        else if (classList.contains('shadow-dish')) elementName = 'shadow-dish';
+        else if (classList.contains('shadow-spoon')) elementName = 'shadow-spoon';
+        else if (classList.contains('shadow-chopsticks')) elementName = 'shadow-chopsticks';
+        else elementName = 'image-shadow';
+    }
     else if (classList.contains('dropped-item')) {
         const itemType = element.getAttribute('data-item-type');
         const stage = element.closest('#japan-stage, #china-stage');
@@ -4042,41 +5141,215 @@ function saveDebugPosition(element) {
         elementName = stage && stage.id === 'china-stage' ? 'cheftable-rice-bowl-china' : 'cheftable-rice-bowl-japan';
     }
     else if (classList.contains('drop-zone')) {
-        const itemType = element.getAttribute('data-item');
-        const stage = element.closest('#japan-stage, #china-stage');
-        const stageName = stage && stage.id === 'china-stage' ? '-china' : '-japan';
-        elementName = `drop-zone-${itemType}${stageName}`;
+        // drop-chopsticks-2는 별도로 처리
+        if (id === 'drop-chopsticks-2') {
+            const stage = element.closest('#japan-stage, #china-stage');
+            const stageName = stage && stage.id === 'china-stage' ? '-china' : '-japan';
+            elementName = `drop-zone-chopsticks-2${stageName}`;
+        } else {
+            const itemType = element.getAttribute('data-item');
+            const stage = element.closest('#japan-stage, #china-stage');
+            const stageName = stage && stage.id === 'china-stage' ? '-china' : '-japan';
+            elementName = `drop-zone-${itemType}${stageName}`;
+        }
     }
     
     if (!elementName || elementName === '알 수 없음') return;
     
     const saveComputedStyle = window.getComputedStyle(element);
-    const left = parseFloat(saveComputedStyle.left) || 0;
-    const top = parseFloat(saveComputedStyle.top) || 0;
+    const left = saveComputedStyle.left;
+    const top = saveComputedStyle.top;
     
-    const parent = element.parentElement;
-    const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight };
-    const xPercent = (left / parentRect.width) * 100;
-    const yPercent = (top / parentRect.height) * 100;
+    // vw 단위로 변환
+    let xVw = 0;
+    let yVw = 0;
     
-    // 크기 정보 가져오기
-    let sizePercent = 80;
-    if (element.classList.contains('top-cheftable') || element.classList.contains('card-napkin') || element.classList.contains('drop-zone')) {
-        sizePercent = 100; // 배경 이미지나 드랍존은 크기 조정 불가
+    // 그림자 이미지는 transform 기반으로 위치 계산
+    if (element.classList.contains('image-shadow')) {
+        let baseX = 0;
+        let baseY = 0;
+        
+        // left/top을 vw로 변환
+        if (left.includes('vw')) {
+            baseX = parseFloat(left);
+        } else if (left.includes('%')) {
+            const parent = element.parentElement;
+            const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight };
+            const leftPx = parseFloat(left) || 0;
+            baseX = pxToVw((leftPx / 100) * parentRect.width);
+        } else {
+            const leftPx = parseFloat(left) || 0;
+            baseX = pxToVw(leftPx);
+        }
+        
+        if (top.includes('vw')) {
+            baseY = parseFloat(top);
+        } else if (top.includes('%')) {
+            const parent = element.parentElement;
+            const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight };
+            const topPx = parseFloat(top) || 0;
+            baseY = pxToVw((topPx / 100) * parentRect.height);
+        } else {
+            const topPx = parseFloat(top) || 0;
+            baseY = pxToVw(topPx);
+        }
+        
+        // transform에서 translate 오프셋 추출
+        const transform = saveComputedStyle.transform;
+        let offsetX = 0;
+        let offsetY = 0;
+        
+        if (transform && transform !== 'none') {
+            const translateMatch = transform.match(/translate\(([^)]+)\)/);
+            if (translateMatch) {
+                const values = translateMatch[1].split(',').map(v => v.trim());
+                if (values.length >= 1) {
+                    const xValue = values[0];
+                    if (xValue.includes('vw')) {
+                        offsetX = parseFloat(xValue);
+                    } else if (xValue.includes('px')) {
+                        offsetX = pxToVw(parseFloat(xValue));
+                    } else if (xValue.includes('%')) {
+                        const parent = element.parentElement;
+                        const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth };
+                        offsetX = pxToVw((parseFloat(xValue) / 100) * parentRect.width);
+                    } else {
+                        offsetX = pxToVw(parseFloat(xValue) || 0);
+                    }
+                }
+                if (values.length >= 2) {
+                    const yValue = values[1];
+                    if (yValue.includes('vw')) {
+                        offsetY = parseFloat(yValue);
+                    } else if (yValue.includes('px')) {
+                        offsetY = pxToVw(parseFloat(yValue));
+                    } else if (yValue.includes('%')) {
+                        const parent = element.parentElement;
+                        const parentRect = parent ? parent.getBoundingClientRect() : { height: window.innerHeight };
+                        offsetY = pxToVw((parseFloat(yValue) / 100) * parentRect.height);
+                    } else {
+                        offsetY = pxToVw(parseFloat(yValue) || 0);
+                    }
+                }
+            }
+        }
+        
+        // base 위치 + transform 오프셋 = 실제 위치
+        xVw = baseX + offsetX;
+        yVw = baseY + offsetY;
+    } else {
+        // 일반 요소는 기존 로직 사용
+    if (left.includes('vw')) {
+        xVw = parseFloat(left);
+    } else if (left.includes('%')) {
+        const parent = element.parentElement;
+        const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight };
+        const leftPx = parseFloat(left) || 0;
+        xVw = pxToVw((leftPx / 100) * parentRect.width);
+    } else {
+        const leftPx = parseFloat(left) || 0;
+        xVw = pxToVw(leftPx);
+    }
+    
+    if (top.includes('vw')) {
+        yVw = parseFloat(top);
+    } else if (top.includes('%')) {
+        const parent = element.parentElement;
+        const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight };
+        const topPx = parseFloat(top) || 0;
+        yVw = pxToVw((topPx / 100) * parentRect.height);
+    } else {
+        const topPx = parseFloat(top) || 0;
+        yVw = pxToVw(topPx);
+        }
+    }
+    
+    // 크기 정보 가져오기 (vw 기반)
+    let sizeVw = 4.17;
+    // top-cheftable은 배경 이미지이지만 크기 조정 가능
+    if (element.classList.contains('top-cheftable')) {
+        const elementComputedStyle = window.getComputedStyle(element);
+        const widthStr = elementComputedStyle.width;
+        
+        if (widthStr.includes('vw')) {
+            sizeVw = parseFloat(widthStr);
+        } else if (widthStr.includes('px')) {
+            const widthPx = parseFloat(widthStr) || 0;
+            sizeVw = pxToVw(widthPx);
+        } else if (widthStr.includes('%')) {
+            const parent = element.parentElement;
+            const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth };
+            const widthPx = (parseFloat(widthStr) / 100) * parentRect.width;
+            sizeVw = pxToVw(widthPx);
+        }
+    } else if (element.classList.contains('card-napkin')) {
+        sizeVw = 4.17; // card-napkin은 크기 조정 불가
+    } else if (element.classList.contains('drop-zone')) {
+        // 드랍존의 크기 가져오기
+        const dropZoneComputedStyle = window.getComputedStyle(element);
+        const widthStr = dropZoneComputedStyle.width;
+        
+        if (widthStr.includes('vw')) {
+            sizeVw = parseFloat(widthStr);
+        } else if (widthStr.includes('px')) {
+            const widthPx = parseFloat(widthStr) || 0;
+            sizeVw = pxToVw(widthPx);
+        } else if (widthStr.includes('%')) {
+            const parent = element.parentElement;
+            const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth };
+            const widthPx = (parseFloat(widthStr) / 100) * parentRect.width;
+            sizeVw = pxToVw(widthPx);
+        }
     } else {
         const saveSizeImg = element.querySelector('img');
-        if (saveSizeImg && saveSizeImg.naturalWidth > 0 && saveSizeImg.naturalHeight > 0) {
+        if (saveSizeImg) {
             const imgComputedStyle = window.getComputedStyle(saveSizeImg);
-            const currentWidth = parseFloat(imgComputedStyle.width) || 0;
-            const widthPercent = (currentWidth / saveSizeImg.naturalWidth) * 100;
-            const currentHeight = parseFloat(imgComputedStyle.height) || 0;
-            const heightPercent = (currentHeight / saveSizeImg.naturalHeight) * 100;
-            sizePercent = (widthPercent + heightPercent) / 2;
+            const widthStr = imgComputedStyle.width;
+            
+            if (widthStr.includes('vw')) {
+                sizeVw = parseFloat(widthStr);
+            } else if (widthStr.includes('px')) {
+                const widthPx = parseFloat(widthStr) || 0;
+                sizeVw = pxToVw(widthPx);
+            } else if (widthStr.includes('%')) {
+                const parent = saveSizeImg.parentElement;
+                const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth };
+                const widthPx = (parseFloat(widthStr) / 100) * parentRect.width;
+                sizeVw = pxToVw(widthPx);
+            }
         }
     }
     
     // 회전 정보 가져오기
     let rotation = 0;
+    
+    // 그림자 이미지는 부모 요소의 transform에서 회전 추출
+    if (element.classList.contains('image-shadow')) {
+        const saveRotationTransform = saveComputedStyle.transform;
+        if (saveRotationTransform && saveRotationTransform !== 'none') {
+            // rotate(...deg) 형태 확인 (translate와 함께 있을 수 있음)
+            const rotateMatch = saveRotationTransform.match(/rotate\(([^)]+)\)/);
+            if (rotateMatch) {
+                const rotateValue = rotateMatch[1];
+                const degMatch = rotateValue.match(/(-?\d+(?:\.\d+)?)/);
+                if (degMatch) {
+                    rotation = Math.round(parseFloat(degMatch[1]));
+                }
+            } else {
+                // matrix() 형태에서 회전 각도 추출
+                const matrix = saveRotationTransform.match(/matrix\(([^)]+)\)/);
+                if (matrix) {
+                    const values = matrix[1].split(',').map(v => parseFloat(v.trim()));
+                    if (values.length >= 4) {
+                        const a = values[0];
+                        const b = values[1];
+                        rotation = Math.round(Math.atan2(b, a) * (180 / Math.PI));
+                    }
+                }
+            }
+        }
+    } else {
+        // 일반 요소는 기존 로직 사용
     const saveRotationTransform = saveComputedStyle.transform;
     
     if (saveRotationTransform && saveRotationTransform !== 'none') {
@@ -4129,6 +5402,7 @@ function saveDebugPosition(element) {
                         const imgRotation = Math.round(Math.atan2(b, a) * (180 / Math.PI));
                         if (imgRotation !== 0) {
                             rotation = imgRotation;
+                            }
                         }
                     }
                 }
@@ -4136,12 +5410,358 @@ function saveDebugPosition(element) {
         }
     }
     
-    debugPositions[elementName] = { x: xPercent, y: yPercent, size: sizePercent, rotation: rotation };
+    debugPositions[elementName] = { x: xVw, y: yVw, size: sizeVw, rotation: rotation };
     
     // localStorage에 저장
     localStorage.setItem('debugPositions', JSON.stringify(debugPositions));
     
     alert(`${elementName} 위치, 크기, 회전이 저장되었습니다!`);
+}
+
+// 모든 디버그 가능한 요소의 위치 저장
+function saveAllDebugPositions() {
+    const allElements = [];
+    
+    // 일본 스테이지 요소들
+    const japanStage = document.getElementById('japan-stage');
+    if (japanStage) {
+        // soup-bowl-japan
+        const soupBowlJapan = japanStage.querySelector('.soup-bowl-image');
+        if (soupBowlJapan) allElements.push(soupBowlJapan);
+        
+        // hand-japan
+        const handJapan = japanStage.querySelector('.hand-draggable');
+        if (handJapan) allElements.push(handJapan);
+        
+        // cheftable-japan
+        const cheftableJapan = japanStage.querySelector('.top-cheftable');
+        if (cheftableJapan) allElements.push(cheftableJapan);
+        
+        // card-napkin-japan
+        const cardNapkinJapan = japanStage.querySelector('.card-napkin');
+        if (cardNapkinJapan) allElements.push(cardNapkinJapan);
+        
+        // japan-dish-3, 4, 5
+        const dish3 = japanStage.querySelector('.japan-dish-3');
+        if (dish3) allElements.push(dish3);
+        const dish4 = japanStage.querySelector('.japan-dish-4');
+        if (dish4) allElements.push(dish4);
+        const dish5 = japanStage.querySelector('.japan-dish-5');
+        if (dish5) allElements.push(dish5);
+        // spoonspot-image
+        const spoonspot1 = japanStage.querySelector('#spoonspot-1');
+        if (spoonspot1) allElements.push(spoonspot1);
+        const spoonspot2 = japanStage.querySelector('#spoonspot-2');
+        if (spoonspot2) allElements.push(spoonspot2);
+        
+        // drop-zone-japan
+        const dropRiceBowl = japanStage.querySelector('#drop-rice-bowl');
+        if (dropRiceBowl) allElements.push(dropRiceBowl);
+        const dropSpoon = japanStage.querySelector('#drop-spoon');
+        if (dropSpoon) allElements.push(dropSpoon);
+        const dropChopsticks = japanStage.querySelector('#drop-chopsticks');
+        if (dropChopsticks) allElements.push(dropChopsticks);
+        const dropChopsticks2 = japanStage.querySelector('#drop-chopsticks-2');
+        if (dropChopsticks2) allElements.push(dropChopsticks2);
+        
+        // 그림자 이미지
+        const shadowDish2 = japanStage.querySelector('.shadow-dish2');
+        if (shadowDish2) allElements.push(shadowDish2);
+        const shadowDish3 = japanStage.querySelector('.shadow-dish3');
+        if (shadowDish3) allElements.push(shadowDish3);
+        const shadowDish4 = japanStage.querySelector('.shadow-dish4');
+        if (shadowDish4) allElements.push(shadowDish4);
+        const shadowDish5 = japanStage.querySelector('.shadow-dish5');
+        if (shadowDish5) allElements.push(shadowDish5);
+        const shadowDish = japanStage.querySelector('.shadow-dish');
+        if (shadowDish) allElements.push(shadowDish);
+        const shadowSpoon = japanStage.querySelector('.shadow-spoon');
+        if (shadowSpoon) allElements.push(shadowSpoon);
+        const shadowChopsticks = japanStage.querySelector('.shadow-chopsticks');
+        if (shadowChopsticks) allElements.push(shadowChopsticks);
+        
+        // cheftable-rice-bowl-japan
+        const cheftableRiceBowlJapan = japanStage.querySelector('.cheftable-rice-bowl');
+        if (cheftableRiceBowlJapan) allElements.push(cheftableRiceBowlJapan);
+    }
+    
+    // grab-image
+    const grabImage = document.getElementById('grab-image');
+    if (grabImage) allElements.push(grabImage);
+    
+    // 중국 스테이지 요소들
+    const chinaStage = document.getElementById('china-stage');
+    if (chinaStage) {
+        // cn-spoon
+        const cnSpoon = chinaStage.querySelector('.cn-spoon');
+        if (cnSpoon) allElements.push(cnSpoon);
+        
+        // cn-chopstick
+        const cnChopstick = chinaStage.querySelector('.cn-chopstick');
+        if (cnChopstick) allElements.push(cnChopstick);
+        
+        // cn-rice
+        const cnRice = chinaStage.querySelector('.cn-rice');
+        if (cnRice) allElements.push(cnRice);
+        
+        // cn-dish
+        const cnDish = chinaStage.querySelector('.cn-dish');
+        if (cnDish) allElements.push(cnDish);
+        
+        // cn-table1
+        const cnTable1 = chinaStage.querySelector('.china-table-image-1');
+        if (cnTable1) allElements.push(cnTable1);
+        
+        // cn-table2
+        const cnTable2 = chinaStage.querySelector('.china-table-image');
+        if (cnTable2) allElements.push(cnTable2);
+        
+        // soup-bowl-china
+        const soupBowlChina = chinaStage.querySelector('.soup-bowl-image');
+        if (soupBowlChina) allElements.push(soupBowlChina);
+        
+        // hand-china
+        const handChina = chinaStage.querySelector('.hand-draggable');
+        if (handChina) allElements.push(handChina);
+        
+        // cheftable-china
+        const cheftableChina = chinaStage.querySelector('.top-cheftable');
+        if (cheftableChina) allElements.push(cheftableChina);
+        
+        // card-napkin-china
+        const cardNapkinChina = chinaStage.querySelector('.card-napkin');
+        if (cardNapkinChina) allElements.push(cardNapkinChina);
+        
+        // cheftable-rice-bowl-china
+        const cheftableRiceBowlChina = chinaStage.querySelector('.cheftable-rice-bowl');
+        if (cheftableRiceBowlChina) allElements.push(cheftableRiceBowlChina);
+        
+        // drop-zone-china (동적으로 생성될 수 있음)
+        const dropRiceBowlChina = chinaStage.querySelector('#drop-rice-bowl');
+        if (dropRiceBowlChina) allElements.push(dropRiceBowlChina);
+        const dropSpoonChina = chinaStage.querySelector('#drop-spoon');
+        if (dropSpoonChina) allElements.push(dropSpoonChina);
+        const dropChopsticksChina = chinaStage.querySelector('#drop-chopsticks');
+        if (dropChopsticksChina) allElements.push(dropChopsticksChina);
+    }
+    
+    // 모든 요소 저장
+    let savedCount = 0;
+    allElements.forEach(element => {
+        const elementName = getElementName(element);
+        if (elementName && elementName !== '알 수 없음') {
+            // saveDebugPosition의 로직을 재사용하되 alert 없이 저장
+            const saveComputedStyle = window.getComputedStyle(element);
+            const left = saveComputedStyle.left;
+            const top = saveComputedStyle.top;
+            
+            // vw 단위로 변환
+            let xVw = 0;
+            let yVw = 0;
+            
+            if (left.includes('vw')) {
+                xVw = parseFloat(left);
+            } else if (left.includes('%')) {
+                const parent = element.parentElement;
+                const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight };
+                const leftPx = parseFloat(left) || 0;
+                xVw = pxToVw((leftPx / 100) * parentRect.width);
+            } else {
+                const leftPx = parseFloat(left) || 0;
+                xVw = pxToVw(leftPx);
+            }
+            
+            if (top.includes('vw')) {
+                yVw = parseFloat(top);
+            } else if (top.includes('%')) {
+                const parent = element.parentElement;
+                const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight };
+                const topPx = parseFloat(top) || 0;
+                yVw = pxToVw((topPx / 100) * parentRect.height);
+            } else {
+                const topPx = parseFloat(top) || 0;
+                yVw = pxToVw(topPx);
+            }
+            
+            // 크기 정보 가져오기 (vw 기반)
+            let sizeVw = 4.17;
+            // top-cheftable은 배경 이미지이지만 크기 조정 가능
+            if (element.classList.contains('top-cheftable')) {
+                const elementComputedStyle = window.getComputedStyle(element);
+                const widthStr = elementComputedStyle.width;
+                
+                if (widthStr.includes('vw')) {
+                    sizeVw = parseFloat(widthStr);
+                } else if (widthStr.includes('px')) {
+                    const widthPx = parseFloat(widthStr) || 0;
+                    sizeVw = pxToVw(widthPx);
+                } else if (widthStr.includes('%')) {
+                    const parent = element.parentElement;
+                    const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth };
+                    const widthPx = (parseFloat(widthStr) / 100) * parentRect.width;
+                    sizeVw = pxToVw(widthPx);
+                }
+            } else if (element.classList.contains('card-napkin') || element.classList.contains('drop-zone')) {
+                sizeVw = 4.17;
+            } else {
+                const saveSizeImg = element.querySelector('img');
+                if (saveSizeImg) {
+                    const imgComputedStyle = window.getComputedStyle(saveSizeImg);
+                    const widthStr = imgComputedStyle.width;
+                    
+                    if (widthStr.includes('vw')) {
+                        sizeVw = parseFloat(widthStr);
+                    } else if (widthStr.includes('px')) {
+                        const widthPx = parseFloat(widthStr) || 0;
+                        sizeVw = pxToVw(widthPx);
+                    } else if (widthStr.includes('%')) {
+                        const parent = saveSizeImg.parentElement;
+                        const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth };
+                        const widthPx = (parseFloat(widthStr) / 100) * parentRect.width;
+                        sizeVw = pxToVw(widthPx);
+                    }
+                }
+            }
+            
+            // 회전 정보 가져오기
+            let rotation = 0;
+            const saveRotationTransform = saveComputedStyle.transform;
+            
+            if (saveRotationTransform && saveRotationTransform !== 'none') {
+                const rotateMatch = saveRotationTransform.match(/rotate\(([^)]+)\)/);
+                if (rotateMatch) {
+                    const rotateValue = rotateMatch[1];
+                    const degMatch = rotateValue.match(/(-?\d+(?:\.\d+)?)/);
+                    if (degMatch) {
+                        rotation = Math.round(parseFloat(degMatch[1]));
+                    }
+                } else {
+                    const matrix = saveRotationTransform.match(/matrix\(([^)]+)\)/);
+                    if (matrix) {
+                        const values = matrix[1].split(',').map(v => parseFloat(v.trim()));
+                        if (values.length >= 4) {
+                            const a = values[0];
+                            const b = values[1];
+                            rotation = Math.round(Math.atan2(b, a) * (180 / Math.PI));
+                        }
+                    }
+                }
+            }
+            
+            // 이미지 요소의 transform도 확인
+            const saveImg = element.querySelector('img');
+            if (saveImg) {
+                const imgTransform = window.getComputedStyle(saveImg).transform;
+                if (imgTransform && imgTransform !== 'none') {
+                    const rotateMatch = imgTransform.match(/rotate\(([^)]+)\)/);
+                    if (rotateMatch) {
+                        const rotateValue = rotateMatch[1];
+                        const degMatch = rotateValue.match(/(-?\d+(?:\.\d+)?)/);
+                        if (degMatch) {
+                            const imgRotation = Math.round(parseFloat(degMatch[1]));
+                            if (imgRotation !== 0) {
+                                rotation = imgRotation;
+                            }
+                        }
+                    } else {
+                        const matrix = imgTransform.match(/matrix\(([^)]+)\)/);
+                        if (matrix) {
+                            const values = matrix[1].split(',').map(v => parseFloat(v.trim()));
+                            if (values.length >= 4) {
+                                const a = values[0];
+                                const b = values[1];
+                                const imgRotation = Math.round(Math.atan2(b, a) * (180 / Math.PI));
+                                if (imgRotation !== 0) {
+                                    rotation = imgRotation;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            debugPositions[elementName] = { x: xVw, y: yVw, size: sizeVw, rotation: rotation };
+            savedCount++;
+        }
+    });
+    
+    // localStorage에 저장
+    localStorage.setItem('debugPositions', JSON.stringify(debugPositions));
+    
+    alert(`전체 ${savedCount}개 요소의 위치, 크기, 회전이 저장되었습니다!`);
+}
+
+// 요소 이름 가져오기 (saveDebugPosition과 동일한 로직)
+function getElementName(element) {
+    let elementName = '';
+    const id = element.id;
+    const classList = element.classList;
+    
+    if (id === 'grab-image') elementName = 'grab-image';
+    else if (classList.contains('cn-spoon')) elementName = 'cn-spoon';
+    else if (classList.contains('cn-chopstick')) elementName = 'cn-chopstick';
+    else if (classList.contains('cn-rice')) elementName = 'cn-rice';
+    else if (classList.contains('cn-dish')) elementName = 'cn-dish';
+    else if (classList.contains('china-table-image-1')) elementName = 'cn-table1';
+    else if (classList.contains('china-table-image')) elementName = 'cn-table2';
+    else if (classList.contains('soup-bowl-image')) {
+        const stage = element.closest('#japan-stage, #china-stage');
+        elementName = stage && stage.id === 'china-stage' ? 'soup-bowl-china' : 'soup-bowl-japan';
+    }
+    else if (classList.contains('hand-draggable')) {
+        const stage = element.closest('#japan-stage, #china-stage');
+        elementName = stage && stage.id === 'china-stage' ? 'hand-china' : 'hand-japan';
+    }
+    else if (classList.contains('top-cheftable')) {
+        const stage = element.closest('#japan-stage, #china-stage');
+        elementName = stage && stage.id === 'china-stage' ? 'cheftable-china' : 'cheftable-japan';
+    }
+    else if (classList.contains('card-napkin')) {
+        const stage = element.closest('#japan-stage, #china-stage');
+        elementName = stage && stage.id === 'china-stage' ? 'card-napkin-china' : 'card-napkin-japan';
+    }
+    else if (classList.contains('japan-dish-3')) elementName = 'japan-dish-3';
+    else if (classList.contains('japan-dish-4')) elementName = 'japan-dish-4';
+    else if (classList.contains('japan-dish-5')) elementName = 'japan-dish-5';
+    else if (classList.contains('spoonspot-image')) {
+        elementName = element.id || 'spoonspot-image';
+    }
+    else if (classList.contains('image-shadow')) {
+        // 그림자 이미지는 클래스명으로 식별
+        if (classList.contains('shadow-dish2')) elementName = 'shadow-dish2';
+        else if (classList.contains('shadow-dish3')) elementName = 'shadow-dish3';
+        else if (classList.contains('shadow-dish4')) elementName = 'shadow-dish4';
+        else if (classList.contains('shadow-dish5')) elementName = 'shadow-dish5';
+        else if (classList.contains('shadow-dish')) elementName = 'shadow-dish';
+        else if (classList.contains('shadow-spoon')) elementName = 'shadow-spoon';
+        else if (classList.contains('shadow-chopsticks')) elementName = 'shadow-chopsticks';
+        else elementName = 'image-shadow';
+    }
+    else if (classList.contains('dropped-item')) {
+        const itemType = element.getAttribute('data-item-type');
+        const stage = element.closest('#japan-stage, #china-stage');
+        const stageName = stage && stage.id === 'china-stage' ? '-china' : '-japan';
+        elementName = `dropped-${itemType}${stageName}`;
+    }
+    else if (classList.contains('cheftable-rice-bowl')) {
+        const stage = element.closest('#japan-stage, #china-stage');
+        elementName = stage && stage.id === 'china-stage' ? 'cheftable-rice-bowl-china' : 'cheftable-rice-bowl-japan';
+    }
+    else if (classList.contains('drop-zone')) {
+        // drop-chopsticks-2는 별도로 처리
+        if (id === 'drop-chopsticks-2') {
+            const stage = element.closest('#japan-stage, #china-stage');
+            const stageName = stage && stage.id === 'china-stage' ? '-china' : '-japan';
+            elementName = `drop-zone-chopsticks-2${stageName}`;
+        } else {
+            const itemType = element.getAttribute('data-item');
+            const stage = element.closest('#japan-stage, #china-stage');
+            const stageName = stage && stage.id === 'china-stage' ? '-china' : '-japan';
+            elementName = `drop-zone-${itemType}${stageName}`;
+        }
+    }
+    
+    return elementName || '알 수 없음';
 }
 
 // 디버그 위치 불러오기
@@ -4150,13 +5770,22 @@ function loadDebugPositions() {
     if (saved) {
         debugPositions = JSON.parse(saved);
         applyDebugPositions();
+        syncShadowPositions();
     }
 }
 
 // 저장된 위치 적용
 function applyDebugPositions() {
+    if (!debugPositions || Object.keys(debugPositions).length === 0) {
+        return; // 저장된 위치가 없으면 종료
+    }
+    
     Object.keys(debugPositions).forEach(elementName => {
         const position = debugPositions[elementName];
+        if (!position || position.x === undefined || position.y === undefined) {
+            return; // 위치 정보가 없으면 건너뛰기
+        }
+        
         let element = null;
         
         if (elementName === 'cn-spoon') element = document.querySelector('.cn-spoon');
@@ -4174,6 +5803,19 @@ function applyDebugPositions() {
         else if (elementName === 'cheftable-china') element = document.querySelector('#china-stage .top-cheftable');
         else if (elementName === 'card-napkin-japan') element = document.querySelector('#japan-stage .card-napkin');
         else if (elementName === 'card-napkin-china') element = document.querySelector('#china-stage .card-napkin');
+        else if (elementName === 'japan-dish-3') element = document.querySelector('#japan-stage .japan-dish-3');
+        else if (elementName === 'japan-dish-4') element = document.querySelector('#japan-stage .japan-dish-4');
+        else if (elementName === 'japan-dish-5') element = document.querySelector('#japan-stage .japan-dish-5');
+        else if (elementName === 'spoonspot-1') element = document.querySelector('#japan-stage #spoonspot-1');
+        else if (elementName === 'spoonspot-2') element = document.querySelector('#japan-stage #spoonspot-2');
+        else if (elementName === 'spoonspot-image') element = document.querySelector('#japan-stage .spoonspot-image');
+        else if (elementName === 'shadow-dish2') element = document.querySelector('#japan-stage .shadow-dish2');
+        else if (elementName === 'shadow-dish3') element = document.querySelector('#japan-stage .shadow-dish3');
+        else if (elementName === 'shadow-dish4') element = document.querySelector('#japan-stage .shadow-dish4');
+        else if (elementName === 'shadow-dish5') element = document.querySelector('#japan-stage .shadow-dish5');
+        else if (elementName === 'shadow-dish') element = document.querySelector('#japan-stage .shadow-dish');
+        else if (elementName === 'shadow-spoon') element = document.querySelector('#japan-stage .shadow-spoon');
+        else if (elementName === 'shadow-chopsticks') element = document.querySelector('#japan-stage .shadow-chopsticks');
         else if (elementName.startsWith('dropped-')) {
             // 드롭된 아이템은 동적으로 생성되므로 나중에 적용
             return;
@@ -4183,6 +5825,7 @@ function applyDebugPositions() {
         else if (elementName === 'drop-zone-rice-bowl-japan') element = document.querySelector('#japan-stage #drop-rice-bowl');
         else if (elementName === 'drop-zone-spoon-japan') element = document.querySelector('#japan-stage #drop-spoon');
         else if (elementName === 'drop-zone-chopsticks-japan') element = document.querySelector('#japan-stage #drop-chopsticks');
+        else if (elementName === 'drop-zone-chopsticks-2-japan') element = document.querySelector('#japan-stage #drop-chopsticks-2');
         else if (elementName.startsWith('drop-zone-')) {
             // 중국 스테이지 드랍존은 동적으로 생성될 수 있으므로 나중에 적용
             const parts = elementName.split('-');
@@ -4194,8 +5837,50 @@ function applyDebugPositions() {
         }
         
         if (element) {
-            element.style.left = `${position.x}%`;
-            element.style.top = `${position.y}%`;
+            // 위치가 유효한 경우에만 적용
+            if (position.x !== undefined && position.x !== null && 
+                position.y !== undefined && position.y !== null) {
+                // 그림자 이미지는 left/top을 직접 설정
+                if (element.classList.contains('image-shadow')) {
+                element.style.left = `${position.x}vw`;
+                element.style.top = `${position.y}vw`;
+                    // transform은 translate 오프셋과 회전값을 포함
+                    const shadowOffsetX = -3;
+                    const shadowOffsetY = 6;
+                    if (position.rotation !== undefined && position.rotation !== 0) {
+                        element.style.transform = `rotate(${position.rotation}deg) translate(${shadowOffsetX}vw, ${shadowOffsetY}vw)`;
+                    } else {
+                        element.style.transform = `translate(${shadowOffsetX}vw, ${shadowOffsetY}vw)`;
+                    }
+                    // 크기도 적용 (부모 요소와 img 요소 모두)
+                    if (position.size !== undefined) {
+                        element.style.width = `${position.size}vw`;
+                        const shadowImg = element.querySelector('img');
+                        if (shadowImg) {
+                            // 이미지 비율 유지
+                            if (shadowImg.naturalWidth > 0 && shadowImg.naturalHeight > 0) {
+                                const aspectRatio = shadowImg.naturalHeight / shadowImg.naturalWidth;
+                                const heightVw = position.size * aspectRatio;
+                                element.style.height = `${heightVw}vw`;
+                                shadowImg.style.width = `${position.size}vw`;
+                                shadowImg.style.height = `${heightVw}vw`;
+                            } else {
+                                shadowImg.onload = function() {
+                                    const aspectRatio = this.naturalHeight / this.naturalWidth;
+                                    const heightVw = position.size * aspectRatio;
+                                    element.style.height = `${heightVw}vw`;
+                                    this.style.width = `${position.size}vw`;
+                                    this.style.height = `${heightVw}vw`;
+                                };
+                                shadowImg.style.width = `${position.size}vw`;
+                            }
+                        }
+                    }
+                } else {
+                    element.style.left = `${position.x}vw`;
+                    element.style.top = `${position.y}vw`;
+                }
+            }
             
             // 드랍존의 경우 transform과 margin 초기화 (저장된 위치 사용 시)
             if (element.classList.contains('drop-zone')) {
@@ -4204,21 +5889,37 @@ function applyDebugPositions() {
                     element.style.marginLeft = '';
                 } else if (elementName === 'drop-zone-chopsticks-japan') {
                     element.style.marginTop = '';
-                    // transform은 유지 (회전이 필요할 수 있음)
+                    element.style.marginLeft = '';
+                    // 젓가락 드랍존 회전 제거
+                    if (!position.rotation) {
+                        element.style.transform = 'none';
+                        element.style.transformOrigin = '';
+                    }
+                } else if (elementName === 'drop-zone-chopsticks-2-japan') {
+                    element.style.marginTop = '';
+                    element.style.marginLeft = '';
+                    // 젓가락 드랍존 2 회전 제거
+                    if (!position.rotation) {
+                        element.style.transform = 'none';
+                        element.style.transformOrigin = '';
+                    }
                 }
             }
             
-            // 크기 적용 (드랍존은 크기 조정 불가)
-            if (position.size && !element.classList.contains('drop-zone')) {
+            // 크기 적용 (card-napkin은 크기 조정 불가, 그림자 이미지는 이미 위에서 적용됨)
+            if (position.size && !element.classList.contains('card-napkin') && !element.classList.contains('image-shadow')) {
                 updateElementSize(element, position.size);
             }
             
-            // 회전 적용
-            if (position.rotation !== undefined) {
+            // 회전 적용 (그림자 이미지는 이미 transform에 회전값이 포함되어 있으므로 건너뜀)
+            if (position.rotation !== undefined && !element.classList.contains('image-shadow')) {
                 updateElementRotation(element, position.rotation);
             }
         }
     });
+    
+    // 그림자 위치 동기화
+    syncShadowPositions();
 }
 
 // 디버그 위치 초기화
@@ -4250,6 +5951,23 @@ function resetDebugPosition(element) {
         const stage = element.closest('#japan-stage, #china-stage');
         elementName = stage && stage.id === 'china-stage' ? 'card-napkin-china' : 'card-napkin-japan';
     }
+    else if (classList.contains('japan-dish-3')) elementName = 'japan-dish-3';
+    else if (classList.contains('japan-dish-4')) elementName = 'japan-dish-4';
+    else if (classList.contains('japan-dish-5')) elementName = 'japan-dish-5';
+    else if (classList.contains('spoonspot-image')) {
+        elementName = element.id || 'spoonspot-image';
+    }
+    else if (classList.contains('image-shadow')) {
+        // 그림자 이미지는 클래스명으로 식별
+        if (classList.contains('shadow-dish2')) elementName = 'shadow-dish2';
+        else if (classList.contains('shadow-dish3')) elementName = 'shadow-dish3';
+        else if (classList.contains('shadow-dish4')) elementName = 'shadow-dish4';
+        else if (classList.contains('shadow-dish5')) elementName = 'shadow-dish5';
+        else if (classList.contains('shadow-dish')) elementName = 'shadow-dish';
+        else if (classList.contains('shadow-spoon')) elementName = 'shadow-spoon';
+        else if (classList.contains('shadow-chopsticks')) elementName = 'shadow-chopsticks';
+        else elementName = 'image-shadow';
+    }
     else if (classList.contains('dropped-item')) {
         const itemType = element.getAttribute('data-item-type');
         const stage = element.closest('#japan-stage, #china-stage');
@@ -4261,10 +5979,17 @@ function resetDebugPosition(element) {
         elementName = stage && stage.id === 'china-stage' ? 'cheftable-rice-bowl-china' : 'cheftable-rice-bowl-japan';
     }
     else if (classList.contains('drop-zone')) {
-        const itemType = element.getAttribute('data-item');
-        const stage = element.closest('#japan-stage, #china-stage');
-        const stageName = stage && stage.id === 'china-stage' ? '-china' : '-japan';
-        elementName = `drop-zone-${itemType}${stageName}`;
+        // drop-chopsticks-2는 별도로 처리
+        if (id === 'drop-chopsticks-2') {
+            const stage = element.closest('#japan-stage, #china-stage');
+            const stageName = stage && stage.id === 'china-stage' ? '-china' : '-japan';
+            elementName = `drop-zone-chopsticks-2${stageName}`;
+        } else {
+            const itemType = element.getAttribute('data-item');
+            const stage = element.closest('#japan-stage, #china-stage');
+            const stageName = stage && stage.id === 'china-stage' ? '-china' : '-japan';
+            elementName = `drop-zone-${itemType}${stageName}`;
+        }
     }
     
     if (!elementName || elementName === '알 수 없음') return;
@@ -4324,6 +6049,7 @@ window.addEventListener('DOMContentLoaded', () => {
     // 저장된 위치 적용 (중국 스테이지 초기화 후)
     setTimeout(() => {
         applyDebugPositions();
+        syncShadowPositions();
     }, 100);
 });
 
