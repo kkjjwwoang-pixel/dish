@@ -204,6 +204,38 @@ function showScreen(screenName) {
         screens[screenName].classList.add('active');
         currentScreen = screenName;
         
+        // 맵 화면으로 전환 시 애니메이션 트리거
+        if (screenName === 'map') {
+            const mapScreen = screens[screenName];
+            
+            // 먼저 기존 애니메이션 클래스 제거
+            const mapImage = mapScreen.querySelector('.title-map-image');
+            const cheftable = mapScreen.querySelector('.title-cheftable-m-image');
+            const spoon = mapScreen.querySelector('.title-spoon-m-image');
+            const chopsticks = mapScreen.querySelector('.title-chopsticks-m-image');
+            const titleText = mapScreen.querySelector('h1');
+            
+            if (mapImage) mapImage.classList.remove('map-expand');
+            if (cheftable) cheftable.classList.remove('map-hide');
+            if (spoon) spoon.classList.remove('map-hide');
+            if (chopsticks) chopsticks.classList.remove('map-hide');
+            if (titleText) titleText.classList.remove('map-hide');
+            
+            // 브라우저 렌더링 후 애니메이션 시작
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    // 애니메이션 클래스 추가
+                    if (mapImage) {
+                        mapImage.classList.add('map-expand');
+                    }
+                    if (cheftable) cheftable.classList.add('map-hide');
+                    if (spoon) spoon.classList.add('map-hide');
+                    if (chopsticks) chopsticks.classList.add('map-hide');
+                    if (titleText) titleText.classList.add('map-hide');
+                });
+            });
+        }
+        
         // 스테이지에 따라 해당 버튼 표시
         if (screenName === 'japan' && backToMapJapan) {
             backToMapJapan.style.display = 'block';
@@ -237,6 +269,22 @@ if (japanCountry) {
 const chinaCountry = document.querySelector('.country.china');
 if (chinaCountry) {
     chinaCountry.addEventListener('click', () => {
+        window.location.href = 'china.html';
+    });
+}
+
+// 맵 이미지 위 일본 버튼
+const japanMapBtn = document.getElementById('japan-map-btn');
+if (japanMapBtn) {
+    japanMapBtn.addEventListener('click', () => {
+        window.location.href = 'japan.html';
+    });
+}
+
+// 맵 이미지 위 중국 버튼
+const chinaMapBtn = document.getElementById('china-map-btn');
+if (chinaMapBtn) {
+    chinaMapBtn.addEventListener('click', () => {
         window.location.href = 'china.html';
     });
 }
