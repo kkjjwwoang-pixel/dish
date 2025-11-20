@@ -4264,15 +4264,15 @@ const defaultDebugPositions = {
         "rotation": 0
     },
     "hand-japan": {
-        "x": 0.9982692307692309,
-        "y": 29.948596673596672,
-        "size": 16.922972972972975,
+        "x": 3.9991281755196306,
+        "y": 21.895207852193995,
+        "size": 16.919053117782912,
         "rotation": 0
     },
     "cheftable-japan": {
-        "x": 60.28695150115474,
-        "y": -6.190300230946882,
-        "size": 79.49364896073902,
+        "x": 14.000207900207897,
+        "y": -8.80010395010395,
+        "size": 89.31029106029106,
         "rotation": 0
     },
     "cn-table1": {
@@ -5099,6 +5099,12 @@ function updateElementPosition(element, x, y) {
         if (y !== null) {
             element.style.top = `${y}vw`;
         }
+        
+        // 셰프테이블은 CSS에서 left: 50%와 transform: translateX(-50%)를 사용하므로
+        // vw 기반 위치를 설정할 때 transform을 초기화
+        if (element.classList.contains('top-cheftable')) {
+            element.style.transform = 'none';
+        }
     }
     
     // 그림자 위치 동기화 (그림자 이미지가 아닌 경우에만)
@@ -5524,6 +5530,82 @@ function saveDebugPosition(element) {
                         offsetY = pxToVw((parseFloat(yValue) / 100) * parentRect.height);
                     } else {
                         offsetY = pxToVw(parseFloat(yValue) || 0);
+                    }
+                }
+            }
+        }
+        
+        // base 위치 + transform 오프셋 = 실제 위치
+        xVw = baseX + offsetX;
+        yVw = baseY + offsetY;
+    } else if (element.classList.contains('top-cheftable')) {
+        // 셰프테이블은 CSS에서 left: 50%와 transform: translateX(-50%)를 사용하므로
+        // 실제 위치를 계산하기 위해 transform 오프셋도 고려
+        let baseX = 0;
+        let baseY = 0;
+        
+        // left/top을 vw로 변환
+        if (left.includes('vw')) {
+            baseX = parseFloat(left);
+        } else if (left.includes('%')) {
+            const parent = element.parentElement;
+            const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight };
+            const leftPx = parseFloat(left) || 0;
+            baseX = pxToVw((leftPx / 100) * parentRect.width);
+        } else {
+            const leftPx = parseFloat(left) || 0;
+            baseX = pxToVw(leftPx);
+        }
+        
+        if (top.includes('vw')) {
+            baseY = parseFloat(top);
+        } else if (top.includes('%')) {
+            const parent = element.parentElement;
+            const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight };
+            const topPx = parseFloat(top) || 0;
+            baseY = pxToVw((topPx / 100) * parentRect.height);
+        } else {
+            const topPx = parseFloat(top) || 0;
+            baseY = pxToVw(topPx);
+        }
+        
+        // transform에서 translate 오프셋 추출
+        const transform = saveComputedStyle.transform;
+        let offsetX = 0;
+        let offsetY = 0;
+        
+        if (transform && transform !== 'none') {
+            // translateX(...) 또는 translate(...) 형태 확인
+            const translateXMatch = transform.match(/translateX\(([^)]+)\)/);
+            const translateMatch = transform.match(/translate\(([^)]+)\)/);
+            
+            if (translateXMatch) {
+                const xValue = translateXMatch[1];
+                if (xValue.includes('vw')) {
+                    offsetX = parseFloat(xValue);
+                } else if (xValue.includes('px')) {
+                    offsetX = pxToVw(parseFloat(xValue));
+                } else if (xValue.includes('%')) {
+                    const parent = element.parentElement;
+                    const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth };
+                    offsetX = pxToVw((parseFloat(xValue) / 100) * parentRect.width);
+                } else {
+                    offsetX = pxToVw(parseFloat(xValue) || 0);
+                }
+            } else if (translateMatch) {
+                const values = translateMatch[1].split(',').map(v => v.trim());
+                if (values.length >= 1) {
+                    const xValue = values[0];
+                    if (xValue.includes('vw')) {
+                        offsetX = parseFloat(xValue);
+                    } else if (xValue.includes('px')) {
+                        offsetX = pxToVw(parseFloat(xValue));
+                    } else if (xValue.includes('%')) {
+                        const parent = element.parentElement;
+                        const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth };
+                        offsetX = pxToVw((parseFloat(xValue) / 100) * parentRect.width);
+                    } else {
+                        offsetX = pxToVw(parseFloat(xValue) || 0);
                     }
                 }
             }
@@ -6152,6 +6234,12 @@ function applyDebugPositions() {
                             }
                         }
                     }
+                } else if (element.classList.contains('top-cheftable')) {
+                    // 셰프테이블은 CSS에서 left: 50%와 transform: translateX(-50%)를 사용하므로
+                    // 저장된 위치를 적용할 때 transform을 초기화하고 left를 vw로 설정
+                    element.style.left = `${position.x}vw`;
+                    element.style.top = `${position.y}vw`;
+                    element.style.transform = 'none'; // 기본 transform 제거
                 } else {
                     element.style.left = `${position.x}vw`;
                     element.style.top = `${position.y}vw`;
