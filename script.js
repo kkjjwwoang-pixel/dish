@@ -3599,17 +3599,20 @@ function showRiceBowlFromCheftableChina() {
 
 // 페이지 로드 시 드롭 존 크기 초기화 (스테이지가 처음 열릴 때를 대비)
 window.addEventListener('load', () => {
-    // 스테이지가 이미 활성화되어 있다면 드롭 존 크기 조정
-    if (document.getElementById('japan-stage')?.classList.contains('active')) {
-        adjustDropZonesToImageSize();
-        // 그림자 이미지 동기화
-        setTimeout(() => syncShadowPositions(), 300);
-    }
-    if (document.getElementById('china-stage')?.classList.contains('active')) {
-        adjustDropZonesToImageSizeChina();
-    }
-    // 손 이미지 드래그 기능 초기화
-    initializeHandDragging();
+    // 모든 이미지 로드 완료 후 실행
+    waitForAllImages(() => {
+        // 스테이지가 이미 활성화되어 있다면 드롭 존 크기 조정
+        if (document.getElementById('japan-stage')?.classList.contains('active')) {
+            adjustDropZonesToImageSize();
+            // 그림자 이미지 동기화
+            setTimeout(() => syncShadowPositions(), 300);
+        }
+        if (document.getElementById('china-stage')?.classList.contains('active')) {
+            adjustDropZonesToImageSizeChina();
+        }
+        // 손 이미지 드래그 기능 초기화
+        initializeHandDragging();
+    });
 });
 
 // 말풍선 타이핑 효과를 위한 전역 변수
@@ -6161,8 +6164,13 @@ function loadDebugPositions() {
     debugPositions = JSON.parse(JSON.stringify(defaultDebugPositions));
     
     if (Object.keys(debugPositions).length > 0) {
-        applyDebugPositions();
-        syncShadowPositions();
+        // 모든 이미지 로드 완료 후 위치 적용
+        waitForAllImages(() => {
+            setTimeout(() => {
+                applyDebugPositions();
+                syncShadowPositions();
+            }, 100);
+        });
     }
 }
 
@@ -6472,14 +6480,44 @@ function resetDebugPosition(element) {
     alert(`${elementName} 위치, 크기, 회전이 초기화되었습니다!`);
 }
 
+// 모든 이미지 로드 완료 대기 함수
+function waitForAllImages(callback) {
+    const images = document.querySelectorAll('img');
+    let loadedCount = 0;
+    const totalImages = images.length;
+    
+    if (totalImages === 0) {
+        callback();
+        return;
+    }
+    
+    const checkComplete = () => {
+        loadedCount++;
+        if (loadedCount === totalImages) {
+            callback();
+        }
+    };
+    
+    images.forEach(img => {
+        if (img.complete && img.naturalWidth > 0) {
+            checkComplete();
+        } else {
+            img.onload = checkComplete;
+            img.onerror = checkComplete; // 에러가 나도 진행
+        }
+    });
+}
+
 // 페이지 로드 시 디버그 모드 초기화
 window.addEventListener('DOMContentLoaded', () => {
     initializeDebugMode();
-    // 저장된 위치 적용 (중국 스테이지 초기화 후)
-    setTimeout(() => {
-        applyDebugPositions();
-        syncShadowPositions();
-    }, 100);
+    // 모든 이미지 로드 완료 후 위치 적용
+    waitForAllImages(() => {
+        setTimeout(() => {
+            applyDebugPositions();
+            syncShadowPositions();
+        }, 100);
+    });
 });
 
 // 말풍선 숨기기
