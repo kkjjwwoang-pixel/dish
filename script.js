@@ -39,8 +39,11 @@ function adjustTitleImages() {
             return;
         }
         
+        // 이미지 크기와 위치를 즉시 설정 (이미지가 로드되지 않았어도)
+        setImageSizeAndPosition(img, key);
+        
         if (img.complete && img.naturalWidth > 0) {
-            // 이미 로드된 경우
+            // 이미 로드된 경우 다시 한 번 설정 (정확한 크기 계산을 위해)
             setImageSizeAndPosition(img, key);
             loadedCount++;
             if (loadedCount === totalImages) {
@@ -55,16 +58,14 @@ function adjustTitleImages() {
                     // 모든 이미지 로드 완료
                 }
             };
+            // 이미지가 로드되지 않았어도 카운트 증가 (타임아웃 방지)
+            loadedCount++;
         }
     });
 }
 
 function setImageSizeAndPosition(img, key) {
-    if (!img || !img.naturalWidth || !img.naturalHeight) return;
-    
-    const viewportWidth = window.innerWidth;
-    const naturalWidth = img.naturalWidth;
-    const naturalHeight = img.naturalHeight;
+    if (!img) return;
     
     let targetWidthVw;
     let topVw, leftVw, rightVw, bottomVw;
@@ -77,8 +78,8 @@ function setImageSizeAndPosition(img, key) {
             break;
         case 'spoon':
             targetWidthVw = 15;
-            topVw = 20;
-            rightVw = 15;
+            topVw = 0;
+            leftVw = 0;
             break;
         case 'chopsticks':
             targetWidthVw = 15;
@@ -92,25 +93,42 @@ function setImageSizeAndPosition(img, key) {
             break;
     }
     
-    // vw 단위로 크기 설정
+    // vw 단위로 크기 설정 (이미지가 로드되지 않았어도 크기 설정)
     img.style.width = `${targetWidthVw}vw`;
     img.style.height = 'auto';
     
     // 위치 설정
-    if (topVw !== undefined) img.style.top = `${topVw}vw`;
-    if (leftVw !== undefined) img.style.left = `${leftVw}vw`;
-    if (rightVw !== undefined) img.style.right = `${rightVw}vw`;
-    if (bottomVw !== undefined) img.style.bottom = `${bottomVw}vw`;
+    if (topVw !== undefined) {
+        img.style.top = `${topVw}vw`;
+        img.style.bottom = ''; // bottom과 충돌 방지
+    }
+    if (leftVw !== undefined) {
+        img.style.left = `${leftVw}vw`;
+        img.style.right = ''; // right와 충돌 방지
+    }
+    if (rightVw !== undefined) {
+        img.style.right = `${rightVw}vw`;
+        img.style.left = ''; // left와 충돌 방지
+    }
+    if (bottomVw !== undefined) {
+        img.style.bottom = `${bottomVw}vw`;
+        img.style.top = ''; // top과 충돌 방지
+    }
+    
+    // position이 absolute인지 확인 (CSS에서 설정되어야 함)
+    if (window.getComputedStyle(img).position === 'static') {
+        img.style.position = 'absolute';
+    }
 }
 
 // 각 파일에서 존재하는 스테이지만 초기화 (DOM 로드 후)
 document.addEventListener('DOMContentLoaded', () => {
-    // 타이틀 화면 이미지 조정
-    if (document.getElementById('title-screen')) {
-        adjustTitleImages();
-        // 윈도우 리사이즈 시에도 조정
-        window.addEventListener('resize', adjustTitleImages);
-    }
+    // 타이틀 화면 이미지 조정 (이미지 제거됨)
+    // if (document.getElementById('title-screen')) {
+    //     adjustTitleImages();
+    //     // 윈도우 리사이즈 시에도 조정
+    //     window.addEventListener('resize', adjustTitleImages);
+    // }
     
     if (document.getElementById('japan-stage')) {
         const slotMenuJapan = document.getElementById('slot-menu-japan');
