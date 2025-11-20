@@ -918,6 +918,9 @@ function syncShadowPositions() {
     const japanStage = document.getElementById('japan-stage');
     if (!japanStage) return;
     
+    // 먼저 그림자 표시/숨김 상태 업데이트 (드롭되었을 때만 표시)
+    updateShadowVisibility();
+    
     // 저장된 디버그 위치 확인 (기본값 사용)
     // debugPositions는 loadDebugPositions()에서 defaultDebugPositions로 설정됨
     
@@ -1009,12 +1012,11 @@ function syncShadowPositions() {
         }
         shadowDish.style.width = computed.width;
         shadowDish.style.height = computed.height;
-        shadowDish.style.display = 'block'; // 확실히 표시
+        // display는 updateShadowVisibility()에서 제어
         const shadowDishImg = shadowDish.querySelector('img');
         if (shadowDishImg) {
             shadowDishImg.style.width = computed.width;
             shadowDishImg.style.height = computed.height;
-            shadowDishImg.style.display = 'block'; // 확실히 표시
         }
     }
     
@@ -1034,12 +1036,11 @@ function syncShadowPositions() {
         }
         shadowSpoon.style.width = computed.width;
         shadowSpoon.style.height = computed.height;
-        shadowSpoon.style.display = 'block'; // 확실히 표시
+        // display는 updateShadowVisibility()에서 제어
         const shadowSpoonImg = shadowSpoon.querySelector('img');
         if (shadowSpoonImg) {
             shadowSpoonImg.style.width = computed.width;
             shadowSpoonImg.style.height = computed.height;
-            shadowSpoonImg.style.display = 'block'; // 확실히 표시
         }
     }
     
