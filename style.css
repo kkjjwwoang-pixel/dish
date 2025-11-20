@@ -47,6 +47,15 @@ body {
     z-index: 10000;
     background: transparent;
     border: none;
+    transition: transform 0.6s ease-out;
+}
+
+#map-screen .top-header {
+    transform: translateY(-100%);
+}
+
+#map-screen .top-header.header-slide-down {
+    transform: translateY(0);
 }
 
 .header-content {

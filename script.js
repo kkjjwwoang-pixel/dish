@@ -195,6 +195,8 @@ function showScreen(screenName) {
             headerTitle.textContent = 'Japan';
         } else if (screenName === 'china') {
             headerTitle.textContent = 'China';
+        } else if (screenName === 'map') {
+            headerTitle.textContent = 'World Map';
         } else {
             headerTitle.textContent = 'World Dining Etiquette';
         }
@@ -207,6 +209,7 @@ function showScreen(screenName) {
         // 맵 화면으로 전환 시 애니메이션 트리거
         if (screenName === 'map') {
             const mapScreen = screens[screenName];
+            const header = mapScreen.querySelector('.top-header');
             
             // 먼저 기존 애니메이션 클래스 제거
             const mapImage = mapScreen.querySelector('.title-map-image');
@@ -220,11 +223,17 @@ function showScreen(screenName) {
             if (spoon) spoon.classList.remove('map-hide');
             if (chopsticks) chopsticks.classList.remove('map-hide');
             if (titleText) titleText.classList.remove('map-hide');
+            if (header) header.classList.remove('header-slide-down');
             
             // 브라우저 렌더링 후 애니메이션 시작
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
-                    // 애니메이션 클래스 추가
+                    // 헤더 애니메이션 먼저 시작
+                    if (header) {
+                        header.classList.add('header-slide-down');
+                    }
+                    
+                    // 다른 애니메이션 클래스 추가
                     if (mapImage) {
                         mapImage.classList.add('map-expand');
                     }
