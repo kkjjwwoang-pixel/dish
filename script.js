@@ -5882,141 +5882,24 @@ function saveAllDebugPositions() {
     });
     
     // 모든 요소 저장
+    // saveDebugPosition 함수를 직접 호출하여 동일한 로직 사용
     let savedCount = 0;
     allElements.forEach(element => {
         const elementName = getElementName(element);
         if (elementName && elementName !== '알 수 없음') {
-            // saveDebugPosition의 로직을 재사용하되 alert 없이 저장
-            const saveComputedStyle = window.getComputedStyle(element);
-            const left = saveComputedStyle.left;
-            const top = saveComputedStyle.top;
+            // saveDebugPosition 함수를 직접 호출하여 정확한 값 저장
+            // 하지만 alert는 표시하지 않도록 임시로 처리
+            const originalAlert = window.alert;
+            window.alert = function() {
+                // alert 호출 무시 (전체 저장 시 각 요소마다 alert가 뜨는 것을 방지)
+            };
             
-            // vw 단위로 변환
-            let xVw = 0;
-            let yVw = 0;
+            // saveDebugPosition 호출 (내부적으로 debugPositions에 저장됨)
+            saveDebugPosition(element);
             
-            if (left.includes('vw')) {
-                xVw = parseFloat(left);
-            } else if (left.includes('%')) {
-                const parent = element.parentElement;
-                const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight };
-                const leftPx = parseFloat(left) || 0;
-                xVw = pxToVw((leftPx / 100) * parentRect.width);
-            } else {
-                const leftPx = parseFloat(left) || 0;
-                xVw = pxToVw(leftPx);
-            }
+            // alert 복원
+            window.alert = originalAlert;
             
-            if (top.includes('vw')) {
-                yVw = parseFloat(top);
-            } else if (top.includes('%')) {
-                const parent = element.parentElement;
-                const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight };
-                const topPx = parseFloat(top) || 0;
-                yVw = pxToVw((topPx / 100) * parentRect.height);
-            } else {
-                const topPx = parseFloat(top) || 0;
-                yVw = pxToVw(topPx);
-            }
-            
-            // 크기 정보 가져오기 (vw 기반)
-            let sizeVw = 4.17;
-            // top-cheftable은 배경 이미지이지만 크기 조정 가능
-            if (element.classList.contains('top-cheftable')) {
-                const elementComputedStyle = window.getComputedStyle(element);
-                const widthStr = elementComputedStyle.width;
-                
-                if (widthStr.includes('vw')) {
-                    sizeVw = parseFloat(widthStr);
-                } else if (widthStr.includes('px')) {
-                    const widthPx = parseFloat(widthStr) || 0;
-                    sizeVw = pxToVw(widthPx);
-                } else if (widthStr.includes('%')) {
-                    const parent = element.parentElement;
-                    const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth };
-                    const widthPx = (parseFloat(widthStr) / 100) * parentRect.width;
-                    sizeVw = pxToVw(widthPx);
-                }
-            } else if (element.classList.contains('card-napkin') || element.classList.contains('drop-zone')) {
-                sizeVw = 4.17;
-            } else {
-                const saveSizeImg = element.querySelector('img');
-                if (saveSizeImg) {
-                    const imgComputedStyle = window.getComputedStyle(saveSizeImg);
-                    const widthStr = imgComputedStyle.width;
-                    
-                    if (widthStr.includes('vw')) {
-                        sizeVw = parseFloat(widthStr);
-                    } else if (widthStr.includes('px')) {
-                        const widthPx = parseFloat(widthStr) || 0;
-                        sizeVw = pxToVw(widthPx);
-                    } else if (widthStr.includes('%')) {
-                        const parent = saveSizeImg.parentElement;
-                        const parentRect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth };
-                        const widthPx = (parseFloat(widthStr) / 100) * parentRect.width;
-                        sizeVw = pxToVw(widthPx);
-                    }
-                }
-            }
-            
-            // 회전 정보 가져오기
-            let rotation = 0;
-            const saveRotationTransform = saveComputedStyle.transform;
-            
-            if (saveRotationTransform && saveRotationTransform !== 'none') {
-                const rotateMatch = saveRotationTransform.match(/rotate\(([^)]+)\)/);
-                if (rotateMatch) {
-                    const rotateValue = rotateMatch[1];
-                    const degMatch = rotateValue.match(/(-?\d+(?:\.\d+)?)/);
-                    if (degMatch) {
-                        rotation = Math.round(parseFloat(degMatch[1]));
-                    }
-                } else {
-                    const matrix = saveRotationTransform.match(/matrix\(([^)]+)\)/);
-                    if (matrix) {
-                        const values = matrix[1].split(',').map(v => parseFloat(v.trim()));
-                        if (values.length >= 4) {
-                            const a = values[0];
-                            const b = values[1];
-                            rotation = Math.round(Math.atan2(b, a) * (180 / Math.PI));
-                        }
-                    }
-                }
-            }
-            
-            // 이미지 요소의 transform도 확인
-            const saveImg = element.querySelector('img');
-            if (saveImg) {
-                const imgTransform = window.getComputedStyle(saveImg).transform;
-                if (imgTransform && imgTransform !== 'none') {
-                    const rotateMatch = imgTransform.match(/rotate\(([^)]+)\)/);
-                    if (rotateMatch) {
-                        const rotateValue = rotateMatch[1];
-                        const degMatch = rotateValue.match(/(-?\d+(?:\.\d+)?)/);
-                        if (degMatch) {
-                            const imgRotation = Math.round(parseFloat(degMatch[1]));
-                            if (imgRotation !== 0) {
-                                rotation = imgRotation;
-                            }
-                        }
-                    } else {
-                        const matrix = imgTransform.match(/matrix\(([^)]+)\)/);
-                        if (matrix) {
-                            const values = matrix[1].split(',').map(v => parseFloat(v.trim()));
-                            if (values.length >= 4) {
-                                const a = values[0];
-                                const b = values[1];
-                                const imgRotation = Math.round(Math.atan2(b, a) * (180 / Math.PI));
-                                if (imgRotation !== 0) {
-                                    rotation = imgRotation;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            
-            debugPositions[elementName] = { x: xVw, y: yVw, size: sizeVw, rotation: rotation };
             savedCount++;
         }
     });
