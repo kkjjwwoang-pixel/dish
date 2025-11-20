@@ -130,6 +130,12 @@ document.addEventListener('DOMContentLoaded', () => {
     //     window.addEventListener('resize', adjustTitleImages);
     // }
     
+    // URL 파라미터 확인하여 맵 화면 활성화
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('screen') === 'map' && document.getElementById('map-screen')) {
+        showScreen('map');
+    }
+    
     if (document.getElementById('japan-stage')) {
         const slotMenuJapan = document.getElementById('slot-menu-japan');
         if (slotMenuJapan) slotMenuJapan.style.display = 'block';
@@ -454,14 +460,14 @@ function resetStage(stageName) {
 const backToMapJapan = document.getElementById('back-to-map-japan');
 if (backToMapJapan) {
     backToMapJapan.addEventListener('click', () => {
-        window.location.href = 'index.html';
+        window.location.href = 'index.html?screen=map';
     });
 }
 
 const backToMapChina = document.getElementById('back-to-map-china');
 if (backToMapChina) {
     backToMapChina.addEventListener('click', () => {
-        window.location.href = 'index.html';
+        window.location.href = 'index.html?screen=map';
     });
 }
 
@@ -865,9 +871,8 @@ function updateShadowVisibility() {
     const dropChopsticks2 = japanStage.querySelector('#drop-chopsticks-2');
     const shadowChopsticks = japanStage.querySelector('.shadow-chopsticks');
     if (shadowChopsticks) {
-        // 저장된 디버그 위치 확인
-        const savedPositions = JSON.parse(localStorage.getItem('debugPositions') || '{}');
-        const hasSavedPosition = savedPositions['shadow-chopsticks'];
+        // 저장된 디버그 위치 확인 (기본값 사용)
+        const hasSavedPosition = debugPositions['shadow-chopsticks'];
         
         const hasChopsticks1 = dropChopsticks && dropChopsticks.querySelector('.dropped-item[data-item-type="chopsticks"]');
         const hasChopsticks2 = dropChopsticks2 && dropChopsticks2.querySelector('.dropped-item[data-item-type="chopsticks"]');
@@ -913,8 +918,8 @@ function syncShadowPositions() {
     const japanStage = document.getElementById('japan-stage');
     if (!japanStage) return;
     
-    // 저장된 디버그 위치 확인
-    const savedPositions = JSON.parse(localStorage.getItem('debugPositions') || '{}');
+    // 저장된 디버그 위치 확인 (기본값 사용)
+    // debugPositions는 loadDebugPositions()에서 defaultDebugPositions로 설정됨
     
     // 그림자 오프셋 (모든 그림자 이미지에 적용)
     const shadowOffsetX = -3; // vw
@@ -924,7 +929,7 @@ function syncShadowPositions() {
     const soupBowlImage = japanStage.querySelector('.soup-bowl-image');
     const shadowDish2 = japanStage.querySelector('.shadow-dish2');
     // 저장된 위치가 있으면 동기화 건너뛰기
-    if (soupBowlImage && shadowDish2 && !savedPositions['shadow-dish2']) {
+    if (soupBowlImage && shadowDish2 && !debugPositions['shadow-dish2']) {
         const computed = window.getComputedStyle(soupBowlImage);
         shadowDish2.style.left = computed.left;
         shadowDish2.style.top = computed.top;
@@ -957,7 +962,7 @@ function syncShadowPositions() {
         const dishElement = japanStage.querySelector(`.japan-dish-${num}`);
         const shadowElement = japanStage.querySelector(`.shadow-dish${num}`);
         // 저장된 위치가 있으면 동기화 건너뛰기
-        if (dishElement && shadowElement && !savedPositions[`shadow-dish${num}`]) {
+        if (dishElement && shadowElement && !debugPositions[`shadow-dish${num}`]) {
             const computed = window.getComputedStyle(dishElement);
             shadowElement.style.left = computed.left;
             shadowElement.style.top = computed.top;
@@ -991,7 +996,7 @@ function syncShadowPositions() {
     const dropRiceBowl = japanStage.querySelector('#drop-rice-bowl');
     const shadowDish = japanStage.querySelector('.shadow-dish');
     // 저장된 위치가 있으면 동기화 건너뛰기
-    if (dropRiceBowl && shadowDish && !savedPositions['shadow-dish']) {
+    if (dropRiceBowl && shadowDish && !debugPositions['shadow-dish']) {
         const computed = window.getComputedStyle(dropRiceBowl);
         shadowDish.style.left = computed.left;
         shadowDish.style.top = computed.top;
@@ -1016,7 +1021,7 @@ function syncShadowPositions() {
     const dropSpoon = japanStage.querySelector('#drop-spoon');
     const shadowSpoon = japanStage.querySelector('.shadow-spoon');
     // 저장된 위치가 있으면 동기화 건너뛰기
-    if (dropSpoon && shadowSpoon && !savedPositions['shadow-spoon']) {
+    if (dropSpoon && shadowSpoon && !debugPositions['shadow-spoon']) {
         const computed = window.getComputedStyle(dropSpoon);
         shadowSpoon.style.left = computed.left;
         shadowSpoon.style.top = computed.top;
@@ -1055,8 +1060,8 @@ function adjustDropZonePositions(images) {
     
     if (!riceBowl || !spoon || !chopsticks) return;
     
-    // 저장된 디버그 위치 확인
-    const savedPositions = JSON.parse(localStorage.getItem('debugPositions') || '{}');
+    // 저장된 디버그 위치 확인 (기본값 사용)
+    // debugPositions는 loadDebugPositions()에서 defaultDebugPositions로 설정됨
     
     // 밥그릇은 중앙 (이미 CSS로 설정됨)
     const riceBowlWidth = images['drop-rice-bowl'].width;
@@ -1068,7 +1073,7 @@ function adjustDropZonePositions(images) {
     
     // 숟가락: 밥그릇 오른쪽 (더 오른쪽으로 이동하여 젓가락 공간 확보) - vw 단위
     // 저장된 위치가 있으면 기본 위치 설정 건너뛰기
-    if (!savedPositions['drop-zone-spoon-japan']) {
+    if (!debugPositions['drop-zone-spoon-japan']) {
         spoon.style.left = '50%';
         spoon.style.top = '60%';
         spoon.style.transform = 'translate(0, -50%)';
@@ -1081,7 +1086,7 @@ function adjustDropZonePositions(images) {
     
     // 젓가락: 50,50에 배치 (회전 제거)
     // 저장된 위치가 있으면 기본 위치 설정 건너뛰기
-    if (!savedPositions['drop-zone-chopsticks-japan']) {
+    if (!debugPositions['drop-zone-chopsticks-japan']) {
         chopsticks.style.left = '50vw';
         chopsticks.style.top = '50vw';
         chopsticks.style.transform = 'none';
@@ -1096,7 +1101,7 @@ function adjustDropZonePositions(images) {
     
     // 젓가락 2: 20,20에 배치
     if (chopsticks2) {
-        if (!savedPositions['drop-zone-chopsticks-2-japan']) {
+        if (!debugPositions['drop-zone-chopsticks-2-japan']) {
             chopsticks2.style.left = '20vw';
             chopsticks2.style.top = '20vw';
             chopsticks2.style.transform = 'none';
@@ -6149,20 +6154,10 @@ function getElementName(element) {
     return elementName || '알 수 없음';
 }
 
-// 디버그 위치 불러오기
+// 디버그 위치 불러오기 (항상 기본값만 사용)
 function loadDebugPositions() {
-    const saved = localStorage.getItem('debugPositions');
-    if (saved) {
-        // localStorage에 저장된 값이 있으면 사용
-        debugPositions = JSON.parse(saved);
-    } else {
-        // localStorage에 값이 없으면 기본값 사용
-        debugPositions = JSON.parse(JSON.stringify(defaultDebugPositions));
-        // 기본값을 localStorage에도 저장 (다음번에는 localStorage에서 로드)
-        if (Object.keys(debugPositions).length > 0) {
-            localStorage.setItem('debugPositions', JSON.stringify(debugPositions));
-        }
-    }
+    // 항상 기본값만 사용 (localStorage 무시)
+    debugPositions = JSON.parse(JSON.stringify(defaultDebugPositions));
     
     if (Object.keys(debugPositions).length > 0) {
         applyDebugPositions();
@@ -6173,14 +6168,8 @@ function loadDebugPositions() {
 // 현재 localStorage의 디버그 위치를 코드로 내보내기 (콘솔에 출력)
 // 이 함수를 콘솔에서 실행하면 현재 설정값을 복사해서 defaultDebugPositions에 붙여넣을 수 있습니다.
 function exportDebugPositionsToCode() {
-    const saved = localStorage.getItem('debugPositions');
-    if (!saved) {
-        alert('localStorage에 저장된 디버그 위치가 없습니다.\n먼저 "전체 저장" 버튼을 눌러 현재 위치를 저장하세요.');
-        console.log('localStorage에 저장된 디버그 위치가 없습니다.');
-        return;
-    }
-    
-    const positions = JSON.parse(saved);
+    // 기본값 사용 (localStorage 무시)
+    const positions = defaultDebugPositions;
     const codeString = JSON.stringify(positions, null, 4);
     
     // script.js에 직접 붙여넣을 수 있는 형태로 포맷팅
