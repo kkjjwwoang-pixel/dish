@@ -118,37 +118,47 @@ body {
     position: absolute;
     pointer-events: none;
     z-index: 1;
+    display: block;
+    object-fit: contain;
 }
 
 .title-map-image {
-    width: 40vw;
-    height: auto;
-    top: 10vw;
-    left: 10vw;
+    width: 40vw !important;
+    height: auto !important;
+    top: 10vw !important;
+    left: 10vw !important;
+    right: auto !important;
+    bottom: auto !important;
     opacity: 0.8;
 }
 
 .title-spoon-image {
-    width: 15vw;
-    height: auto;
-    top: 20vw;
-    right: 15vw;
+    width: 15vw !important;
+    height: auto !important;
+    top: 20vw !important;
+    right: 15vw !important;
+    left: auto !important;
+    bottom: auto !important;
     opacity: 1;
 }
 
 .title-chopsticks-image {
-    width: 15vw;
-    height: auto;
-    bottom: 20vw;
-    left: 15vw;
-    opacity: 0.7;
+    width: 15vw !important;
+    height: auto !important;
+    bottom: 20vw !important;
+    left: 15vw !important;
+    top: auto !important;
+    right: auto !important;
+    opacity: 1;
 }
 
 .title-cheftable-image {
-    width: 25vw;
-    height: auto;
-    bottom: 10vw;
-    right: 10vw;
+    width: 25vw !important;
+    height: auto !important;
+    bottom: 10vw !important;
+    right: 10vw !important;
+    top: auto !important;
+    left: auto !important;
     opacity: 0.8;
 }
 

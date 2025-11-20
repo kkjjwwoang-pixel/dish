@@ -13,8 +13,105 @@ const screens = {
     china: document.getElementById('china-stage')
 };
 
+// vw 단위 변환 함수
+function pxToVw(px) {
+    return (px / window.innerWidth) * 100;
+}
+
+// 타이틀 이미지 크기 및 위치 조정
+function adjustTitleImages() {
+    const titleScreen = document.getElementById('title-screen');
+    if (!titleScreen) return;
+    
+    const images = {
+        'map': document.querySelector('.title-map-image'),
+        'spoon': document.querySelector('.title-spoon-image'),
+        'chopsticks': document.querySelector('.title-chopsticks-image'),
+        'cheftable': document.querySelector('.title-cheftable-image')
+    };
+    
+    let loadedCount = 0;
+    const totalImages = Object.keys(images).length;
+    
+    Object.entries(images).forEach(([key, img]) => {
+        if (!img) {
+            loadedCount++;
+            return;
+        }
+        
+        if (img.complete && img.naturalWidth > 0) {
+            // 이미 로드된 경우
+            setImageSizeAndPosition(img, key);
+            loadedCount++;
+            if (loadedCount === totalImages) {
+                // 모든 이미지 로드 완료
+            }
+        } else {
+            // 로드 대기
+            img.onload = () => {
+                setImageSizeAndPosition(img, key);
+                loadedCount++;
+                if (loadedCount === totalImages) {
+                    // 모든 이미지 로드 완료
+                }
+            };
+        }
+    });
+}
+
+function setImageSizeAndPosition(img, key) {
+    if (!img || !img.naturalWidth || !img.naturalHeight) return;
+    
+    const viewportWidth = window.innerWidth;
+    const naturalWidth = img.naturalWidth;
+    const naturalHeight = img.naturalHeight;
+    
+    let targetWidthVw;
+    let topVw, leftVw, rightVw, bottomVw;
+    
+    switch(key) {
+        case 'map':
+            targetWidthVw = 40;
+            topVw = 10;
+            leftVw = 10;
+            break;
+        case 'spoon':
+            targetWidthVw = 15;
+            topVw = 20;
+            rightVw = 15;
+            break;
+        case 'chopsticks':
+            targetWidthVw = 15;
+            bottomVw = 20;
+            leftVw = 15;
+            break;
+        case 'cheftable':
+            targetWidthVw = 25;
+            bottomVw = 10;
+            rightVw = 10;
+            break;
+    }
+    
+    // vw 단위로 크기 설정
+    img.style.width = `${targetWidthVw}vw`;
+    img.style.height = 'auto';
+    
+    // 위치 설정
+    if (topVw !== undefined) img.style.top = `${topVw}vw`;
+    if (leftVw !== undefined) img.style.left = `${leftVw}vw`;
+    if (rightVw !== undefined) img.style.right = `${rightVw}vw`;
+    if (bottomVw !== undefined) img.style.bottom = `${bottomVw}vw`;
+}
+
 // 각 파일에서 존재하는 스테이지만 초기화 (DOM 로드 후)
 document.addEventListener('DOMContentLoaded', () => {
+    // 타이틀 화면 이미지 조정
+    if (document.getElementById('title-screen')) {
+        adjustTitleImages();
+        // 윈도우 리사이즈 시에도 조정
+        window.addEventListener('resize', adjustTitleImages);
+    }
+    
     if (document.getElementById('japan-stage')) {
         const slotMenuJapan = document.getElementById('slot-menu-japan');
         if (slotMenuJapan) slotMenuJapan.style.display = 'block';
