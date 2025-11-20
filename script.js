@@ -4219,6 +4219,14 @@ let debugMode = false;
 let selectedDebugElement = null;
 let debugPositions = {};
 
+// 디버그 값 하드코딩 (localStorage에서 가져온 값들을 여기에 직접 입력)
+// exportDebugValuesToCode() 함수를 실행하여 현재 저장된 값을 확인하고 아래에 복사하세요
+// 페이지 로드 시 자동으로 localStorage 값이 여기에 반영됩니다
+let DEBUG_POSITIONS_HARDCODED = {
+    // 예시: 'cn-spoon': { x: 70, y: 40, size: 4.17, rotation: 0 },
+    // 실제 값은 localStorage에서 가져와서 여기에 입력하세요
+};
+
 // 디버그 모드 초기화
 function initializeDebugMode() {
     const debugToggleBtn = document.getElementById('debug-toggle-btn');
@@ -5863,11 +5871,75 @@ function getElementName(element) {
 
 // 디버그 위치 불러오기
 function loadDebugPositions() {
+    // 하드코딩된 값이 있으면 우선 사용
+    if (Object.keys(DEBUG_POSITIONS_HARDCODED).length > 0) {
+        debugPositions = DEBUG_POSITIONS_HARDCODED;
+        applyDebugPositions();
+        syncShadowPositions();
+        return;
+    }
+    
+    // 하드코딩된 값이 없으면 localStorage에서 불러오기
     const saved = localStorage.getItem('debugPositions');
     if (saved) {
         debugPositions = JSON.parse(saved);
         applyDebugPositions();
         syncShadowPositions();
+    }
+}
+
+// 디버그 값을 코드에 직접 반영하는 함수 (콘솔에 출력 및 자동 반영)
+function exportDebugValuesToCode() {
+    const saved = localStorage.getItem('debugPositions');
+    if (!saved) {
+        console.log('저장된 디버그 값이 없습니다.');
+        alert('저장된 디버그 값이 없습니다. 먼저 디버그 모드에서 값을 저장해주세요.');
+        return;
+    }
+    
+    const positions = JSON.parse(saved);
+    
+    // 콘솔에 출력
+    console.log('// 디버그 값들을 코드에 직접 반영하려면 아래 값을 사용하세요:');
+    console.log('const DEBUG_POSITIONS_HARDCODED = ' + JSON.stringify(positions, null, 2) + ';');
+    console.log('\n// 각 요소별 값:');
+    
+    Object.keys(positions).forEach(elementName => {
+        const pos = positions[elementName];
+        console.log(`// ${elementName}: x=${pos.x}vw, y=${pos.y}vw, size=${pos.size}vw, rotation=${pos.rotation}deg`);
+    });
+    
+    // 클립보드에 복사할 수 있도록 포맷팅
+    const codeString = 'const DEBUG_POSITIONS_HARDCODED = ' + JSON.stringify(positions, null, 4) + ';';
+    
+    // 텍스트 영역 생성하여 복사 가능하게 만들기
+    const textarea = document.createElement('textarea');
+    textarea.value = codeString;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+        document.execCommand('copy');
+        alert('디버그 값이 클립보드에 복사되었습니다!\n\n콘솔에서 전체 코드를 확인하고, script.js 파일의 DEBUG_POSITIONS_HARDCODED 상수를 업데이트하세요.');
+    } catch (err) {
+        alert('클립보드 복사에 실패했습니다. 콘솔에서 값을 확인하세요.');
+    }
+    document.body.removeChild(textarea);
+    
+    return positions;
+}
+
+// 페이지 로드 시 localStorage의 값을 자동으로 DEBUG_POSITIONS_HARDCODED에 반영
+function autoApplyDebugValues() {
+    const saved = localStorage.getItem('debugPositions');
+    if (saved) {
+        const positions = JSON.parse(saved);
+        // DEBUG_POSITIONS_HARDCODED 객체에 값 복사
+        Object.keys(positions).forEach(key => {
+            DEBUG_POSITIONS_HARDCODED[key] = positions[key];
+        });
+        console.log('디버그 값이 자동으로 하드코딩된 상수에 반영되었습니다.');
     }
 }
 
@@ -6143,6 +6215,8 @@ function resetDebugPosition(element) {
 // 페이지 로드 시 디버그 모드 초기화
 window.addEventListener('DOMContentLoaded', () => {
     initializeDebugMode();
+    // localStorage의 값을 자동으로 하드코딩된 상수에 반영
+    autoApplyDebugValues();
     // 저장된 위치 적용 (중국 스테이지 초기화 후)
     setTimeout(() => {
         applyDebugPositions();
