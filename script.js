@@ -4219,12 +4219,194 @@ let debugMode = false;
 let selectedDebugElement = null;
 let debugPositions = {};
 
-// 디버그 값 하드코딩 (localStorage에서 가져온 값들을 여기에 직접 입력)
-// exportDebugValuesToCode() 함수를 실행하여 현재 저장된 값을 확인하고 아래에 복사하세요
-// 페이지 로드 시 자동으로 localStorage 값이 여기에 반영됩니다
-let DEBUG_POSITIONS_HARDCODED = {
-    // 예시: 'cn-spoon': { x: 70, y: 40, size: 4.17, rotation: 0 },
-    // 실제 값은 localStorage에서 가져와서 여기에 입력하세요
+// 기본 디버그 위치 (GitHub에 업로드될 기본값)
+// localStorage에 값이 없을 때 이 값들이 사용됩니다.
+// 현재 localStorage 값을 이 변수로 업데이트하려면 exportDebugPositionsToCode() 함수를 사용하세요.
+const defaultDebugPositions = {
+    "china-table-1": {
+        "left": -20.807962376198443,
+        "top": -177.25490894192964
+    },
+    "cn-rice": {
+        "x": 36.6231288981289,
+        "y": 65.56029106029106,
+        "size": 77.83783783783782,
+        "rotation": 0
+    },
+    "cn-spoon": {
+        "x": 56.181392931392935,
+        "y": 60.87110187110187,
+        "size": 4.1621569646569645,
+        "rotation": 0
+    },
+    "cn-chopstick": {
+        "x": 61.17099792099793,
+        "y": 58.67567567567568,
+        "size": 4.1621569646569645,
+        "rotation": 0
+    },
+    "cn-dish": {
+        "x": 14.269074844074842,
+        "y": 51.09121621621622,
+        "size": 4.1621569646569645,
+        "rotation": 0
+    },
+    "card-napkin-japan": {
+        "x": 84.18187066974596,
+        "y": 33.592667436489606,
+        "size": 4.17,
+        "rotation": -5
+    },
+    "drop-zone-chopsticks-japan": {
+        "x": -147.17515592515593,
+        "y": 19.983160083160083,
+        "size": 4.17,
+        "rotation": 0
+    },
+    "hand-japan": {
+        "x": 0.9982692307692309,
+        "y": 29.948596673596672,
+        "size": 16.922972972972975,
+        "rotation": 0
+    },
+    "cheftable-japan": {
+        "x": 60.28695150115474,
+        "y": -6.190300230946882,
+        "size": 79.49364896073902,
+        "rotation": 0
+    },
+    "cn-table1": {
+        "x": 0,
+        "y": 0,
+        "size": 4.1621569646569645,
+        "rotation": 0
+    },
+    "cn-table2": {
+        "x": 0,
+        "y": 0,
+        "size": 4.1621569646569645,
+        "rotation": 0
+    },
+    "hand-china": {
+        "x": 1.0378274428274428,
+        "y": 0,
+        "size": 4.1621569646569645,
+        "rotation": 0
+    },
+    "japan-dish-5": {
+        "x": 5.097848232848233,
+        "y": 9.396101871101871,
+        "size": 29.814553014553013,
+        "rotation": 0
+    },
+    "japan-dish-3": {
+        "x": 39.691859122401844,
+        "y": 9.395323325635104,
+        "size": 10.797055427251733,
+        "rotation": 0
+    },
+    "japan-dish-4": {
+        "x": 63.386258660508076,
+        "y": 8.696189376443417,
+        "size": 8.490588914549653,
+        "rotation": 0
+    },
+    "dropped-chopsticks-japan": {
+        "x": 0,
+        "y": 0,
+        "size": 4.17,
+        "rotation": 0
+    },
+    "soup-bowl-japan": {
+        "x": 38.991512702078516,
+        "y": 27.68827944572748,
+        "size": 15.383833718244802,
+        "rotation": 0
+    },
+    "drop-zone-rice-bowl-japan": {
+        "x": 51.68874133949192,
+        "y": 29.693533487297923,
+        "size": 21.399653579676674,
+        "rotation": 0
+    },
+    "drop-zone-spoon-japan": {
+        "x": 63.98614318706698,
+        "y": 31.893071593533488,
+        "size": 4.16521362586605,
+        "rotation": 0
+    },
+    "drop-zone-chopsticks-2-japan": {
+        "x": 49.98908775981524,
+        "y": 31.59757505773672,
+        "size": 4.168481524249422,
+        "rotation": -90
+    },
+    "cheftable-rice-bowl-japan": {
+        "x": 69.68475750577367,
+        "y": -12.697228637413394,
+        "size": 22.950346420323324,
+        "rotation": 0
+    },
+    "spoonspot-image": {
+        "x": 55.0141041931385,
+        "y": 24.706353240152477,
+        "size": 5.300266836086403,
+        "rotation": 0
+    },
+    "spoonspot-2": {
+        "x": 38.291628175519634,
+        "y": 43.59670900692841,
+        "size": 4.99858545034642,
+        "rotation": -90
+    },
+    "shadow-dish5": {
+        "x": 6.7984988452655895,
+        "y": 4.399041570438799,
+        "size": 29.806870669745962,
+        "rotation": 0
+    },
+    "spoonspot-1": {
+        "x": 63.386258660508076,
+        "y": 24.701270207852193,
+        "size": 5.29843533487298,
+        "rotation": 0
+    },
+    "shadow-dish2": {
+        "x": 24.9945727482679,
+        "y": 15.396651270207853,
+        "size": 15.378926096997692,
+        "rotation": 0
+    },
+    "shadow-dish3": {
+        "x": 41.990819861431866,
+        "y": 4.199087759815242,
+        "size": 11.09688221709007,
+        "rotation": 0
+    },
+    "shadow-dish4": {
+        "x": 65.18591224018475,
+        "y": 3.899151270207852,
+        "size": 8.489722863741338,
+        "rotation": 0
+    },
+    "shadow-dish": {
+        "x": 39.59139722863741,
+        "y": 16.09647806004619,
+        "size": 21.5074480369515,
+        "rotation": 0
+    },
+    "shadow-spoon": {
+        "x": 65.98556581986142,
+        "y": 15.396651270207853,
+        "size": 4.346593533487298,
+        "rotation": 0
+    },
+    "shadow-chopsticks": {
+        "x": 42.990646651270204,
+        "y": 30.6933025404157,
+        "size": 3.6962413394919174,
+        "rotation": -90
+    }
 };
 
 // 디버그 모드 초기화
@@ -4243,6 +4425,7 @@ function initializeDebugMode() {
     const debugSaveBtn = document.getElementById('debug-save-btn');
     const debugSaveAllBtn = document.getElementById('debug-save-all-btn');
     const debugResetBtn = document.getElementById('debug-reset-btn');
+    const debugExportBtn = document.getElementById('debug-export-btn');
     
     // 저장된 위치 불러오기
     loadDebugPositions();
@@ -4422,6 +4605,13 @@ function initializeDebugMode() {
         if (!selectedDebugElement) return;
         resetDebugPosition(selectedDebugElement);
     });
+    
+    // 기본값으로 내보내기 버튼
+    if (debugExportBtn) {
+        debugExportBtn.addEventListener('click', () => {
+            exportDebugPositionsToCode();
+        });
+    }
 }
 
 // 디버그 요소 선택
@@ -5871,76 +6061,60 @@ function getElementName(element) {
 
 // 디버그 위치 불러오기
 function loadDebugPositions() {
-    // 하드코딩된 값이 있으면 우선 사용
-    if (Object.keys(DEBUG_POSITIONS_HARDCODED).length > 0) {
-        debugPositions = DEBUG_POSITIONS_HARDCODED;
-        applyDebugPositions();
-        syncShadowPositions();
-        return;
-    }
-    
-    // 하드코딩된 값이 없으면 localStorage에서 불러오기
     const saved = localStorage.getItem('debugPositions');
     if (saved) {
+        // localStorage에 저장된 값이 있으면 사용
         debugPositions = JSON.parse(saved);
+    } else {
+        // localStorage에 값이 없으면 기본값 사용
+        debugPositions = JSON.parse(JSON.stringify(defaultDebugPositions));
+        // 기본값을 localStorage에도 저장 (다음번에는 localStorage에서 로드)
+        if (Object.keys(debugPositions).length > 0) {
+            localStorage.setItem('debugPositions', JSON.stringify(debugPositions));
+        }
+    }
+    
+    if (Object.keys(debugPositions).length > 0) {
         applyDebugPositions();
         syncShadowPositions();
     }
 }
 
-// 디버그 값을 코드에 직접 반영하는 함수 (콘솔에 출력 및 자동 반영)
-function exportDebugValuesToCode() {
+// 현재 localStorage의 디버그 위치를 코드로 내보내기 (콘솔에 출력)
+// 이 함수를 콘솔에서 실행하면 현재 설정값을 복사해서 defaultDebugPositions에 붙여넣을 수 있습니다.
+function exportDebugPositionsToCode() {
     const saved = localStorage.getItem('debugPositions');
     if (!saved) {
-        console.log('저장된 디버그 값이 없습니다.');
-        alert('저장된 디버그 값이 없습니다. 먼저 디버그 모드에서 값을 저장해주세요.');
+        alert('localStorage에 저장된 디버그 위치가 없습니다.\n먼저 "전체 저장" 버튼을 눌러 현재 위치를 저장하세요.');
+        console.log('localStorage에 저장된 디버그 위치가 없습니다.');
         return;
     }
     
     const positions = JSON.parse(saved);
+    const codeString = JSON.stringify(positions, null, 4);
     
-    // 콘솔에 출력
-    console.log('// 디버그 값들을 코드에 직접 반영하려면 아래 값을 사용하세요:');
-    console.log('const DEBUG_POSITIONS_HARDCODED = ' + JSON.stringify(positions, null, 2) + ';');
-    console.log('\n// 각 요소별 값:');
+    // script.js에 직접 붙여넣을 수 있는 형태로 포맷팅
+    const formattedCode = `const defaultDebugPositions = ${codeString};`;
     
-    Object.keys(positions).forEach(elementName => {
-        const pos = positions[elementName];
-        console.log(`// ${elementName}: x=${pos.x}vw, y=${pos.y}vw, size=${pos.size}vw, rotation=${pos.rotation}deg`);
-    });
+    console.log('=== defaultDebugPositions에 복사할 코드 ===');
+    console.log(formattedCode);
+    console.log('\n위 코드를 복사해서 script.js의 defaultDebugPositions 변수에 붙여넣으세요.');
+    console.log('(기존 const defaultDebugPositions = {}; 부분을 위 코드로 교체하세요)');
     
-    // 클립보드에 복사할 수 있도록 포맷팅
-    const codeString = 'const DEBUG_POSITIONS_HARDCODED = ' + JSON.stringify(positions, null, 4) + ';';
-    
-    // 텍스트 영역 생성하여 복사 가능하게 만들기
-    const textarea = document.createElement('textarea');
-    textarea.value = codeString;
-    textarea.style.position = 'fixed';
-    textarea.style.opacity = '0';
-    document.body.appendChild(textarea);
-    textarea.select();
-    try {
-        document.execCommand('copy');
-        alert('디버그 값이 클립보드에 복사되었습니다!\n\n콘솔에서 전체 코드를 확인하고, script.js 파일의 DEBUG_POSITIONS_HARDCODED 상수를 업데이트하세요.');
-    } catch (err) {
-        alert('클립보드 복사에 실패했습니다. 콘솔에서 값을 확인하세요.');
+    // 클립보드에 복사 시도 (브라우저 지원 시)
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(formattedCode).then(() => {
+            alert('✓ 코드가 클립보드에 복사되었습니다!\n\n콘솔(F12)을 열어 확인하거나, script.js 파일의 defaultDebugPositions 변수를 위 코드로 교체하세요.');
+            console.log('✓ 클립보드에 복사되었습니다!');
+        }).catch(() => {
+            alert('클립보드 복사 실패. 콘솔(F12)에서 코드를 확인하세요.');
+            console.log('클립보드 복사 실패. 위의 코드를 수동으로 복사하세요.');
+        });
+    } else {
+        alert('브라우저가 클립보드 복사를 지원하지 않습니다.\n콘솔(F12)을 열어 코드를 확인하세요.');
     }
-    document.body.removeChild(textarea);
     
     return positions;
-}
-
-// 페이지 로드 시 localStorage의 값을 자동으로 DEBUG_POSITIONS_HARDCODED에 반영
-function autoApplyDebugValues() {
-    const saved = localStorage.getItem('debugPositions');
-    if (saved) {
-        const positions = JSON.parse(saved);
-        // DEBUG_POSITIONS_HARDCODED 객체에 값 복사
-        Object.keys(positions).forEach(key => {
-            DEBUG_POSITIONS_HARDCODED[key] = positions[key];
-        });
-        console.log('디버그 값이 자동으로 하드코딩된 상수에 반영되었습니다.');
-    }
 }
 
 // 저장된 위치 적용
@@ -6215,8 +6389,6 @@ function resetDebugPosition(element) {
 // 페이지 로드 시 디버그 모드 초기화
 window.addEventListener('DOMContentLoaded', () => {
     initializeDebugMode();
-    // localStorage의 값을 자동으로 하드코딩된 상수에 반영
-    autoApplyDebugValues();
     // 저장된 위치 적용 (중국 스테이지 초기화 후)
     setTimeout(() => {
         applyDebugPositions();
