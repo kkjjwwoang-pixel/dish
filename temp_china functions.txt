@@ -1,0 +1,162 @@
+// 남김없이 먹기/조금 남기기 선택을 위한 말풍선 확장 (중국 스테이지)
+function expandSpeechBubbleForLeftoversSelectionChina() {
+    const speechBubble = document.getElementById('speech-bubble-china');
+    const speechBubbleContent = speechBubble ? speechBubble.querySelector('.speech-bubble-content') : null;
+    const nextBtn = document.getElementById('next-speech-btn-china');
+
+    if (!speechBubble || !speechBubbleContent) return;
+
+    // 기존 버튼 숨기기
+    if (nextBtn) {
+        nextBtn.style.display = 'none';
+    }
+
+    // 기존 선택 버튼 컨테이너가 있으면 제거
+    const existingSelectionContainer = speechBubbleContent.querySelector('.leftovers-selection-buttons');
+    if (existingSelectionContainer) {
+        existingSelectionContainer.remove();
+    }
+
+    // 말풍선 세로로 더 넓게, 가로로도 더 넓게 확장
+    speechBubbleContent.style.transition = 'min-height 0.5s ease-in-out, max-width 0.5s ease-in-out, padding 0.5s ease-in-out';
+    speechBubbleContent.style.minHeight = '480px';
+    speechBubbleContent.style.maxWidth = '1280px';
+    speechBubbleContent.style.padding = '40px 40px 120px 40px';
+
+    // 좌우로 배치된 버튼 컨테이너 생성
+    const buttonsContainer = document.createElement('div');
+    buttonsContainer.className = 'leftovers-selection-buttons';
+    buttonsContainer.style.display = 'flex';
+    buttonsContainer.style.flexDirection = 'row';
+    buttonsContainer.style.justifyContent = 'space-between';
+    buttonsContainer.style.gap = '40px';
+    buttonsContainer.style.marginTop = '40px';
+    buttonsContainer.style.width = '100%';
+    buttonsContainer.style.position = 'relative';
+    buttonsContainer.style.zIndex = '10011';
+
+    // 좌측 버튼: 남김없이 먹기
+    const leftButton = document.createElement('button');
+    leftButton.className = 'next-btn';
+    leftButton.style.flex = '1';
+    leftButton.style.margin = '0';
+    leftButton.style.minWidth = '280px';
+    leftButton.style.minHeight = '320px';
+    leftButton.style.display = 'flex';
+    leftButton.style.flexDirection = 'column';
+    leftButton.style.alignItems = 'center';
+    leftButton.style.justifyContent = 'center';
+    leftButton.style.gap = '16px';
+    leftButton.style.padding = '24px';
+    leftButton.style.position = 'relative';
+    leftButton.style.zIndex = '10012';
+
+    // 이미지 컨테이너
+    const leftImageContainer = document.createElement('div');
+    leftImageContainer.style.width = '200px';
+    leftImageContainer.style.height = '200px';
+    leftImageContainer.style.backgroundColor = 'transparent';
+    leftImageContainer.style.display = 'flex';
+    leftImageContainer.style.alignItems = 'center';
+    leftImageContainer.style.justifyContent = 'center';
+    leftButton.appendChild(leftImageContainer);
+
+    // 텍스트
+    const leftText = document.createElement('span');
+    leftText.textContent = '남김없이 먹기';
+    leftText.style.fontSize = '19px';
+    leftText.style.whiteSpace = 'nowrap';
+    leftButton.appendChild(leftText);
+
+    leftButton.onclick = () => {
+        handleLeftoversSelectionChina('empty');
+    };
+    buttonsContainer.appendChild(leftButton);
+
+    // 우측 버튼: 조금 남기기
+    const rightButton = document.createElement('button');
+    rightButton.className = 'next-btn';
+    rightButton.style.flex = '1';
+    rightButton.style.margin = '0';
+    rightButton.style.minWidth = '280px';
+    rightButton.style.minHeight = '320px';
+    rightButton.style.display = 'flex';
+    rightButton.style.flexDirection = 'column';
+    rightButton.style.alignItems = 'center';
+    rightButton.style.justifyContent = 'center';
+    rightButton.style.gap = '16px';
+    rightButton.style.padding = '24px';
+    rightButton.style.position = 'relative';
+    rightButton.style.zIndex = '10012';
+
+    // 이미지 컨테이너
+    const rightImageContainer = document.createElement('div');
+    rightImageContainer.style.width = '200px';
+    rightImageContainer.style.height = '200px';
+    rightImageContainer.style.backgroundColor = 'transparent';
+    rightImageContainer.style.display = 'flex';
+    rightImageContainer.style.alignItems = 'center';
+    rightImageContainer.style.justifyContent = 'center';
+    rightButton.appendChild(rightImageContainer);
+
+    // 텍스트
+    const rightText = document.createElement('span');
+    rightText.textContent = '조금 남기기';
+    rightText.style.fontSize = '19px';
+    rightText.style.whiteSpace = 'nowrap';
+    rightButton.appendChild(rightText);
+
+    rightButton.onclick = () => {
+        handleLeftoversSelectionChina('leave');
+    };
+    buttonsContainer.appendChild(rightButton);
+
+    // 버튼 컨테이너를 말풍선 안에 추가
+    speechBubbleContent.appendChild(buttonsContainer);
+}
+
+// 말풍선을 기본 스타일로 되돌리기 (중국 스테이지)
+function resetSpeechBubbleToDefaultChina() {
+    const speechBubble = document.getElementById('speech-bubble-china');
+    const speechBubbleContent = speechBubble ? speechBubble.querySelector('.speech-bubble-content') : null;
+    const nextBtn = document.getElementById('next-speech-btn-china');
+
+    if (!speechBubble || !speechBubbleContent) return;
+
+    // 확장된 버튼 컨테이너 제거
+    const existingSelectionContainer = speechBubbleContent.querySelector('.leftovers-selection-buttons');
+    if (existingSelectionContainer) {
+        existingSelectionContainer.remove();
+    }
+
+    // 말풍선 스타일을 기본값으로 되돌리기
+    speechBubbleContent.style.transition = 'min-height 0.5s ease-in-out, max-width 0.5s ease-in-out, padding 0.5s ease-in-out';
+    speechBubbleContent.style.minHeight = '';
+    speechBubbleContent.style.maxWidth = '';
+    speechBubbleContent.style.padding = '';
+
+    // 다음 버튼 다시 표시
+    if (nextBtn) {
+        nextBtn.style.display = 'block';
+    }
+}
+
+// 남김없이 먹기/조금 남기기 선택 처리 (중국 스테이지)
+function handleLeftoversSelectionChina(choice) {
+    // 말풍선을 기본 스타일로 되돌리기
+    resetSpeechBubbleToDefaultChina();
+
+    if (choice === 'empty') {
+        // 남김없이 먹기 - 정답
+        console.log('남김없이 먹기 선택 - 중국');
+        
+        // 다음 단계로 진행
+        showSpeechBubbleChina('정답입니다!', 3000);
+    } else if (choice === 'leave') {
+        // 조금 남기기 - 정답 (중국 문화)
+        console.log('조금 남기기 선택 - 중국');
+        
+        // 다음 단계로 진행
+        showSpeechBubbleChina('정답입니다!', 3000);
+    }
+}

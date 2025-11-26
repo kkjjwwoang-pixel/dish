@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>China - World Dining Etiquette</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <!-- 상단 헤더 -->
     <header class="top-header">
@@ -30,104 +32,169 @@
                     <div id="next-buttons-container-china" class="next-buttons-container" style="display: none;"></div>
                     <button id="next-speech-btn-china" class="next-btn" style="display: none;">다음</button>
                 </div>
-                
+
                 <!-- 드롭 존 영역 -->
                 <div class="drop-zone-area">
                     <div class="table-setting">
-                        <!-- 중국 테이블 이미지 -->
-                        <div class="china-table-image">
-                            <img src="cn_table2.png" alt="중국 테이블">
+                        <!-- cn 폴더 이미지들 -->
+                        <div class="cn-chopstick">
+                            <img class="shadow-img" src="resource/cn/cn_chopstick_s.png" alt="젓가락 그림자">
+                            <img src="resource/cn/cn_chopstick.png" alt="젓가락">
                         </div>
-                        <!-- 중국 테이블 이미지 1 (위에 배치) -->
-                        <div class="china-table-image-1">
-                            <img src="cn_table1.png" alt="중국 테이블 1">
+                        <div class="cn-chopstick2">
+                            <img class="shadow-img" src="resource/cn/cn_chopstick2_s.png" alt="젓가락2 그림자">
+                            <img src="resource/cn/cn_chopstick2.png" alt="젓가락2">
                         </div>
-                        <!-- 손 이미지 (드래그 가능) -->
-                        <div class="hand-draggable" id="hand-draggable-china">
-                            <img src="hand.png" alt="손">
+                        <div class="cn-chopstickspot">
+                            <img class="shadow-img" src="resource/cn/cn_chopstickspot_s.png" alt="젓가락받침 그림자">
+                            <img src="resource/cn/cn_chopstickspot.png" alt="젓가락받침">
                         </div>
-                        
-                        <!-- 중국 식기 이미지들 -->
-                        <div class="china-utensil cn-spoon">
-                            <img src="cn_spoon.png" alt="중국 숟가락">
+                        <div class="cn-cup">
+                            <img class="shadow-img" src="resource/cn/cn_cup_s.png" alt="찻잔 그림자">
+                            <img src="resource/cn/cn_cup.png" alt="찻잔">
                         </div>
-                        <div class="china-utensil cn-chopstick">
-                            <img src="cn_chopstick.png" alt="중국 젓가락">
+                        <div class="cn-dish">
+                            <img class="shadow-img" src="resource/cn/cn_dish_s.png" alt="접시 그림자">
+                            <img src="resource/cn/cn_dish.png" alt="접시">
                         </div>
-                        <div class="china-utensil cn-rice">
-                            <img src="cn_rice.png" alt="중국 밥">
+                        <div class="cn-dish2">
+                            <img class="shadow-img" src="resource/cn/cn_dish2_s.png" alt="접시2 그림자">
+                            <img src="resource/cn/cn_dish2.png" alt="접시2">
                         </div>
-                        <div class="china-utensil cn-dish">
-                            <img src="cn_dish.png" alt="중국 그릇">
+                        <div class="cn-soupspoon">
+                            <img src="resource/cn/cn_soupsppon.png" alt="중국 숟가락">
                         </div>
+                        <div class="cn-table1">
+                            <img src="resource/cn/cn_table1.png" alt="테이블1">
+                            <div class="cn-maindish1">
+                                <img class="shadow-img" src="resource/cn/cn_maindish1_s.png" alt="메인요리1 그림자">
+                                <img src="resource/cn/cn_maindish1.png" alt="메인요리1">
+                            </div>
+                            <div class="cn-maindish2">
+                                <img class="shadow-img" src="resource/cn/cn_maindish2_s.png" alt="메인요리2 그림자">
+                                <img src="resource/cn/cn_maindish2.png" alt="메인요리2">
+                            </div>
+                            <div class="cn-maindish3">
+                                <img class="shadow-img" src="resource/cn/cn_maindish3_s.png" alt="메인요리3 그림자">
+                                <img src="resource/cn/cn_maindish3.png" alt="메인요리3">
+                            </div>
+                            <div class="cn-maindish4">
+                                <img class="shadow-img" src="resource/cn/cn_maindish4_s.png" alt="메인요리4 그림자">
+                                <img src="resource/cn/cn_maindish4.png" alt="메인요리4">
+                            </div>
+                            <div class="cn-maindish5">
+                                <img class="shadow-img" src="resource/cn/cn_maindish5_s.png" alt="메인요리5 그림자">
+                                <img src="resource/cn/cn_maindish5.png" alt="메인요리5">
+                                <div class="cn-mainspoon">
+                                    <img src="resource/cn/cn_mainsppon.png" alt="메인 숟가락">
+                                </div>
+                            </div>
+                            <div class="cn-maindish6">
+                                <img class="shadow-img" src="resource/cn/cn_maindish6_s.png" alt="메인요리6 그림자">
+                                <img src="resource/cn/cn_maindish6.png" alt="메인요리6">
+                            </div>
+                        </div>
+                        <div class="cn-table2">
+                            <img src="resource/cn/cn_table2.png" alt="테이블2">
+                        </div>
+                        <div class="cn-tavlemat">
+                            <img class="shadow-img" src="resource/cn/cn_tavlemat_s.png" alt="테이블매트 그림자">
+                            <img src="resource/cn/cn_tavlemat.png" alt="테이블매트">
+                        </div>
+                        <div class="cn-teapot">
+                            <img class="shadow-img" src="resource/cn/cn_teapot_s.png" alt="주전자 그림자">
+                            <img src="resource/cn/cn_teapot.png" alt="주전자">
+                        </div>
+                        <!-- 드롭존 추가 -->
+                        <div id="drop-zone-cn-cup" class="drop-zone cn-cup-drop-zone"></div>
+                        <div id="drop-zone-cn-teapot" class="drop-zone cn-teapot-drop-zone"></div>
                     </div>
                 </div>
-                
+
                 <!-- 젓가락 정보 슬롯 메뉴 -->
                 <div id="chopsticks-info-menu-china" class="info-menu">
                     <div class="info-menu-tab"></div>
                     <button class="info-menu-close" onclick="closeChopsticksInfoMenuChina()">×</button>
-                    <h2 class="info-menu-title">INFO</h2>
-                    <h3>젓가락 사용 예절</h3>
-                    <div class="info-menu-image">
-                        <img src="chopsticks.png" alt="젓가락">
-                    </div>
-                    <div class="info-menu-content">
-                        <p>중국에서는 젓가락을 밥그릇에 꽂으면 안 됩니다. 이는 매우 무례한 행동으로 간주됩니다.</p>
-                        <p>젓가락을 밥그릇에 꽂는 것은 장례식에서 사용하는 방식이므로, 식사 중에는 절대 피해야 합니다.</p>
-                        <p>중국에서는 젓가락을 세로로 놓는 것이 일반적이며, 젓가락 받침에 올려두는 것이 올바른 예절입니다.</p>
+                    <div class="info-menu-scroll-content">
+                        <h2 class="info-menu-title">INFO</h2>
+                        <h3>젓가락 사용 예절</h3>
+                        <div class="info-menu-image">
+                        </div>
+                        <div class="info-menu-content">
+                            <p>중국에서는 젓가락을 밥그릇에 꽂으면 안 됩니다. 이는 매우 무례한 행동으로 간주됩니다.</p>
+                            <p>젓가락을 밥그릇에 꽂는 것은 장례식에서 사용하는 방식이므로, 식사 중에는 절대 피해야 합니다.</p>
+                            <p>중국에서는 젓가락을 세로로 놓는 것이 일반적이며, 젓가락 받침에 올려두는 것이 올바른 예절입니다.</p>
+                        </div>
                     </div>
                 </div>
-                
+
                 <!-- 식기 손으로 들고 먹는 것 정보 메뉴 -->
                 <div id="utensil-holding-info-menu-china" class="info-menu">
                     <div class="info-menu-tab"></div>
                     <button class="info-menu-close" onclick="closeUtensilHoldingInfoMenuChina()">×</button>
-                    <h2 class="info-menu-title">INFO</h2>
-                    <h3>식기 사용 예절</h3>
-                    <div class="info-menu-image">
-                        <img src="spoon.png" alt="숟가락">
-                    </div>
-                    <div class="info-menu-content">
-                        <p>중국에서는 밥그릇을 손으로 들고 먹는 것이 올바른 예절입니다.</p>
-                        <p>밥그릇을 들고 숟가락이나 젓가락으로 먹는 것이 정상적인 식사 방법입니다.</p>
-                        <p>밥그릇을 들지 않고 테이블에 그대로 두고 먹는 것은 예의에 어긋납니다.</p>
+                    <div class="info-menu-scroll-content">
+                        <h2 class="info-menu-title">INFO</h2>
+                        <h3>식기 사용 예절</h3>
+                        <div class="info-menu-image">
+                        </div>
+                        <div class="info-menu-content">
+                            <p>중국에서는 밥그릇을 손으로 들고 먹는 것이 올바른 예절입니다.</p>
+                            <p>밥그릇을 들고 숟가락이나 젓가락으로 먹는 것이 정상적인 식사 방법입니다.</p>
+                            <p>밥그릇을 들지 않고 테이블에 그대로 두고 먹는 것은 예의에 어긋납니다.</p>
+                        </div>
                     </div>
                 </div>
-                
+
                 <!-- 음식 주문 예절 정보 메뉴 -->
                 <div id="food-order-info-menu-china" class="info-menu">
                     <div class="info-menu-tab"></div>
                     <button class="info-menu-close" onclick="closeFoodOrderInfoMenuChina()">×</button>
-                    <h2 class="info-menu-title">INFO</h2>
-                    <h3>음식 주문 예절</h3>
-                    <div class="info-menu-image">
-                        <img src="reciepts.png" alt="주문서">
-                    </div>
-                    <div class="info-menu-content">
-                        <p>중국에서는 보통 음식을 짝수로 시킵니다.</p>
-                        <p>짝수는 행운과 조화를 상징하며, 특히 2, 4, 6, 8개가 선호됩니다.</p>
-                        <p>홀수 개의 음식을 주문하는 것은 피하는 것이 좋습니다.</p>
+                    <div class="info-menu-scroll-content">
+                        <h2 class="info-menu-title">INFO</h2>
+                        <h3>음식 주문 예절</h3>
+                        <div class="info-menu-image">
+                        </div>
+                        <div class="info-menu-content">
+                            <p>중국에서는 보통 음식을 짝수로 시킵니다.</p>
+                            <p>짝수는 행운과 조화를 상징하며, 특히 2, 4, 6, 8개가 선호됩니다.</p>
+                            <p>홀수 개의 음식을 주문하는 것은 피하는 것이 좋습니다.</p>
+                        </div>
                     </div>
                 </div>
-                
+
                 <!-- 테이블 회전 예절 정보 메뉴 -->
                 <div id="table-rotation-info-menu-china" class="info-menu">
                     <div class="info-menu-tab"></div>
                     <button class="info-menu-close" onclick="closeTableRotationInfoMenuChina()">×</button>
-                    <h2 class="info-menu-title">INFO</h2>
-                    <h3>테이블 회전 예절</h3>
-                    <div class="info-menu-image">
-                        <img src="cn_table1.png" alt="테이블">
+                    <div class="info-menu-scroll-content">
+                        <h2 class="info-menu-title">INFO</h2>
+                        <h3>테이블 회전 예절</h3>
+                        <div class="info-menu-image">
+                        </div>
+                        <div class="info-menu-content">
+                            <p>중국에서는 원탁을 시계방향으로 회전시키는 것이 예절입니다.</p>
+                            <p>반시계방향으로 회전시키는 것은 피해야 하며, 이는 불길한 의미로 여겨집니다.</p>
+                            <p>음식을 돌릴 때는 천천히, 시계방향으로 회전시켜야 합니다.</p>
+                        </div>
                     </div>
-                    <div class="info-menu-content">
-                        <p>중국에서는 원탁을 시계방향으로 회전시키는 것이 예절입니다.</p>
-                        <p>반시계방향으로 회전시키는 것은 피해야 하며, 이는 불길한 의미로 여겨집니다.</p>
-                        <p>음식을 돌릴 때는 천천히, 시계방향으로 회전시켜야 합니다.</p>
+                </div>
+
+                <!-- 일반 정보 메뉴 (동적 콘텐츠용) -->
+                <div id="info-menu-china" class="info-menu">
+                    <div class="info-menu-tab"></div>
+                    <button class="info-menu-close" onclick="closeInfoMenuChina()">×</button>
+                    <div class="info-menu-scroll-content">
+                        <h2 class="info-menu-title">INFO</h2>
+                        <h3 id="info-title-china">정보</h3>
+                        <div class="info-menu-image">
+                        </div>
+                        <div class="info-menu-content">
+                            <p id="info-desc-china"></p>
+                        </div>
                     </div>
                 </div>
             </div>
-            
+
         </div>
     </div>
 
@@ -163,14 +230,16 @@
                     <input type="range" id="debug-size-slider" min="0.01" max="500" value="4.17" step="0.1">
                 </label>
                 <label>
-                    회전: <input type="number" id="debug-rotation-value" step="1" style="width: 80px; margin-right: 5px;">°
+                    회전: <input type="number" id="debug-rotation-value" step="1"
+                        style="width: 80px; margin-right: 5px;">°
                     <input type="range" id="debug-rotation-slider" min="-360" max="360" value="0" step="1">
                 </label>
                 <div class="debug-buttons">
                     <button id="debug-save-btn" class="debug-btn">선택 저장</button>
                     <button id="debug-save-all-btn" class="debug-btn">전체 저장</button>
                     <button id="debug-reset-btn" class="debug-btn">초기화</button>
-                    <button id="debug-export-btn" class="debug-btn" style="background: #4CAF50; color: white; margin-top: 5px;">기본값으로 내보내기</button>
+                    <button id="debug-export-btn" class="debug-btn"
+                        style="background: #4CAF50; color: white; margin-top: 5px;">기본값으로 내보내기</button>
                 </div>
             </div>
         </div>
@@ -181,17 +250,13 @@
         <div class="slot-menu-tab"></div>
         <h3>INVENTORY</h3>
         <div class="slot-items">
-            <div class="slot-item" draggable="true" data-item="rice-bowl" data-image="dish.png">
-                <div class="item-icon" style="background-image: url('dish.png');"></div>
-                <span>밥그릇</span>
+            <div class="slot-item disabled" draggable="false" data-item="cup" data-image="resource/cn/cn_cup.png">
+                <div class="item-icon" style="background-image: url('resource/cn/cn_cup.png');"></div>
+                <span>찻잔</span>
             </div>
-            <div class="slot-item" draggable="true" data-item="spoon" data-image="spoon.png">
-                <div class="item-icon" style="background-image: url('spoon.png');"></div>
-                <span>숟가락</span>
-            </div>
-            <div class="slot-item" draggable="true" data-item="chopsticks" data-image="chopsticks.png">
-                <div class="item-icon" style="background-image: url('chopsticks.png');"></div>
-                <span>젓가락</span>
+            <div class="slot-item disabled" draggable="false" data-item="teapot" data-image="resource/cn/cn_teapot.png">
+                <div class="item-icon" style="background-image: url('resource/cn/cn_teapot.png');"></div>
+                <span>주전자</span>
             </div>
         </div>
     </div>
@@ -201,5 +266,7 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>
 
+</html>

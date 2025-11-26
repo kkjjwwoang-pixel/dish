@@ -48,6 +48,8 @@ body {
     background: transparent;
     border: none;
     transition: transform 0.6s ease-out;
+    pointer-events: none;
+    /* 헤더 자체는 클릭 이벤트를 통과시킴 */
 }
 
 #map-screen .top-header {
@@ -64,6 +66,8 @@ body {
     align-items: flex-start;
     justify-content: space-between;
     position: relative;
+    pointer-events: none;
+    /* 헤더 콘텐츠도 기본적으로 클릭 이벤트 통과 */
 }
 
 .header-square {
@@ -77,6 +81,8 @@ body {
     border: none;
     align-self: flex-start;
     border-radius: 0 0 10px 10px;
+    pointer-events: auto;
+    /* 헤더 사각형은 클릭 가능 */
 }
 
 .header-title {
@@ -90,6 +96,8 @@ body {
     top: -6.5px;
     transform: translateX(-50%);
     text-align: center;
+    pointer-events: auto;
+    /* 제목은 클릭 가능 */
 }
 
 .screen {
@@ -304,6 +312,8 @@ body {
     border-radius: 25px;
     cursor: pointer;
     transition: all 0.3s;
+    pointer-events: auto;
+    /* 버튼은 클릭 가능 */
 }
 
 .btn-secondary:hover {
@@ -339,7 +349,7 @@ body {
     background: #B56B41;
     color: white;
     transform: scale(1.05);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .japan-btn {
@@ -358,7 +368,7 @@ body {
     height: 400px;
     background: #fff;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -431,6 +441,8 @@ body {
     font-size: 1.1rem !important;
     z-index: 10001;
     border: none !important;
+    pointer-events: auto;
+    /* 버튼은 클릭 가능 */
 }
 
 .back-to-map-btn:hover {
@@ -446,6 +458,8 @@ body {
     font-size: 1.1rem !important;
     z-index: 10001;
     border: none !important;
+    pointer-events: auto;
+    /* 버튼은 클릭 가능 */
 }
 
 .reset-btn:hover {
@@ -458,7 +472,7 @@ body {
     position: absolute;
     top: 110px;
     left: 50px;
-    z-index: 100;
+    z-index: 20000;
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
     pointer-events: none;
@@ -560,6 +574,8 @@ body {
     width: 100%;
     height: 100%;
     position: relative;
+    transform: translateY(-3%);
+    /* 전체 요소를 위로 조금 이동 */
 }
 
 /* 배경 요소들 */
@@ -615,9 +631,11 @@ body {
 /* 그림자 이미지들 (가장 낮은 z-index) */
 .image-shadow {
     position: absolute;
-    z-index: 0; /* 원본 이미지(z-index: 5)보다 뒤, 배경 위 */
+    z-index: 0;
+    /* 원본 이미지(z-index: 5)보다 뒤, 배경 위 */
     pointer-events: none;
-    opacity: 1; /* 확실히 보이도록 */
+    opacity: 1;
+    /* 확실히 보이도록 */
 }
 
 /* 밥그릇, 수저 그림자는 기본적으로 숨김 (드롭존에 배치되었을 때만 표시) */
@@ -628,7 +646,8 @@ body {
 }
 
 .debug-mode .image-shadow {
-    pointer-events: auto; /* 디버그 모드에서 선택 가능 */
+    pointer-events: auto;
+    /* 디버그 모드에서 선택 가능 */
     cursor: pointer;
     outline: 2px dashed transparent;
     transition: outline 0.2s;
@@ -649,11 +668,13 @@ body {
     height: auto;
     max-width: 100%;
     pointer-events: none;
-    opacity: 1; /* 확실히 보이도록 */
+    opacity: 1;
+    /* 확실히 보이도록 */
 }
 
 .debug-mode .image-shadow img {
-    pointer-events: auto; /* 디버그 모드에서 선택 가능 */
+    pointer-events: auto;
+    /* 디버그 모드에서 선택 가능 */
 }
 
 /* dish2 그림자 (soup-bowl-image와 같은 위치) */
@@ -709,39 +730,42 @@ body {
     pointer-events: auto;
 }
 
-/* 중국 테이블 이미지 */
+/* 중국 테이블 이미지 (배경/고정) */
 .china-table-image {
     position: absolute;
     left: 50%;
-    top: 47%;
+    top: 50%;
     transform: translate(-50%, -50%);
+    width: 100vw;
+    height: 100vh;
     z-index: 1;
     pointer-events: none;
-    width: 100%;
-    height: 100%;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    overflow: visible;
 }
 
 .china-table-image img {
-    display: block;
-    width: auto;
-    height: auto;
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-/* 중국 테이블 이미지 1 (위에 배치) */
+/* 중국 테이블 이미지 1 (회전하는 테이블) */
 .china-table-image-1 {
     position: absolute;
-    left: -35%;
-    top: -189%;
-    transform: translateX(0);
+    top: -40%;
+    /* 화면 상단에 걸치도록 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90vw;
+    /* 큰 테이블 */
+    height: 90vw;
     z-index: 2;
     pointer-events: auto;
     cursor: grab;
+    border-radius: 50%;
     user-select: none;
 }
 
@@ -749,59 +773,567 @@ body {
     cursor: grabbing;
 }
 
-.china-table-image-1 img {
-    display: block;
-    width: auto;
-    height: auto;
-    transform-origin: center center;
-    transition: transform 0.1s ease-out;
+.china-table-image-1 img.rotating-table-bg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
 }
 
-/* 중국 식기 이미지들 */
-.china-utensil {
+/* 회전하는 음식들 */
+.rotating-dish {
     position: absolute;
+    width: 18vw;
+    height: 18vw;
     z-index: 3;
     pointer-events: none;
 }
 
-.debug-mode .china-utensil {
-    pointer-events: auto;
+.rotating-dish img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
-.china-utensil img {
-    display: block;
-    width: auto;
-    height: auto;
+/* 음식 배치 (원형 테이블 위) */
+.dish-1 {
+    top: 15%;
+    left: 20%;
+    transform: rotate(-30deg);
+}
+
+.dish-2 {
+    top: 15%;
+    right: 20%;
+    transform: rotate(30deg);
+}
+
+.dish-3 {
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* 사용자 자리 세팅 (고정) */
+.user-setting-area {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    z-index: 10;
     pointer-events: none;
 }
 
-.debug-mode .china-utensil img {
-    pointer-events: auto;
+.setting-mat {
+    position: absolute;
+    bottom: 5%;
+    left: 15%;
+    width: 35vw;
+    height: 25vw;
+    z-index: 11;
 }
 
-/* 중국 식기 위치 배치 */
-.cn-spoon {
-    left: 70%;
-    top: 40%;
-    transform: translate(-50%, -50%);
+.setting-mat img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform: rotate(-5deg);
+}
+
+.setting-plate {
+    position: absolute;
+    bottom: 10%;
+    left: 20%;
+    width: 18vw;
+    height: 18vw;
+    z-index: 12;
+}
+
+.setting-plate img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.setting-bowl {
+    position: absolute;
+    bottom: 25%;
+    left: 32%;
+    width: 10vw;
+    height: 10vw;
+    z-index: 13;
+}
+
+.setting-bowl img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.setting-spoon {
+    position: absolute;
+    top: 10%;
+    left: 20%;
+    width: 8vw;
+    height: 8vw;
+    z-index: 14;
+    transform: rotate(-45deg);
+}
+
+.setting-spoon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.setting-chopsticks {
+    position: absolute;
+    bottom: 10%;
+    left: 38%;
+    width: 15vw;
+    height: 25vw;
+    z-index: 13;
+    transform: rotate(15deg);
+}
+
+.setting-chopsticks img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.setting-tea-pot {
+    position: absolute;
+    bottom: 15%;
+    right: 25%;
+    width: 18vw;
+    height: 18vw;
+    z-index: 12;
+}
+
+.setting-tea-pot img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.setting-tea-cup {
+    position: absolute;
+    bottom: 10%;
+    right: 40%;
+    width: 8vw;
+    height: 8vw;
+    z-index: 12;
+}
+
+.setting-tea-cup img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* cn 폴더 이미지들 기본 스타일 */
+.cn-dish {
+    position: absolute;
+    left: 21vw;
+    top: 25.2vw;
+    width: 15.5vw;
+    height: 15.5vw;
+    z-index: 3;
+    transform: rotate(0deg);
+}
+
+.cn-dish img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.cn-dish2 {
+    position: absolute;
+    left: 33.3vw;
+    top: 19.2vw;
+    width: 10.3vw;
+    height: 10.3vw;
+    z-index: 3;
+    transform: rotate(0deg);
+}
+
+.cn-dish2 img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.cn-tavlemat {
+    position: absolute;
+    left: 0vw;
+    top: -8vw;
+    width: 63vw;
+    height: 63vw;
+    z-index: -1;
+    transform: rotate(0deg);
+}
+
+.cn-tavlemat img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.cn-teapot {
+    position: absolute;
+    left: 59.1vw;
+    top: 27.0vw;
+    width: 16vw;
+    height: 16vw;
+    z-index: 3;
+    transform: rotate(0deg);
+    display: none;
+    /* Hide initially */
+}
+
+.cn-teapot img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.cn-cup {
+    position: absolute;
+    left: 50.1vw;
+    top: 33.0vw;
+    width: 9vw;
+    height: 9vw;
+    z-index: 3;
+    transform: rotate(0deg);
+    display: none;
+    /* Hide initially */
+}
+
+.cn-cup img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 .cn-chopstick {
-    left: 30%;
-    top: 40%;
+    position: absolute;
+    left: 31vw;
+    top: 30.3vw;
+    width: 16vw;
+    height: 16vw;
+    z-index: 4;
+    transform: rotate(30deg);
+    cursor: grab;
+    pointer-events: auto;
+    transition: opacity 0.2s;
+}
+
+.cn-chopstick:hover {
+    opacity: 0.7;
+}
+
+.cn-chopstick:active {
+    cursor: grabbing;
+}
+
+.cn-chopstick img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.cn-chopstick2 {
+    position: absolute;
+    left: 11.4vw;
+    top: 15.5vw;
+    width: 22vw;
+    height: 22vw;
+    z-index: 3;
+    transform: rotate(32deg);
+    cursor: grab;
+    pointer-events: auto;
+    transition: opacity 0.2s;
+}
+
+.cn-chopstick2:hover {
+    opacity: 0.7;
+}
+
+.cn-chopstick2:active {
+    cursor: grabbing;
+}
+
+.cn-chopstick2 img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.cn-chopstickspot {
+    position: absolute;
+    left: 39.4vw;
+    top: 32.7vw;
+    width: 3.4vw;
+    height: 3.4vw;
+    z-index: 3;
+    transform: rotate(0deg);
+}
+
+.cn-chopstickspot img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.cn-table1 {
+    position: absolute;
+    left: 33.8vw;
+    top: -29.5vw;
+    width: 54.9vw;
+    height: 54.9vw;
+    z-index: 2;
+    transform: rotate(0deg);
+    cursor: grab;
+    pointer-events: auto;
+    user-select: none;
+}
+
+.cn-table1:active {
+    cursor: grabbing;
+}
+
+.cn-table1 img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+.cn-table2 {
+    position: absolute;
+    left: -1.1vw;
+    top: 1.2vw;
+    width: 100vw;
+    height: 100vh;
+    z-index: -2;
+}
+
+.cn-table2 img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.cn-maindish1 {
+    position: absolute;
+    left: 50%;
+    top: 20%;
+    width: 14vw;
+    height: 14vw;
+    z-index: 2;
     transform: translate(-50%, -50%);
 }
 
-.cn-rice {
-    left: 50%;
-    top: 30%;
+.cn-maindish1 img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.cn-maindish2 {
+    position: absolute;
+    left: 75%;
+    top: 35%;
+    width: 14.5vw;
+    height: 14.5vw;
+    z-index: 2;
     transform: translate(-50%, -50%);
 }
 
-.cn-dish {
-    left: 50%;
-    top: 60%;
+.cn-maindish2 img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.cn-maindish3 {
+    position: absolute;
+    left: 75%;
+    top: 65%;
+    width: 18.1vw;
+    height: 18.1vw;
+    z-index: 2;
     transform: translate(-50%, -50%);
+}
+
+.cn-maindish3 img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.cn-maindish4 {
+    position: absolute;
+    left: 50%;
+    top: 80%;
+    width: 12vw;
+    height: 12vw;
+    z-index: 2;
+    transform: translate(-50%, -50%);
+    overflow: visible;
+    /* Ensure drop zone is not clipped */
+}
+
+.cn-maindish4 img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.cn-maindish5 {
+    position: absolute;
+    left: 25%;
+    top: 65%;
+    width: 11.7vw;
+    height: 11.7vw;
+    z-index: 2;
+    transform: translate(-50%, -50%);
+}
+
+.cn-maindish5 img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.cn-maindish6 {
+    position: absolute;
+    left: 25%;
+    top: 35%;
+    width: 10vw;
+    height: 10vw;
+    z-index: 2;
+    transform: translate(-50%, -50%);
+}
+
+.cn-maindish6 img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* China Main Dish Shadows */
+[class^="cn-maindish"] {
+    pointer-events: auto;
+    /* Changed to auto to allow mainspoon interaction */
+}
+
+[class^="cn-maindish"]>img {
+    pointer-events: none;
+    /* Images themselves don't need pointer events */
+}
+
+[class^="cn-maindish"] .shadow-img {
+    position: absolute;
+    left: 0.5vw;
+    top: 0.5vw;
+    z-index: -1;
+    transform: scale(1.02);
+    /* Slightly larger for soft shadow effect */
+}
+
+[class^="cn-maindish"] img:not(.shadow-img) {
+    position: relative;
+    z-index: 1;
+}
+
+/* Other China Stage Shadows */
+.cn-chopstick .shadow-img {
+    position: absolute;
+    left: 7vw;
+    top: 1vw;
+    z-index: -1;
+    transform: scale(1.1);
+}
+
+.cn-chopstick2 .shadow-img {
+    position: absolute;
+    left: 0.5vw;
+    top: 0.5vw;
+    z-index: -1;
+    transform: scale(1.02);
+}
+
+.cn-dish2 .shadow-img {
+    position: absolute;
+    left: 1.2vw;
+    top: 1.2vw;
+    z-index: -1;
+    transform: scale(1.02);
+}
+
+.cn-dish .shadow-img {
+    position: absolute;
+    left: 0.5vw;
+    top: 0.5vw;
+    z-index: -1;
+    transform: scale(0.98);
+}
+
+.cn-chopstickspot .shadow-img,
+.cn-cup .shadow-img,
+.cn-tavlemat .shadow-img,
+.cn-teapot .shadow-img {
+    position: absolute;
+    left: 0.5vw;
+    top: 0.5vw;
+    z-index: -1;
+    transform: scale(1.02);
+}
+
+.cn-chopstick img:not(.shadow-img),
+.cn-chopstick2 img:not(.shadow-img),
+.cn-chopstickspot img:not(.shadow-img),
+.cn-cup img:not(.shadow-img),
+.cn-dish img:not(.shadow-img),
+.cn-dish2 img:not(.shadow-img),
+.cn-tavlemat img:not(.shadow-img),
+.cn-teapot img:not(.shadow-img) {
+    position: relative;
+    z-index: 1;
+}
+
+.cn-mandu {
+    position: absolute;
+    left: 0vw;
+    top: 0vw;
+    width: 3.4vw;
+    height: 3.4vw;
+    z-index: 1;
+}
+
+.cn-mandu img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.cn-mandu2 {
+    position: absolute;
+    left: 0vw;
+    top: 0vw;
+    width: 3.4vw;
+    height: 3.4vw;
+    z-index: 1;
+}
+
+.cn-mandu2 img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 /* 디버그 모드 */
@@ -1039,24 +1571,29 @@ body {
 .japan-dish-4,
 .japan-dish-5 {
     position: absolute;
-    pointer-events: none; /* 드래그 불가능 */
+    pointer-events: none;
+    /* 드래그 불가능 */
 }
 
 .debug-mode .japan-dish-3,
 .debug-mode .japan-dish-4,
 .debug-mode .japan-dish-5 {
-    pointer-events: auto; /* 디버그 모드에서만 선택 가능 */
+    pointer-events: auto;
+    /* 디버그 모드에서만 선택 가능 */
 }
 
 /* spoonspot 이미지 (드래그 불가능, 디버그 모드에서만 수정 가능) */
 .spoonspot-image {
     position: absolute;
-    pointer-events: none; /* 드래그 불가능 */
-    z-index: 0; /* 드랍된 아이템과 드랍존보다 아래 레이어 */
+    pointer-events: none;
+    /* 드래그 불가능 */
+    z-index: 0;
+    /* 드랍된 아이템과 드랍존보다 아래 레이어 */
 }
 
 .debug-mode .spoonspot-image {
-    pointer-events: auto; /* 디버그 모드에서만 선택 가능 */
+    pointer-events: auto;
+    /* 디버그 모드에서만 선택 가능 */
 }
 
 .spoonspot-image img {
@@ -1070,7 +1607,8 @@ body {
 }
 
 .debug-mode .spoonspot-image img {
-    pointer-events: auto; /* 디버그 모드에서 선택 가능 */
+    pointer-events: auto;
+    /* 디버그 모드에서 선택 가능 */
 }
 
 .japan-dish-3 img,
@@ -1222,10 +1760,13 @@ body {
 }
 
 @keyframes fingerPulse {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translate(-50%, -50%) scale(1);
         opacity: 1;
     }
+
     50% {
         transform: translate(-50%, -50%) scale(1.1);
         opacity: 0.8;
@@ -1245,7 +1786,8 @@ body {
     min-width: 50px;
     min-height: 50px;
     overflow: visible;
-    z-index: 5; /* spoonspot-image보다 위에 표시 */
+    z-index: 5;
+    /* spoonspot-image보다 위에 표시 */
 }
 
 .drop-zone.drag-over {
@@ -1309,7 +1851,7 @@ body {
     top: 80px;
     right: 0;
     bottom: 20px;
-    width: 300px;
+    width: 335px;
     background: #F5F3E5;
     border-left: none;
     border-radius: 20px 0 0 20px;
@@ -1321,7 +1863,7 @@ body {
 
 .slot-menu-tab {
     position: fixed;
-    right: 300px;
+    right: 335px;
     top: 120px;
     width: 2vw;
     height: 10vw;
@@ -1336,20 +1878,24 @@ body {
 .info-menu {
     position: fixed;
     top: 80px;
-    right: -300px;
+    right: -335px;
     bottom: 20px;
-    width: 300px;
+    width: 335px;
     background: #F5F3E5;
     border-left: none;
     border-radius: 20px 0 0 20px;
-    padding: 25px;
-    padding-top: 20px;
-    padding-bottom: 30px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
     z-index: 10002;
     display: none;
+}
+
+.info-menu-scroll-content {
     overflow-y: auto;
-    overflow-x: visible;
+    flex: 1;
+    padding: 25px;
+    padding-top: 20px;
+    padding-bottom: 30px;
+    width: 100%;
 }
 
 .info-menu-tab {
@@ -1409,7 +1955,7 @@ body {
     height: 2px;
     display: block;
     background: #905431;
-    box-shadow: 
+    box-shadow:
         0 8px 0 #905431,
         0 16px 0 #905431;
 }
@@ -1426,13 +1972,15 @@ body {
 
 .info-menu-image {
     width: 100%;
-    margin-bottom: 15px;
+    margin-bottom: 25px;
+    margin-top: 15px;
     text-align: center;
     display: flex;
     justify-content: center;
     align-items: center;
     padding-left: 10px;
     position: relative;
+    min-height: 200px;
 }
 
 .info-menu-image::before {
@@ -1451,12 +1999,14 @@ body {
 }
 
 .info-menu-image img {
-    max-width: 35px;
+    max-width: 180px;
+    max-height: 140px;
+    width: auto;
     height: auto;
     border-radius: 8px;
-    transform: rotate(90deg);
     position: relative;
     z-index: 1;
+    transform: none;
 }
 
 .info-menu-content {
@@ -1496,7 +2046,7 @@ body {
     height: 2px;
     display: block;
     background: #905431;
-    box-shadow: 
+    box-shadow:
         0 8px 0 #905431,
         0 16px 0 #905431;
 }
@@ -1523,15 +2073,63 @@ body {
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
+    opacity: 1;
+    pointer-events: auto;
 }
 
-.slot-item:hover {
+/* 비활성화된 슬롯 아이템 스타일 - 최고 우선순위 */
+#slot-menu-japan .slot-item.disabled,
+#slot-menu-china .slot-item.disabled,
+.slot-menu .slot-item.disabled,
+.slot-item.disabled {
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+    opacity: 0.3 !important;
+    filter: grayscale(50%) !important;
+    user-drag: none !important;
+    -webkit-user-drag: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    transform: none !important;
+    box-shadow: none !important;
+    border: 2px dashed transparent !important;
+    transition: none !important;
+}
+
+#slot-menu-japan .slot-item.disabled:hover,
+#slot-menu-japan .slot-item.disabled:active,
+#slot-menu-japan .slot-item.disabled:focus,
+#slot-menu-china .slot-item.disabled:hover,
+#slot-menu-china .slot-item.disabled:active,
+#slot-menu-china .slot-item.disabled:focus,
+.slot-item.disabled:hover,
+.slot-item.disabled:active,
+.slot-item.disabled:focus,
+.slot-item.disabled:hover *,
+.slot-item.disabled:active *,
+.slot-item.disabled:focus * {
+    transform: none !important;
+    box-shadow: none !important;
+    border: 2px dashed transparent !important;
+    opacity: 0.3 !important;
+    filter: grayscale(50%) !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+}
+
+.slot-item.disabled * {
+    pointer-events: none !important;
+    user-drag: none;
+    -webkit-user-drag: none;
+}
+
+.slot-item:not(.disabled):hover {
     transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     border: 2px dashed #905431;
 }
 
-.slot-item:active {
+.slot-item:not(.disabled):active {
     cursor: grabbing;
 }
 
@@ -1549,15 +2147,22 @@ body {
 }
 
 @keyframes pulseHighlight {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.08);
     }
 }
 
 .hand-draggable.highlight-pulse img {
+    animation: pulseHighlight 1.5s ease-in-out infinite;
+}
+
+.cheftable-bill.highlight-pulse img {
     animation: pulseHighlight 1.5s ease-in-out infinite;
 }
 
@@ -1652,7 +2257,7 @@ body {
     top: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
     justify-content: center;
     align-items: center;
 }
@@ -1666,7 +2271,7 @@ body {
     padding: 40px;
     border-radius: 20px;
     text-align: center;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     max-width: 400px;
 }
 
@@ -1682,29 +2287,307 @@ body {
     .title-content h1 {
         font-size: 2.5rem;
     }
-    
+
     .subtitle {
         font-size: 1rem;
     }
-    
+
     .stage-content {
         flex-direction: column;
     }
-    
+
     .slot-menu {
         width: 100%;
         height: 200px;
         border-left: none;
         border-top: 2px solid #e0e0e0;
     }
-    
+
     .slot-items {
         flex-direction: row;
         overflow-x: auto;
     }
-    
+
     .slot-item {
         min-width: 120px;
     }
 }
 
+/* China Stage Drop Zones */
+.cn-cup-drop-zone {
+    position: absolute;
+    left: 50.1vw;
+    top: 33.0vw;
+    width: 9vw;
+    height: 9vw;
+    z-index: 20;
+    transform: rotate(0deg);
+}
+
+.cn-teapot-drop-zone {
+    position: absolute;
+    left: 59.1vw;
+    top: 27.0vw;
+    width: 16vw;
+    height: 16vw;
+    z-index: 20;
+    transform: rotate(0deg);
+}
+
+/* China Stage Inventory Icons */
+#slot-menu-china .slot-item[data-item="cup"] .item-icon {
+    background-image: url('resource/cn/cn_cup.png');
+}
+
+#slot-menu-china .slot-item[data-item="teapot"] .item-icon {
+    background-image: url('resource/cn/cn_teapot.png');
+}
+
+/* China Stage Highlights */
+@keyframes blink-shadow {
+    0% {
+        filter: drop-shadow(0 0 0px white);
+    }
+
+    50% {
+        filter: drop-shadow(0 0 15px white);
+    }
+
+    100% {
+        filter: drop-shadow(0 0 0px white);
+    }
+}
+
+.highlight-blink {
+    animation: blink-shadow 1.5s infinite;
+}
+
+.circular-drop-zone {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    transform: translate(-50%, -50%);
+    border: 3px dashed #F5F3E5;
+    border-radius: 50%;
+    background-color: rgba(200, 200, 200, 0.1);
+    z-index: 20;
+    /* 더 높은 우선순위 */
+    pointer-events: auto;
+    transition: background-color 0.2s, border-color 0.2s, border-width 0.2s, width 0.2s, height 0.2s;
+    box-sizing: content-box;
+    display: none;
+    /* 기본값은 숨김 */
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 1.5vw;
+    font-weight: bold;
+    text-shadow: 0 0 5px black;
+}
+
+.circular-drop-zone.drag-over {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 3px dashed #F5F3E5;
+    border-width: 3px;
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+@keyframes scale-pulse {
+    0% {
+        transform: scale(1) rotate(30deg);
+    }
+
+    50% {
+        transform: scale(1.1) rotate(30deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(30deg);
+    }
+}
+
+.highlight-scale {
+    animation: scale-pulse 1.5s infinite;
+}
+
+.cn-dish .mandu-on-dish {
+    position: absolute;
+    top: -60%;
+    left: 5%;
+    width: 50%;
+    height: auto;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    animation: mandu-appear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.cn-dish .mandu-shadow {
+    position: absolute;
+    top: -50%;
+    left: 51%;
+    width: 50%;
+    height: auto;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+    animation: mandu-appear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes mandu-appear {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes scale-pulse-centered {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+.highlight-scale-centered {
+    animation: scale-pulse-centered 1.5s infinite;
+}
+
+.cn-soupspoon {
+    position: absolute;
+    left: 40.3vw;
+    top: 24.2vw;
+    width: 9vw;
+    height: 9vw;
+    z-index: 3;
+    transform: translate(-50%, -50%);
+    cursor: grab;
+    transition: transform 0.2s ease;
+}
+
+.cn-soupspoon:hover {
+    opacity: 0.85;
+    transform: translate(-50%, -50%);
+}
+
+.cn-soupspoon:active {
+    cursor: grabbing;
+}
+
+.cn-soupspoon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.cn-mainspoon {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 8vw;
+    height: 8vw;
+    z-index: 11;
+    /* 드롭존(z-index:10)보다 위에 */
+    cursor: grab;
+    transition: opacity 0.2s;
+    pointer-events: auto;
+}
+
+.cn-mainspoon:hover {
+    opacity: 0.85;
+}
+
+.cn-mainspoon:active {
+    cursor: grabbing;
+}
+
+.cn-mainspoon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* 테이블 하이라이트 애니메이션 (흰색 그림자 깜빡임) */
+@keyframes blink-shadow {
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 0px rgba(255, 255, 255, 0));
+    }
+
+    50% {
+        filter: drop-shadow(0 0 30px rgba(255, 255, 255, 1));
+    }
+}
+
+.highlight-blink {
+    animation: blink-shadow 1s ease-in-out infinite;
+}
+
+/* mainspoon 하이라이트 시 흰색 그림자만 (크기는 JavaScript에서 제어) */
+@keyframes mainspoon-highlight-shadow {
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 0px rgba(255, 255, 255, 0));
+    }
+
+    50% {
+        filter: drop-shadow(0 0 25px rgba(255, 255, 255, 1));
+    }
+}
+
+.cn-mainspoon.highlight-scale {
+    animation: mainspoon-highlight-shadow 1s ease-in-out infinite;
+    z-index: 15;
+    /* 하이라이트 시 더 위로 */
+}
+
+.cn-mainspoon.highlight-scale img {
+    animation: scale-pulse-mainspoon 1s ease-in-out infinite;
+}
+
+@keyframes scale-pulse-mainspoon {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+}
+
+/* 일반 아이템 (젓가락, 국자) 하이라이트 - 위치 유지하면서 이미지만 애니메이션 */
+.highlight-item {
+    z-index: 15;
+}
+
+.highlight-item img {
+    animation: scale-pulse-item 1.5s ease-in-out infinite;
+}
+
+@keyframes scale-pulse-item {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}

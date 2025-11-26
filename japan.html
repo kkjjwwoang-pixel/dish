@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Japan - World Dining Etiquette</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <!-- 상단 헤더 -->
     <header class="top-header">
@@ -28,63 +30,64 @@
                     </div>
                     <div class="speech-bubble-tail"></div>
                     <button id="next-speech-btn" class="next-btn" style="display: none;">다음</button>
+                    <div id="next-buttons-container" class="next-buttons-container" style="display: none;"></div>
                 </div>
-                
+
                 <!-- 드롭 존 영역 -->
                 <div class="drop-zone-area">
                     <div class="table-setting">
                         <!-- 상단 cheftable -->
-                        <div class="top-cheftable" style="background-image: url('cheftable.png');"></div>
-                        
+                        <div class="top-cheftable" style="background-image: url('resource/jp/cheftable.png');"></div>
+
                         <!-- 테이블 세팅 -->
                         <div class="table-mat"></div>
                         <div class="card-napkin" style="background-image: url('reciepts.png');">
                         </div>
-                        
+
                         <!-- 그림자 이미지들 (가장 낮은 z-index) -->
                         <div class="image-shadow shadow-dish2">
-                            <img src="dish2_s.png" alt="dish2 shadow">
+                            <img src="resource/jp/dish2_s.png" alt="dish2 shadow">
                         </div>
                         <div class="image-shadow shadow-dish3">
-                            <img src="dish3_s.png" alt="dish3 shadow">
+                            <img src="resource/jp/dish3_s.png" alt="dish3 shadow">
                         </div>
                         <div class="image-shadow shadow-dish4">
-                            <img src="dish4_s.png" alt="dish4 shadow">
+                            <img src="resource/jp/dish4_s.png" alt="dish4 shadow">
                         </div>
                         <div class="image-shadow shadow-dish5">
-                            <img src="dish5_s.png" alt="dish5 shadow">
+                            <img src="resource/jp/dish5_s.png" alt="dish5 shadow">
                         </div>
                         <div class="image-shadow shadow-dish">
-                            <img src="dish_s.png" alt="dish shadow">
+                            <img src="resource/jp/dish_s.png" alt="dish shadow">
                         </div>
                         <div class="image-shadow shadow-spoon">
-                            <img src="spoon_s.png" alt="spoon shadow">
+                            <img src="resource/jp/spoon_s.png" alt="spoon shadow">
                         </div>
                         <div class="image-shadow shadow-chopsticks">
-                            <img src="chopsticks_s.png" alt="chopsticks shadow">
+                            <img src="resource/jp/chopsticks_s.png" alt="chopsticks shadow">
                         </div>
-                        
+
                         <!-- 국그릇 (기본 배치 이미지) -->
                         <div class="soup-bowl-image">
-                            <img src="dish2.png" alt="국그릇">
+                            <img src="resource/jp/dish2.png" alt="국그릇">
                         </div>
-                        
+
                         <!-- dish 3, 4, 5 이미지 (드래그 불가능, 디버그 모드에서만 수정 가능) -->
                         <div class="japan-dish-3">
-                            <img src="dish3.png" alt="dish 3">
+                            <img src="resource/jp/dish3.png" alt="dish 3">
                         </div>
                         <div class="japan-dish-4">
-                            <img src="dish4.png" alt="dish 4">
+                            <img src="resource/jp/dish4.png" alt="dish 4">
                         </div>
                         <div class="japan-dish-5">
-                            <img src="dish5.png" alt="dish 5">
+                            <img src="resource/jp/dish5.png" alt="dish 5">
                         </div>
-                        
+
                         <!-- 손 이미지 (드래그 가능) -->
                         <div class="hand-draggable" id="hand-draggable">
-                            <img src="hand.png" alt="손">
+                            <img src="resource/jp/hand.png" alt="손">
                         </div>
-                        
+
                         <!-- 드롭 존들 -->
                         <div class="drop-zone" id="drop-rice-bowl" data-item="rice-bowl">
                             <div class="grab-text" id="grab-text" style="display: none;">집기</div>
@@ -98,10 +101,10 @@
                         </div>
                         <!-- spoonspot 이미지 (드래그 불가) -->
                         <div class="spoonspot-image" id="spoonspot-1">
-                            <img src="spoonstpot.png" alt="spoonspot">
+                            <img src="resource/jp/spoonstpot.png" alt="spoonspot">
                         </div>
                         <div class="spoonspot-image" id="spoonspot-2">
-                            <img src="spoonstpot.png" alt="spoonspot">
+                            <img src="resource/jp/spoonstpot.png" alt="spoonspot">
                         </div>
                         <div class="drop-zone" id="drop-chopsticks" data-item="chopsticks">
                         </div>
@@ -109,36 +112,95 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- 젓가락 정보 슬롯 메뉴 -->
                 <div id="chopsticks-info-menu" class="info-menu">
                     <div class="info-menu-tab"></div>
                     <button class="info-menu-close" onclick="closeChopsticksInfoMenu()">×</button>
-                    <h2 class="info-menu-title">INFO</h2>
-                    <h3>젓가락 사용 예절</h3>
-                    <div class="info-menu-image">
-                        <img src="chopsticks.png" alt="젓가락">
-                    </div>
-                    <div class="info-menu-content">
-                        <p>일본에서는 젓가락을 밥그릇에 꽂으면 안 됩니다. 이는 매우 무례한 행동으로 간주됩니다.</p>
-                        <p>젓가락을 밥그릇에 꽂는 것은 장례식에서 사용하는 방식이므로, 식사 중에는 절대 피해야 합니다.</p>
-                        <p>젓가락은 밥그릇 옆에 가로로 놓거나 젓가락 받침에 올려두는 것이 올바른 예절입니다.</p>
+                    <div class="info-menu-scroll-content">
+                        <h2 class="info-menu-title">INFO</h2>
+                        <h3>젓가락 사용 예절</h3>
+                        <div class="info-menu-image">
+                            <img src="resource/jp/chopsticks.png" alt="젓가락">
+                        </div>
+                        <div class="info-menu-content">
+                            <p>일본에서는 밥을 먹을 때 젓가락을 사용하는 것이 올바른 예절입니다.</p>
+                            <p>숟가락보다는 젓가락을 사용하여 밥을 먹는 것이 일반적이며, 밥그릇을 손으로 들고 젓가락으로 먹는 것이 정상적인 식사 방법입니다.</p>
+                            <p>또한 젓가락을 밥그릇에 꽂으면 안 됩니다. 이는 매우 무례한 행동으로 간주되며, 장례식에서 사용하는 방식이므로 식사 중에는 절대 피해야 합니다.</p>
+                            <p>젓가락은 밥그릇 옆에 가로로 놓거나 젓가락 받침에 올려두는 것이 올바른 예절입니다.</p>
+                        </div>
                     </div>
                 </div>
-                
+
                 <!-- 식기 손으로 들고 먹는 것 정보 메뉴 -->
                 <div id="utensil-holding-info-menu" class="info-menu">
                     <div class="info-menu-tab"></div>
                     <button class="info-menu-close" onclick="closeUtensilHoldingInfoMenu()">×</button>
-                    <h2 class="info-menu-title">INFO</h2>
-                    <h3>식기 사용 예절</h3>
-                    <div class="info-menu-image">
-                        <img src="spoon.png" alt="숟가락">
+                    <div class="info-menu-scroll-content">
+                        <h2 class="info-menu-title">INFO</h2>
+                        <h3>식기 사용 예절</h3>
+                        <div class="info-menu-image">
+                            <img src="resource/jp/spoon.png" alt="숟가락">
+                        </div>
+                        <div class="info-menu-content">
+                            <p>일본에서는 밥그릇을 손으로 들고 먹는 것이 올바른 예절입니다.</p>
+                            <p>밥그릇을 들고 숟가락이나 젓가락으로 먹는 것이 정상적인 식사 방법입니다.</p>
+                            <p>밥그릇을 들지 않고 테이블에 그대로 두고 먹는 것은 예의에 어긋납니다.</p>
+                        </div>
                     </div>
-                    <div class="info-menu-content">
-                        <p>일본에서는 밥그릇을 손으로 들고 먹는 것이 올바른 예절입니다.</p>
-                        <p>밥그릇을 들고 숟가락이나 젓가락으로 먹는 것이 정상적인 식사 방법입니다.</p>
-                        <p>밥그릇을 들지 않고 테이블에 그대로 두고 먹는 것은 예의에 어긋납니다.</p>
+                </div>
+
+                <!-- 전부 먹는게 예의 정보 메뉴 -->
+                <div id="eating-etiquette-info-menu" class="info-menu">
+                    <div class="info-menu-tab"></div>
+                    <button class="info-menu-close" onclick="closeEatingEtiquetteInfoMenu()">×</button>
+                    <div class="info-menu-scroll-content">
+                        <h2 class="info-menu-title">INFO</h2>
+                        <h3>식사 예절</h3>
+                        <div class="info-menu-image">
+                            <img src="resource/jp/dish.png" alt="밥그릇">
+                        </div>
+                        <div class="info-menu-content">
+                            <p>일본에서는 음식을 남김없이 전부 먹는 것이 올바른 예절입니다.</p>
+                            <p>음식을 남기면 주인에게 실례가 되며, 음식에 대한 존중을 보여주지 못하는 행동으로 간주됩니다.</p>
+                            <p>가능한 한 음식을 남김없이 먹는 것이 일본 식사 문화의 기본 예절입니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 식사 후 인사말 정보 메뉴 -->
+                <div id="after-meal-greeting-info-menu" class="info-menu">
+                    <div class="info-menu-tab"></div>
+                    <button class="info-menu-close" onclick="closeAfterMealGreetingInfoMenu()">×</button>
+                    <div class="info-menu-scroll-content">
+                        <h2 class="info-menu-title">INFO</h2>
+                        <h3>식사 후 인사말</h3>
+                        <div class="info-menu-image">
+                            <img src="resource/jp/dish.png" alt="인사말">
+                        </div>
+                        <div class="info-menu-content">
+                            <p>일본에서는 식사를 마친 후 "고치소사마데시타"(ごちそうさまでした)라고 인사하는 것이 올바른 예절입니다.</p>
+                            <p>이는 "잘 먹었습니다"라는 뜻으로, 음식을 준비해 준 사람과 식재료에 대한 감사의 마음을 표현하는 것입니다.</p>
+                            <p>"이타다키마스"(잘 먹겠습니다)는 식사 전에 하는 인사말이며, 식사 후에는 반드시 "고치소사마데시타"라고 해야 합니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 결제 정보 메뉴 -->
+                <div id="payment-info-menu" class="info-menu">
+                    <div class="info-menu-tab"></div>
+                    <button class="info-menu-close" onclick="closePaymentInfoMenu()">×</button>
+                    <div class="info-menu-scroll-content">
+                        <h2 class="info-menu-title">INFO</h2>
+                        <h3>결제 예절</h3>
+                        <div class="info-menu-image">
+                            <img src="resource/jp/bill2.png" alt="결제">
+                        </div>
+                        <div class="info-menu-content">
+                            <p>일본의 많은 식당, 특히 전통적인 가게나 작은 식당에서는 현금 결제만 가능한 경우가 많습니다.</p>
+                            <p>따라서 식사를 하러 갈 때는 항상 충분한 현금을 준비해 두는 것이 좋습니다.</p>
+                            <p>카드가 가능한 곳이라도 현금을 선호하는 경향이 있으니 주의하세요.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -177,14 +239,16 @@
                     <input type="range" id="debug-size-slider" min="0.01" max="500" value="4.17" step="0.1">
                 </label>
                 <label>
-                    회전: <input type="number" id="debug-rotation-value" step="1" style="width: 80px; margin-right: 5px;">°
+                    회전: <input type="number" id="debug-rotation-value" step="1"
+                        style="width: 80px; margin-right: 5px;">°
                     <input type="range" id="debug-rotation-slider" min="-360" max="360" value="0" step="1">
                 </label>
                 <div class="debug-buttons">
                     <button id="debug-save-btn" class="debug-btn">선택 저장</button>
                     <button id="debug-save-all-btn" class="debug-btn">전체 저장</button>
                     <button id="debug-reset-btn" class="debug-btn">초기화</button>
-                    <button id="debug-export-btn" class="debug-btn" style="background: #4CAF50; color: white; margin-top: 5px;">기본값으로 내보내기</button>
+                    <button id="debug-export-btn" class="debug-btn"
+                        style="background: #4CAF50; color: white; margin-top: 5px;">기본값으로 내보내기</button>
                 </div>
             </div>
         </div>
@@ -195,12 +259,12 @@
         <div class="slot-menu-tab"></div>
         <h3>INVENTORY</h3>
         <div class="slot-items">
-            <div class="slot-item" draggable="true" data-item="spoon" data-image="spoon.png">
-                <div class="item-icon" style="background-image: url('spoon.png');"></div>
+            <div class="slot-item" data-item="spoon" data-image="resource/jp/spoon.png">
+                <div class="item-icon" style="background-image: url('resource/jp/spoon.png');"></div>
                 <span>숟가락</span>
             </div>
-            <div class="slot-item" draggable="true" data-item="chopsticks" data-image="chopsticks.png">
-                <div class="item-icon" style="background-image: url('chopsticks.png');"></div>
+            <div class="slot-item" data-item="chopsticks" data-image="resource/jp/chopsticks.png">
+                <div class="item-icon" style="background-image: url('resource/jp/chopsticks.png');"></div>
                 <span>젓가락</span>
             </div>
         </div>
@@ -211,5 +275,5 @@
 
     <script src="script.js"></script>
 </body>
-</html>
 
+</html>
