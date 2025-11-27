@@ -45,7 +45,6 @@ body {
     background: #f5f5f5;
     overflow: hidden;
     height: 100vh;
-    line-height: 1.5;
 }
 
 /* 상단 헤더 */
@@ -285,16 +284,16 @@ body {
 
 .btn-primary {
     padding: 12px 24px !important;
-    padding-top: 14px !important;
+    padding-top: 15px !important;
+    padding-bottom: 12px !important;
     font-size: 1.1rem !important;
     font-family: "GangwonEducationModuche", sans-serif;
     font-weight: bold;
+    line-height: 1.2;
     background: #F5F3E5;
     color: #905431;
     border: none !important;
     border-radius: 25px;
-    line-height: 1.6;
-    vertical-align: middle;
     cursor: pointer;
     transition: transform 0.8s ease-out, opacity 0.8s ease-out, background 0.3s, color 0.3s;
     position: absolute;
@@ -302,6 +301,9 @@ body {
     left: 50px;
     z-index: 2;
     margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #map-screen .btn-primary.map-hide {
@@ -316,19 +318,22 @@ body {
 
 .btn-secondary {
     padding: 10px 20px;
-    padding-top: 12px;
+    padding-top: 13px;
+    padding-bottom: 10px;
     font-size: 1rem;
     font-family: "GangwonEducationModuche", sans-serif;
     font-weight: bold;
+    line-height: 1.2;
     background: #F5F3E5;
     color: #905431;
     border: 2px solid black;
     border-radius: 25px;
-    line-height: 1.6;
-    vertical-align: middle;
     cursor: pointer;
     transition: all 0.3s;
     pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     /* 버튼은 클릭 가능 */
 }
 
@@ -348,20 +353,23 @@ body {
 .map-country-btn {
     position: absolute;
     padding: 12px 24px;
-    padding-top: 14px;
+    padding-top: 15px;
+    padding-bottom: 12px;
     font-size: 1.1rem;
     font-family: "GangwonEducationModuche", sans-serif;
     font-weight: bold;
+    line-height: 1.2;
     background: #F5F3E5;
     color: #905431;
     border: none;
     border-radius: 25px;
-    line-height: 1.6;
-    vertical-align: middle;
     cursor: pointer;
     transition: all 0.3s;
     z-index: 10;
     pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .map-country-btn:hover {
@@ -457,10 +465,16 @@ body {
     margin: 0;
     margin-top: -10px;
     padding: 12px 24px !important;
+    padding-top: 15px !important;
+    padding-bottom: 12px !important;
     font-size: 1.1rem !important;
+    line-height: 1.2;
     z-index: 10001;
     border: none !important;
     pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     /* 버튼은 클릭 가능 */
 }
 
@@ -474,10 +488,16 @@ body {
     margin: 0;
     margin-top: -10px;
     padding: 12px 24px !important;
+    padding-top: 15px !important;
+    padding-bottom: 12px !important;
     font-size: 1.1rem !important;
+    line-height: 1.2;
     z-index: 10001;
     border: none !important;
     pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     /* 버튼은 클릭 가능 */
 }
 
@@ -506,25 +526,27 @@ body {
     border: none;
     border-radius: 18px;
     padding: 32px 40px;
+    padding-top: 35px;
+    padding-bottom: 32px;
     box-shadow: 4px 6px 16px rgba(0, 0, 0, 0.25), 2px 3px 8px rgba(0, 0, 0, 0.15);
     max-width: 840px;
     min-width: 300px;
     width: fit-content;
     position: relative;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     margin-left: 0;
     padding-left: 40px;
 }
 
 .speech-bubble-content p {
     margin: 0;
+    margin-top: 3px;
     color: #905431;
     font-size: 1.32rem;
-    line-height: 1.92;
+    line-height: 1.5;
     white-space: pre-wrap;
     word-wrap: break-word;
-    padding-top: 5px;
-    vertical-align: baseline;
 }
 
 .next-btn {
@@ -533,20 +555,22 @@ body {
     border: none;
     border-radius: 15px;
     padding: 15px 30px;
-    padding-top: 17px;
+    padding-top: 18px;
+    padding-bottom: 15px;
     font-size: 1.2rem;
     font-family: "GangwonEducationModuche", sans-serif;
     font-weight: bold;
+    line-height: 1.2;
     cursor: pointer;
     transition: all 0.3s;
     margin-top: 15px;
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-left: 0;
     margin-right: auto;
     pointer-events: auto;
     box-shadow: 3px 4px 12px rgba(0, 0, 0, 0.2), 1.5px 2px 6px rgba(0, 0, 0, 0.15);
-    line-height: 1.6;
-    vertical-align: middle;
 }
 
 .next-btn:hover {
@@ -1566,6 +1590,9 @@ body {
     font-family: "GangwonEducationModuche", sans-serif;
     font-weight: bold;
     transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .debug-btn:hover {
@@ -2132,11 +2159,10 @@ body {
     margin-bottom: 60px;
     font-size: 1.8rem;
     padding-left: 50px;
-    padding-top: 5px;
     position: relative;
     display: flex;
     align-items: center;
-    line-height: 1.5;
+    line-height: 1;
 }
 
 .slot-menu h3::before {
