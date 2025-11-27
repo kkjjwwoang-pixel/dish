@@ -2132,10 +2132,11 @@ body {
     margin-bottom: 60px;
     font-size: 1.8rem;
     padding-left: 50px;
+    padding-top: 5px;
     position: relative;
     display: flex;
     align-items: center;
-    line-height: 1;
+    line-height: 1.5;
 }
 
 .slot-menu h3::before {
