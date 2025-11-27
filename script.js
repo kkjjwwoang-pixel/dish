@@ -3719,8 +3719,9 @@ function initializeChinaMainspoonDrag() {
     const mainspoon = document.querySelector('.cn-mainspoon');
     if (!mainspoon) return;
 
-    // HTML5 드래그 앤 드롭 사용
-    mainspoon.setAttribute('draggable', 'true');
+    // 초기에는 비활성화 (볶음밥 단계에서 활성화됨)
+    mainspoon.setAttribute('draggable', 'false');
+    mainspoon.style.cursor = 'default';
 
     // 데이터 속성 설정
     mainspoon.setAttribute('data-item-type', 'mainspoon');
@@ -4738,9 +4739,11 @@ function initializeChinaTable1Rotation() {
                                                                                                         table1.classList.add('highlight-blink');
                                                                                                     }
 
-                                                                                                    // mainspoon 하이라이트 (크기 커졌다 작아졌다)
+                                                                                                    // mainspoon 활성화 및 하이라이트 (크기 커졌다 작아졌다)
                                                                                                     const mainspoon = document.querySelector('.cn-mainspoon');
                                                                                                     if (mainspoon) {
+                                                                                                        mainspoon.setAttribute('draggable', 'true');
+                                                                                                        mainspoon.style.cursor = 'grab';
                                                                                                         mainspoon.classList.add('highlight-scale');
                                                                                                     }
 

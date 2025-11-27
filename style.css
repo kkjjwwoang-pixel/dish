@@ -29,6 +29,14 @@
     -ms-user-select: none;
 }
 
+html,
+body {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
 body {
     font-family: '강원교육모두', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: bold;
