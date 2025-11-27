@@ -2188,6 +2188,12 @@ function placeItemInZone(itemType, imageSrc, dropZone, dropZoneId, correctZoneId
                     stopHighlightUtensilsChina();
                 }
             }
+            // 찻잔이나 주전자가 올바르게 배치되면 강조 애니메이션 제거
+            if (itemType === 'cup' || itemType === 'teapot') {
+                if (currentStage === 'china') {
+                    stopHighlightUtensilsChina();
+                }
+            }
 
             // 젓가락이 올바르게 배치된 경우 젓가락 배치 예절 슬라이드 창 표시
             if (itemType === 'chopsticks') {
@@ -2514,20 +2520,26 @@ function stopHighlightUtensils() {
 }
 
 function highlightUtensilsChina() {
-    const cupItem = document.querySelector('#china-stage .slot-item[data-item="cup"]');
-    const teapotItem = document.querySelector('#china-stage .slot-item[data-item="teapot"]');
+    // 슬롯 메뉴에서 찾기 (우선), 없으면 china-stage에서 찾기
+    const cupItem = document.querySelector('#slot-menu-china .slot-item[data-item="cup"]') || document.querySelector('#china-stage .slot-item[data-item="cup"]');
+    const teapotItem = document.querySelector('#slot-menu-china .slot-item[data-item="teapot"]') || document.querySelector('#china-stage .slot-item[data-item="teapot"]');
 
     if (cupItem) {
+        // disabled 클래스가 있으면 제거
+        cupItem.classList.remove('disabled');
         cupItem.classList.add('highlight-pulse');
     }
     if (teapotItem) {
+        // disabled 클래스가 있으면 제거
+        teapotItem.classList.remove('disabled');
         teapotItem.classList.add('highlight-pulse');
     }
 }
 
 function stopHighlightUtensilsChina() {
-    const cupItem = document.querySelector('#china-stage .slot-item[data-item="cup"]');
-    const teapotItem = document.querySelector('#china-stage .slot-item[data-item="teapot"]');
+    // 슬롯 메뉴에서 찾기 (우선), 없으면 china-stage에서 찾기
+    const cupItem = document.querySelector('#slot-menu-china .slot-item[data-item="cup"]') || document.querySelector('#china-stage .slot-item[data-item="cup"]');
+    const teapotItem = document.querySelector('#slot-menu-china .slot-item[data-item="teapot"]') || document.querySelector('#china-stage .slot-item[data-item="teapot"]');
 
     if (cupItem) {
         cupItem.classList.remove('highlight-pulse');
@@ -4283,8 +4295,8 @@ function handleLeftoversSelectionChina(choice) {
                 }, 500);
             });
             // 차 마시기 단계 시작: 인벤토리의 차와 주전자 활성화
-            const cupItem = document.querySelector('.slot-item[data-item="cup"]');
-            const teapotItem = document.querySelector('.slot-item[data-item="teapot"]');
+            const cupItem = document.querySelector('#slot-menu-china .slot-item[data-item="cup"]') || document.querySelector('#china-stage .slot-item[data-item="cup"]');
+            const teapotItem = document.querySelector('#slot-menu-china .slot-item[data-item="teapot"]') || document.querySelector('#china-stage .slot-item[data-item="teapot"]');
 
             if (cupItem) {
                 cupItem.classList.remove('disabled');
@@ -4294,6 +4306,10 @@ function handleLeftoversSelectionChina(choice) {
                 teapotItem.classList.remove('disabled');
                 teapotItem.setAttribute('draggable', 'true');
             }
+            
+            // 찻잔과 주전자 하이라이팅 (일본 스테이지 수저 하이라이팅과 동일한 스타일)
+            // disabled 클래스를 제거한 후에 하이라이팅 추가
+            highlightUtensilsChina();
 
             // 드롭존 활성화 (보이도록 설정)
             const cupDropZone = document.getElementById('drop-zone-cn-cup');
@@ -6843,6 +6859,12 @@ const speechSequenceChina = [
                                                                 table1.style.pointerEvents = 'auto';
                                                                 table1.style.cursor = 'grab';
                                                             }
+                                                        }
+                                                        
+                                                        // 테이블1 하이라이트 (하얀색 그림자 깜빡임)
+                                                        const table1 = document.querySelector('.cn-table1');
+                                                        if (table1) {
+                                                            table1.classList.add('highlight-blink');
                                                         }
                                                     }
                                                 }, 30);
