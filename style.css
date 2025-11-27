@@ -1000,16 +1000,90 @@ body {
     object-fit: contain;
 }
 
+/* 주전자 기울임 애니메이션 */
+@keyframes teapot-pour {
+    0% {
+        transform: rotate(0deg) translateX(-1.5vw) translateY(-1.5vw);
+        transform-origin: center center;
+    }
+    50% {
+        transform: rotate(-25deg) translateX(-12.5vw) translateY(-12.5vw);
+        transform-origin: center center;
+    }
+    100% {
+        transform: rotate(-25deg) translateX(-10.5vw) translateY(-12.5vw);
+        transform-origin: center center;
+    }
+}
+
+.cn-teapot.teapot-pouring {
+    animation: teapot-pour 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.dropped-item.teapot-pouring {
+    animation: teapot-pour 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* friendcup용 주전자 기울임 애니메이션 */
+@keyframes teapot-pour-friendcup {
+    0% {
+        transform: rotate(0deg) translateX(0) translateY(0);
+        transform-origin: center center;
+    }
+    50% {
+        transform: rotate(-25deg) translateX(-35vw) translateY(-46vw);
+        transform-origin: center center;
+    }
+    100% {
+        transform: rotate(-25deg) translateX(-35vw) translateY(-46vw);
+        transform-origin: center center;
+    }
+}
+
+.cn-teapot.teapot-pouring-friendcup,
+.dropped-item.teapot-pouring-friendcup {
+    animation: teapot-pour-friendcup 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    z-index: 102 !important; /* friendcup(z-index: 100)보다 위에 표시 */
+}
+
+/* 친구 찻잔 등장 애니메이션 */
+.friend-cup-china {
+    position: absolute;
+    left: 9vw;
+    top: 14vw;
+    width: 11vw;
+    height: 11vw;
+    z-index: 100;
+    opacity: 0;
+    transform: translateY(-20px) scale(0.8);
+    transition: opacity 0.5s ease-out, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+}
+
+.friend-cup-china.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.friend-cup-china img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    position: relative;
+    z-index: -1; /* 주전자(cn_teapot, cn_teapot_a)보다 아래에 표시 */
+}
+
 .cn-cup {
     position: absolute;
-    left: 50.1vw;
-    top: 33.0vw;
+    left: 50.1vw !important;
+    top: 33.0vw !important;
     width: 9vw;
     height: 9vw;
     z-index: 3;
     transform: rotate(0deg);
     display: none;
     /* Hide initially */
+    /* cn_cup 이미지 위치는 드랍존과 독립적으로 설정 */
 }
 
 .cn-cup img {
@@ -1110,6 +1184,10 @@ body {
     height: 100%;
     object-fit: contain;
     pointer-events: none;
+}
+
+.cn-table1.highlight-blink img {
+    filter: drop-shadow(0 0 0px rgba(255, 255, 255, 0.8));
 }
 
 .cn-table2 {
@@ -2174,6 +2252,10 @@ body {
     animation: pulseHighlight 1.5s ease-in-out infinite;
 }
 
+.dropped-item.highlight-pulse img {
+    animation: pulseHighlight 1.5s ease-in-out infinite;
+}
+
 .item-icon {
     width: 96px;
     height: 96px;
@@ -2316,12 +2398,13 @@ body {
 /* China Stage Drop Zones */
 .cn-cup-drop-zone {
     position: absolute;
-    left: 50.1vw;
-    top: 33.0vw;
-    width: 9vw;
-    height: 9vw;
+    left: 44.5vw !important;
+    top: 33.0vw !important;
+    width: 8vw;
+    height: 8vw;
     z-index: 20;
     transform: rotate(0deg);
+    /* 드랍존 위치는 cn_cup 이미지와 독립적으로 설정 */
 }
 
 .cn-teapot-drop-zone {
@@ -2346,15 +2429,15 @@ body {
 /* China Stage Highlights */
 @keyframes blink-shadow {
     0% {
-        filter: drop-shadow(0 0 0px white);
+        filter: drop-shadow(0 0 0px rgba(255, 255, 255, 0.8));
     }
 
     50% {
-        filter: drop-shadow(0 0 15px white);
+        filter: drop-shadow(0 0 25px rgba(255, 255, 255, 1)) drop-shadow(0 0 40px rgba(255, 255, 255, 0.8));
     }
 
     100% {
-        filter: drop-shadow(0 0 0px white);
+        filter: drop-shadow(0 0 0px rgba(255, 255, 255, 0.8));
     }
 }
 
@@ -2410,6 +2493,25 @@ body {
 
 .highlight-scale {
     animation: scale-pulse 1.5s infinite;
+}
+
+/* 드랍존 하이라이팅 애니메이션 (회전 없이 크기만) */
+@keyframes drop-zone-scale-pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.drop-zone.highlight-scale {
+    animation: drop-zone-scale-pulse 1.5s infinite;
 }
 
 .cn-dish .mandu-on-dish {
@@ -2524,11 +2626,11 @@ body {
 
     0%,
     100% {
-        filter: drop-shadow(0 0 0px rgba(255, 255, 255, 0));
+        filter: drop-shadow(0 0 0px rgba(255, 255, 255, 0.8));
     }
 
     50% {
-        filter: drop-shadow(0 0 30px rgba(255, 255, 255, 1));
+        filter: drop-shadow(0 0 30px rgba(255, 255, 255, 1)) drop-shadow(0 0 50px rgba(255, 255, 255, 0.8));
     }
 }
 
