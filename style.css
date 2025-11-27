@@ -1751,7 +1751,7 @@ body {
     top: 0;
     right: 0;
     width: calc(100% - 80px);
-    height: calc(100% - 80px);
+    height: calc(100% - 200px);
     display: flex;
     border: 3px dashed #F5F3E5;
     background: rgba(200, 200, 200, 0.1);

@@ -7323,7 +7323,25 @@ function expandSpeechBubbleForDishSelection() {
 
 // 선택 버튼 클릭 처리
 function handleDishSelection(choice) {
-    // 확장된 말풍선을 기본 스타일로 되돌리기
+    if (choice === 'leave') {
+        // 조금 남기기 처리
+        console.log('조금 남기기 선택');
+        
+        // 말풍선은 그대로 두고 텍스트만 변경 (버튼과 크기 유지)
+        const speechBubble = document.getElementById('speech-bubble');
+        const speechText = document.getElementById('speech-text');
+        
+        if (speechBubble && speechText) {
+            // 텍스트만 변경
+            speechText.textContent = '...입에 안 맞으셨나요?';
+        }
+        
+        // 인포 메뉴 표시
+        showEatingEtiquetteInfoMenu();
+        return; // 여기서 종료하여 아래 코드 실행 방지
+    }
+
+    // 남김없이 먹기 선택 시에만 말풍선을 기본 스타일로 되돌리기
     resetSpeechBubbleToDefault();
 
     // 사이드 먹기 단계는 이미 grab4 표시 시점에 전환되었으므로 여기서는 선택 처리만
@@ -7341,11 +7359,6 @@ function handleDishSelection(choice) {
         setTimeout(() => {
             showSpeechBubble('다 드셨다니 입에 맞으셨나 보네요!', -1, true, showAfterMealSpeechSelection, null, '아무렴요', null);
         }, 500);
-    } else if (choice === 'leave') {
-        // 조금 남기기 처리
-        console.log('조금 남기기 선택');
-        // 인포 메뉴 표시
-        showEatingEtiquetteInfoMenu();
     }
 }
 
