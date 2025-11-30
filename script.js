@@ -2,7 +2,8 @@
 const BUTTON_TEXTS = {
     next: '고마워',
     nextJapan: '고마워',
-    nextChina: '고마워'
+    nextChina: '고마워',
+    nextFrance: '고마워'
 };
 
 // 화면 전환 관리
@@ -10,7 +11,8 @@ const screens = {
     title: document.getElementById('title-screen'),
     map: document.getElementById('map-screen'),
     japan: document.getElementById('japan-stage'),
-    china: document.getElementById('china-stage')
+    china: document.getElementById('china-stage'),
+    france: document.getElementById('france-stage')
 };
 
 // vw 단위 변환 함수
@@ -144,8 +146,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (document.getElementById('china-stage')) {
         const slotMenuChina = document.getElementById('slot-menu-china');
-        if (slotMenuChina) slotMenuChina.style.display = 'block';
+        if (slotMenuChina) slotMenuChina.style.display = 'flex';
         initializeChinaStage();
+    }
+
+    if (document.getElementById('france-stage')) {
+        const slotMenuFrance = document.getElementById('slot-menu-france');
+        if (slotMenuFrance) slotMenuFrance.style.display = 'flex';
+        initializeFranceStage();
     }
 });
 
@@ -243,18 +251,22 @@ function showScreen(screenName) {
     // 헤더 버튼 표시/숨김 처리
     const backToMapJapan = document.getElementById('back-to-map-japan');
     const backToMapChina = document.getElementById('back-to-map-china');
+    const backToMapFrance = document.getElementById('back-to-map-france');
     const resetStageBtn = document.getElementById('reset-stage-btn');
 
     if (backToMapJapan) backToMapJapan.style.display = 'none';
     if (backToMapChina) backToMapChina.style.display = 'none';
+    if (backToMapFrance) backToMapFrance.style.display = 'none';
     if (resetStageBtn) resetStageBtn.style.display = 'none';
 
     // 슬롯 메뉴 표시/숨김 처리
     const slotMenuJapan = document.getElementById('slot-menu-japan');
     const slotMenuChina = document.getElementById('slot-menu-china');
+    const slotMenuFrance = document.getElementById('slot-menu-france');
 
     if (slotMenuJapan) slotMenuJapan.style.display = 'none';
     if (slotMenuChina) slotMenuChina.style.display = 'none';
+    if (slotMenuFrance) slotMenuFrance.style.display = 'none';
 
     // 헤더 제목 업데이트
     const headerTitle = document.querySelector('.header-title');
@@ -263,6 +275,8 @@ function showScreen(screenName) {
             headerTitle.textContent = 'Japan';
         } else if (screenName === 'china') {
             headerTitle.textContent = 'China';
+        } else if (screenName === 'france') {
+            headerTitle.textContent = 'France';
         } else if (screenName === 'map') {
             headerTitle.textContent = 'World Map';
         } else {
@@ -322,11 +336,15 @@ function showScreen(screenName) {
         // 스테이지에 따라 해당 버튼 표시
         if (screenName === 'japan' && backToMapJapan) {
             backToMapJapan.style.display = 'block';
-            if (slotMenuJapan) slotMenuJapan.style.display = 'block';
+            if (slotMenuJapan) slotMenuJapan.style.display = 'flex';
             if (resetStageBtn) resetStageBtn.style.display = 'block';
         } else if (screenName === 'china' && backToMapChina) {
             backToMapChina.style.display = 'block';
-            if (slotMenuChina) slotMenuChina.style.display = 'block';
+            if (slotMenuChina) slotMenuChina.style.display = 'flex';
+            if (resetStageBtn) resetStageBtn.style.display = 'block';
+        } else if (screenName === 'france' && backToMapFrance) {
+            backToMapFrance.style.display = 'block';
+            if (slotMenuFrance) slotMenuFrance.style.display = 'flex';
             if (resetStageBtn) resetStageBtn.style.display = 'block';
         }
     }
@@ -369,6 +387,14 @@ const chinaMapBtn = document.getElementById('china-map-btn');
 if (chinaMapBtn) {
     chinaMapBtn.addEventListener('click', () => {
         window.location.href = 'china.html';
+    });
+}
+
+// 맵 이미지 위 프랑스 버튼
+const franceMapBtn = document.getElementById('france-map-btn');
+if (franceMapBtn) {
+    franceMapBtn.addEventListener('click', () => {
+        window.location.href = 'france.html';
     });
 }
 
@@ -521,6 +547,42 @@ function resetStage(stageName) {
             // 배치된 아이템 초기화
             Object.keys(placedItems).forEach(key => delete placedItems[key]);
         }
+    } else if (stageName === 'france') {
+        // 프랑스 스테이지 완전 초기화
+        const franceStage = document.getElementById('france-stage');
+        if (franceStage) {
+            // 모든 드롭 존 초기화
+            franceStage.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.classList.remove('correct', 'filled', 'drag-over');
+                const existingItem = zone.querySelector('.dropped-item');
+                if (existingItem) {
+                    existingItem.remove();
+                }
+            });
+
+            // 말풍선 숨기기
+            const speechBubble = document.getElementById('speech-bubble-france');
+            if (speechBubble) {
+                speechBubble.classList.remove('show');
+            }
+
+            // 정보 메뉴 닫기
+            franceStage.querySelectorAll('.info-menu').forEach(menu => {
+                menu.style.display = 'none';
+            });
+
+            // 타이핑 인터벌 정리
+            if (currentTypingInterval) {
+                clearInterval(currentTypingInterval);
+                currentTypingInterval = null;
+            }
+
+            // 콜백 초기화
+            onNextCallback = null;
+
+            // 배치된 아이템 초기화
+            Object.keys(placedItems).forEach(key => delete placedItems[key]);
+        }
     }
 }
 
@@ -539,12 +601,20 @@ if (backToMapChina) {
     });
 }
 
+const backToMapFrance = document.getElementById('back-to-map-france');
+if (backToMapFrance) {
+    backToMapFrance.addEventListener('click', () => {
+        window.location.href = 'index.html?screen=map';
+    });
+}
+
 // 다시하기 버튼 클릭 이벤트
 const resetStageBtn = document.getElementById('reset-stage-btn');
 if (resetStageBtn) {
     resetStageBtn.addEventListener('click', () => {
         const japanStage = document.getElementById('japan-stage');
         const chinaStage = document.getElementById('china-stage');
+        const franceStage = document.getElementById('france-stage');
 
         if (japanStage && japanStage.classList.contains('active')) {
             resetStage('japan');
@@ -552,6 +622,9 @@ if (resetStageBtn) {
         } else if (chinaStage && chinaStage.classList.contains('active')) {
             resetStage('china');
             initializeChinaStage();
+        } else if (franceStage && franceStage.classList.contains('active')) {
+            resetStage('france');
+            initializeFranceStage();
         }
     });
 }
@@ -2554,14 +2627,15 @@ function showChopsticksInfoMenu() {
     const infoMenu = document.getElementById('chopsticks-info-menu');
     if (!infoMenu) return;
 
-    // 오른쪽에서 등장하는 애니메이션
+    // 오른쪽에서 왼쪽으로 등장하는 애니메이션
     infoMenu.style.display = 'block';
-    infoMenu.style.right = '-335px'; // 초기 위치 (화면 밖)
+    infoMenu.style.top = '300px';
+    infoMenu.style.right = '-25vw'; // 초기 위치 (화면 밖 오른쪽)
 
     // 애니메이션 시작
     setTimeout(() => {
         infoMenu.style.transition = 'right 0.5s ease-out';
-        infoMenu.style.right = '0';
+        infoMenu.style.right = '20px';
     }, 50);
 }
 
@@ -2572,7 +2646,7 @@ function closeChopsticksInfoMenu() {
 
     // 오른쪽으로 사라지는 애니메이션
     infoMenu.style.transition = 'right 0.5s ease-in';
-    infoMenu.style.right = '-335px';
+    infoMenu.style.right = '-25vw';
 
     // 애니메이션 완료 후 숨김
     setTimeout(() => {
@@ -2585,14 +2659,15 @@ function showUtensilHoldingInfoMenu() {
     const infoMenu = document.getElementById('utensil-holding-info-menu');
     if (!infoMenu) return;
 
-    // 오른쪽에서 등장하는 애니메이션
+    // 오른쪽에서 왼쪽으로 등장하는 애니메이션
     infoMenu.style.display = 'block';
-    infoMenu.style.right = '-335px'; // 초기 위치 (화면 밖)
+    infoMenu.style.top = '300px';
+    infoMenu.style.right = '-25vw'; // 초기 위치 (화면 밖 오른쪽)
 
     // 애니메이션 시작
     setTimeout(() => {
         infoMenu.style.transition = 'right 0.5s ease-out';
-        infoMenu.style.right = '0';
+        infoMenu.style.right = '20px';
     }, 50);
 }
 
@@ -2603,7 +2678,7 @@ function closeUtensilHoldingInfoMenu() {
 
     // 오른쪽으로 사라지는 애니메이션
     infoMenu.style.transition = 'right 0.5s ease-in';
-    infoMenu.style.right = '-335px';
+    infoMenu.style.right = '-25vw';
 
     // 애니메이션 완료 후 숨김
     setTimeout(() => {
@@ -2616,14 +2691,15 @@ function showEatingEtiquetteInfoMenu() {
     const infoMenu = document.getElementById('eating-etiquette-info-menu');
     if (!infoMenu) return;
 
-    // 오른쪽에서 등장하는 애니메이션
+    // 오른쪽에서 왼쪽으로 등장하는 애니메이션
     infoMenu.style.display = 'block';
-    infoMenu.style.right = '-335px'; // 초기 위치 (화면 밖)
+    infoMenu.style.top = '300px';
+    infoMenu.style.right = '-25vw'; // 초기 위치 (화면 밖 오른쪽)
 
     // 애니메이션 시작
     setTimeout(() => {
         infoMenu.style.transition = 'right 0.5s ease-out';
-        infoMenu.style.right = '0';
+        infoMenu.style.right = '20px';
     }, 50);
 }
 
@@ -2634,7 +2710,7 @@ function closeEatingEtiquetteInfoMenu() {
 
     // 오른쪽으로 사라지는 애니메이션
     infoMenu.style.transition = 'right 0.5s ease-in';
-    infoMenu.style.right = '-335px';
+    infoMenu.style.right = '-25vw';
 
     // 애니메이션 완료 후 숨김
     setTimeout(() => {
@@ -3938,15 +4014,17 @@ function initializeChinaMainspoonDrag() {
                             infoTitle.textContent = '개인 식기 사용';
                             infoDesc.innerHTML = '내 앞에 있는 음식은<br>개인 식기로 먹어야 합니다.<br>공용 젓가락이 아닌<br>개인 젓가락을 사용하세요.';
                             infoMenu.style.display = 'block';
-                            infoMenu.style.right = '-335px';
+                            infoMenu.style.top = '300px';
+                            infoMenu.style.right = '-25vw';
                             setTimeout(() => {
                                 infoMenu.style.transition = 'right 0.5s ease-out';
-                                infoMenu.style.right = '0';
+                                infoMenu.style.right = '20px';
                             }, 50);
 
                             // 7초 후 자동으로 닫기
                             setTimeout(() => {
-                                infoMenu.style.right = '-335px';
+                                infoMenu.style.transition = 'right 0.5s ease-in';
+                                infoMenu.style.right = '-25vw';
                                 setTimeout(() => {
                                     infoMenu.style.display = 'none';
                                 }, 500);
@@ -4025,10 +4103,11 @@ function initializeChinaSoupspoonDrag() {
             infoTitle.textContent = '숟가락 사용 금지';
             infoDesc.innerHTML = '중국에서는 밥을 먹을 때<br>숟가락을 사용하지 않습니다.<br>젓가락으로 먹어야 합니다.';
             infoMenu.style.display = 'block';
-            infoMenu.style.right = '-335px';
+            infoMenu.style.top = '300px';
+            infoMenu.style.right = '-25vw';
             setTimeout(() => {
                 infoMenu.style.transition = 'right 0.5s ease-out';
-                infoMenu.style.right = '0';
+                infoMenu.style.right = '20px';
             }, 50);
         }
 
@@ -4176,10 +4255,8 @@ function resetSpeechBubbleToDefaultChina() {
     if (!speechBubble || !speechBubbleContent) return;
 
     // 확장된 버튼 컨테이너 제거
-    const existingSelectionContainer = speechBubbleContent.querySelector('.leftovers-selection-buttons');
-    if (existingSelectionContainer) {
-        existingSelectionContainer.remove();
-    }
+    const existingSelectionContainer = speechBubbleContent.querySelectorAll('.leftovers-selection-buttons, .calculation-selection-buttons');
+    existingSelectionContainer.forEach(container => container.remove());
 
     // 말풍선 스타일을 기본값으로 되돌리기
     speechBubbleContent.style.transition = 'min-height 0.5s ease-in-out, max-width 0.5s ease-in-out, padding 0.5s ease-in-out';
@@ -4199,13 +4276,19 @@ function handleLeftoversSelectionChina(choice) {
         // 남김없이 먹기 - 오답 (중국은 조금 남겨야 함)
         console.log('남김없이 먹기 선택 - 중국 (오답)');
 
-        // 말풍선은 그대로 두고 텍스트만 변경 (버튼과 크기 유지)
-        const speechText = document.getElementById('speech-text-china');
+        // 기존 말풍선을 기본 스타일로 되돌리기
+        resetSpeechBubbleToDefaultChina();
         
-        if (speechText) {
-            // 텍스트만 변경
-            speechText.textContent = '음식이 모자랐어...?';
-        }
+        // 새로운 말풍선 표시: "음식이 모자랐어...?"
+        // 다시하기 버튼 클릭 시 이전 말풍선으로 돌아가기
+        showSpeechBubbleChina('음식이 모자랐어...?', -1, true, () => {
+            // 다시하기 버튼 클릭 시 이전 말풍선으로 돌아가기
+            showSpeechBubbleChina('더 먹을거지?', -1, false, null, () => {
+                setTimeout(() => {
+                    expandSpeechBubbleForLeftoversSelectionChina();
+                }, 100);
+            }, null, null);
+        }, null, '다시하기', null);
         
         // 인포 메뉴 표시
         const infoMenu = document.getElementById('info-menu-china');
@@ -4215,17 +4298,18 @@ function handleLeftoversSelectionChina(choice) {
         if (infoMenu && infoTitle && infoDesc) {
             infoTitle.textContent = '식사 예절';
             infoDesc.innerHTML = '중국에서는 음식을 남기면 부족했다는 뜻으로<br>여겨져서 실례가 됩니다.<br><br>음식을 남기면 주인이 충분히 대접하지 못했다는<br>의미로 받아들여질 수 있습니다.<br><br>따라서 중국에서는 음식을 조금 남기는 것이<br>올바른 예절입니다.';
-            infoMenu.style.display = 'block';
-            infoMenu.style.right = '-335px';
+            infoMenu.style.display = 'flex';
+            infoMenu.style.top = '300px';
+            infoMenu.style.right = '-25vw';
             setTimeout(() => {
                 infoMenu.style.transition = 'right 0.5s ease-out';
-                infoMenu.style.right = '0';
+                infoMenu.style.right = '20px';
             }, 50);
             
             // 7초 후 자동으로 닫기
             setTimeout(() => {
                 infoMenu.style.transition = 'right 0.5s ease-in';
-                infoMenu.style.right = '-335px';
+                infoMenu.style.right = '-25vw';
                 setTimeout(() => {
                     infoMenu.style.display = 'none';
                 }, 500); // 애니메이션 완료 후 숨김
@@ -4247,15 +4331,17 @@ function handleLeftoversSelectionChina(choice) {
         infoTitle.textContent = '식사 예절';
         infoDesc.innerHTML = '중국에서는 음식을 조금 남기는 것이<br>올바른 예절입니다.<br><br>음식을 조금 남기면 주인이 충분히<br>대접했다는 의미로 받아들입니다.<br><br>반대로 음식을 전부 다 먹으면<br>더 달라는 신호로 여겨질 수 있습니다.';
         infoMenu.style.display = 'block';
-        infoMenu.style.right = '-335px';
+        infoMenu.style.top = '300px';
+        infoMenu.style.right = '-25vw';
         setTimeout(() => {
             infoMenu.style.transition = 'right 0.5s ease-out';
-            infoMenu.style.right = '0';
+            infoMenu.style.right = '20px';
         }, 50);
 
         // 7초 후 자동으로 닫기
         setTimeout(() => {
-            infoMenu.style.right = '-335px';
+            infoMenu.style.transition = 'right 0.5s ease-in';
+            infoMenu.style.right = '-25vw';
             setTimeout(() => {
                 infoMenu.style.display = 'none';
             }, 500); // 애니메이션 완료 후 숨김
@@ -4288,7 +4374,7 @@ function handleLeftoversSelectionChina(choice) {
             allInfoMenus.forEach(menu => {
                 // 슬라이드 아웃 애니메이션
                 menu.style.transition = 'right 0.5s ease-out';
-                menu.style.right = '-335px';
+                menu.style.right = '-250px';
 
                 // 애니메이션 완료 후 완전히 숨김
                 setTimeout(() => {
@@ -4643,10 +4729,11 @@ function initializeChinaTable1Rotation() {
                                                                                 infoTitle.textContent = '개인 젓가락 사용';
                                                                                 infoDesc.innerHTML = '음식을 덜 때가 아닌<br>먹을 때는<br>개인 젓가락을 사용해야 합니다.';
                                                                                 infoMenu.style.display = 'block';
-                                                                                infoMenu.style.right = '-335px';
+                                                                                infoMenu.style.top = '300px';
+                                                                                infoMenu.style.right = '-25vw';
                                                                                 setTimeout(() => {
                                                                                     infoMenu.style.transition = 'right 0.5s ease-out';
-                                                                                    infoMenu.style.right = '0';
+                                                                                    infoMenu.style.right = '20px';
                                                                                 }, 50);
                                                                             }
 
@@ -6364,11 +6451,18 @@ function showSpeechBubbleChina(text, duration = 3000, showNextButton = false, ne
 
         // 다음 버튼 숨기기 (타이핑 중에는 숨김)
         if (nextBtn) {
+            // 다시하기 버튼인 경우 아이콘으로 표시
+            if (buttonText === '다시하기') {
+                nextBtn.textContent = '';
+                nextBtn.classList.add('rewind-btn');
+            } else {
+                nextBtn.classList.remove('rewind-btn');
             // 버튼 텍스트 설정 (지정된 텍스트가 있으면 사용, 없으면 기본값)
             if (buttonText) {
                 nextBtn.textContent = buttonText;
             } else {
                 nextBtn.textContent = BUTTON_TEXTS.nextChina;
+                }
             }
             nextBtn.style.display = 'none';
         }
@@ -6398,6 +6492,20 @@ function showSpeechBubbleChina(text, duration = 3000, showNextButton = false, ne
             // 타이핑 완료 후 다음 버튼 표시
             if (showNextButton && nextBtn && !buttons) {
                 nextBtn.style.display = 'block';
+                
+                // 다시하기 버튼인 경우 아이콘으로 표시
+                if (buttonText === '다시하기') {
+                    nextBtn.textContent = '';
+                    nextBtn.classList.add('rewind-btn');
+                } else {
+                    nextBtn.classList.remove('rewind-btn');
+                    if (buttonText) {
+                        nextBtn.textContent = buttonText;
+                    } else {
+                        nextBtn.textContent = BUTTON_TEXTS.nextChina;
+                    }
+                }
+                
                 nextBtn.onclick = () => {
                     if (onNextCallback) {
                         onNextCallback();
@@ -6422,10 +6530,11 @@ function showChopsticksInfoMenuChina() {
     const infoMenu = document.getElementById('chopsticks-info-menu-china');
     if (!infoMenu) return;
     infoMenu.style.display = 'block';
-    infoMenu.style.right = '-335px';
+    infoMenu.style.top = '300px';
+    infoMenu.style.right = '-25vw';
     setTimeout(() => {
         infoMenu.style.transition = 'right 0.5s ease-out';
-        infoMenu.style.right = '0';
+        infoMenu.style.right = '20px';
     }, 50);
 }
 
@@ -6433,7 +6542,7 @@ function closeChopsticksInfoMenuChina() {
     const infoMenu = document.getElementById('chopsticks-info-menu-china');
     if (!infoMenu) return;
     infoMenu.style.transition = 'right 0.5s ease-in';
-    infoMenu.style.right = '-335px';
+    infoMenu.style.right = '-25vw';
     setTimeout(() => {
         infoMenu.style.display = 'none';
     }, 500);
@@ -6443,10 +6552,11 @@ function showUtensilHoldingInfoMenuChina() {
     const infoMenu = document.getElementById('utensil-holding-info-menu-china');
     if (!infoMenu) return;
     infoMenu.style.display = 'block';
-    infoMenu.style.right = '-335px';
+    infoMenu.style.top = '300px';
+    infoMenu.style.right = '-25vw';
     setTimeout(() => {
         infoMenu.style.transition = 'right 0.5s ease-out';
-        infoMenu.style.right = '0';
+        infoMenu.style.right = '20px';
     }, 50);
 }
 
@@ -6454,7 +6564,7 @@ function closeUtensilHoldingInfoMenuChina() {
     const infoMenu = document.getElementById('utensil-holding-info-menu-china');
     if (!infoMenu) return;
     infoMenu.style.transition = 'right 0.5s ease-in';
-    infoMenu.style.right = '-335px';
+    infoMenu.style.right = '-25vw';
     setTimeout(() => {
         infoMenu.style.display = 'none';
     }, 500);
@@ -6465,10 +6575,11 @@ function showFoodOrderInfoMenuChina() {
     const infoMenu = document.getElementById('food-order-info-menu-china');
     if (!infoMenu) return;
     infoMenu.style.display = 'block';
-    infoMenu.style.right = '-335px';
+    infoMenu.style.top = '300px';
+    infoMenu.style.right = '-25vw';
     setTimeout(() => {
         infoMenu.style.transition = 'right 0.5s ease-out';
-        infoMenu.style.right = '0';
+        infoMenu.style.right = '20px';
     }, 50);
 }
 
@@ -6477,7 +6588,7 @@ function closeFoodOrderInfoMenuChina() {
     const infoMenu = document.getElementById('food-order-info-menu-china');
     if (!infoMenu) return;
     infoMenu.style.transition = 'right 0.5s ease-in';
-    infoMenu.style.right = '-335px';
+    infoMenu.style.right = '-25vw';
     setTimeout(() => {
         infoMenu.style.display = 'none';
     }, 500);
@@ -6488,10 +6599,11 @@ function showTableRotationInfoMenuChina() {
     const infoMenu = document.getElementById('table-rotation-info-menu-china');
     if (!infoMenu) return;
     infoMenu.style.display = 'block';
-    infoMenu.style.right = '-335px';
+    infoMenu.style.top = '300px';
+    infoMenu.style.right = '-25vw';
     setTimeout(() => {
         infoMenu.style.transition = 'right 0.5s ease-out';
-        infoMenu.style.right = '0';
+        infoMenu.style.right = '20px';
     }, 50);
 }
 
@@ -6500,7 +6612,7 @@ function closeTableRotationInfoMenuChina() {
     const infoMenu = document.getElementById('table-rotation-info-menu-china');
     if (!infoMenu) return;
     infoMenu.style.transition = 'right 0.5s ease-in';
-    infoMenu.style.right = '-335px';
+    infoMenu.style.right = '-25vw';
     setTimeout(() => {
         infoMenu.style.display = 'none';
     }, 500);
@@ -6584,30 +6696,21 @@ function showCalculationSelectionChina() {
     leftButton.appendChild(leftText);
     
     leftButton.onclick = () => {
-        // 말풍선 닫기
-        speechBubble.classList.remove('show');
+        // 기존 말풍선을 기본 스타일로 되돌리기
+        resetSpeechBubbleToDefaultChina();
         
-        // 기존 버튼 컨테이너 제거
-        const existingButtons = speechBubbleContent.querySelectorAll('.calculation-selection-buttons, .leftovers-selection-buttons');
-        existingButtons.forEach(btn => btn.remove());
+        // 새로운 말풍선 표시: "정말 좋은 식사였어!"
+        // 다시하기 버튼 클릭 시 이전 말풍선으로 돌아가기
+        showSpeechBubbleChina('정말 좋은 식사였어!', -1, true, () => {
+            // 다시하기 버튼 클릭 시 이전 말풍선으로 돌아가기
+            showCalculationSelectionChina();
+        }, null, '다시하기', null);
         
-        // 말풍선 크기 초기화
-        speechBubbleContent.style.minHeight = '';
-        speechBubbleContent.style.maxWidth = '';
-        speechBubbleContent.style.padding = '';
-        
-        // 계산 예절 인포 메뉴 표시
-        showCalculationEtiquetteInfoMenuChina();
-        
-        // 새 말풍선 표시 (버튼 없고, 커지지 않은 일반 말풍선)
+        // 말풍선과 버튼이 완전히 표시된 후 인포 메뉴 표시
+        // 타이핑 효과 시간 + 약간의 여유 시간을 고려하여 딜레이 추가
         setTimeout(() => {
-            showSpeechBubbleChina('정말 좋은 식사였어!', 2000);
-            
-            // 일본 스테이지처럼 스테이지 클리어 효과 표시 (딜레이 단축)
-            setTimeout(() => {
-                showStageClearEffect('china');
-            }, 800);
-        }, 100);
+            showCalculationEtiquetteInfoMenuChina();
+        }, 500);
     };
     calculationButtonsContainer.appendChild(leftButton);
     
@@ -6646,10 +6749,21 @@ function showCalculationSelectionChina() {
     rightButton.appendChild(rightText);
     
     rightButton.onclick = () => {
-        // 말풍선은 그대로 두고 텍스트만 변경 (버튼과 크기 유지)
-        speechText.textContent = '당연히 초대한 사람이 사야지!';
-        // 계산 예절 인포 메뉴 표시
-        showCalculationEtiquetteInfoMenuChina();
+        // 기존 말풍선을 기본 스타일로 되돌리기
+        resetSpeechBubbleToDefaultChina();
+        
+        // 새로운 말풍선 표시: "당연히 초대한 사람이 사야지!"
+        // 다시하기 버튼 클릭 시 이전 말풍선으로 돌아가기
+        showSpeechBubbleChina('당연히 초대한 사람이 사야지!', -1, true, () => {
+            // 다시하기 버튼 클릭 시 이전 말풍선으로 돌아가기
+            showCalculationSelectionChina();
+        }, null, '다시하기', null);
+        
+        // 말풍선과 버튼이 완전히 표시된 후 인포 메뉴 표시
+        // 타이핑 효과 시간 + 약간의 여유 시간을 고려하여 딜레이 추가
+        setTimeout(() => {
+            showCalculationEtiquetteInfoMenuChina();
+        }, 500);
     };
     calculationButtonsContainer.appendChild(rightButton);
     
@@ -6667,16 +6781,17 @@ function showCalculationEtiquetteInfoMenuChina() {
         infoTitle.textContent = '계산 예절';
         infoDesc.innerHTML = '중국에서는 초대한 손님이 계산하는 것이 예의입니다.<br><br>식사에 초대한 사람이 계산을 하는 것이<br>중국 문화에서 올바른 예절입니다.<br><br>초대받은 사람이 계산하려고 하는 것은<br>호의로 받아들이지만, 일반적으로는<br>초대한 사람이 계산을 담당합니다.';
         infoMenu.style.display = 'block';
-        infoMenu.style.right = '-335px';
+        infoMenu.style.top = '300px';
+        infoMenu.style.right = '-25vw';
         setTimeout(() => {
             infoMenu.style.transition = 'right 0.5s ease-out';
-            infoMenu.style.right = '0';
+            infoMenu.style.right = '20px';
         }, 50);
         
         // 5초 후 자동으로 닫기
         setTimeout(() => {
             infoMenu.style.transition = 'right 0.5s ease-in';
-            infoMenu.style.right = '-335px';
+            infoMenu.style.right = '-25vw';
             setTimeout(() => {
                 infoMenu.style.display = 'none';
             }, 500); // 애니메이션 완료 후 숨김
@@ -6694,16 +6809,17 @@ function showTeaPouringEtiquetteInfoMenuChina() {
         infoTitle.textContent = '차 따라주는 예절';
         infoDesc.innerHTML = '중국에서는 친구나 손님에게 차를 따라줄 때<br>예의를 지켜야 합니다.<br><br>주전자를 친구의 찻잔 쪽으로 기울여<br>차를 따라주는 것이 올바른 예절입니다.<br><br>상대방의 찻잔에 정확히 따라주는 것은<br>배려와 존중을 나타내는 행동입니다.';
         infoMenu.style.display = 'block';
-        infoMenu.style.right = '-335px';
+        infoMenu.style.top = '300px';
+        infoMenu.style.right = '-25vw';
         setTimeout(() => {
             infoMenu.style.transition = 'right 0.5s ease-out';
-            infoMenu.style.right = '0';
+            infoMenu.style.right = '20px';
         }, 50);
         
         // 애니메이션 종료 후 자동으로 닫기 (약 5초 후)
         setTimeout(() => {
             infoMenu.style.transition = 'right 0.5s ease-in';
-            infoMenu.style.right = '-335px';
+            infoMenu.style.right = '-25vw';
             setTimeout(() => {
                 infoMenu.style.display = 'none';
             }, 500); // 애니메이션 완료 후 숨김
@@ -6716,7 +6832,7 @@ function closeInfoMenuChina() {
     const infoMenu = document.getElementById('info-menu-china');
     if (!infoMenu) return;
     infoMenu.style.transition = 'right 0.5s ease-in';
-    infoMenu.style.right = '-335px';
+    infoMenu.style.right = '-25vw';
     setTimeout(() => {
         infoMenu.style.display = 'none';
     }, 500);
@@ -7498,14 +7614,15 @@ function showAfterMealGreetingInfoMenu() {
     const infoMenu = document.getElementById('after-meal-greeting-info-menu');
     if (!infoMenu) return;
 
-    // 오른쪽에서 등장하는 애니메이션
+    // 오른쪽에서 왼쪽으로 등장하는 애니메이션
     infoMenu.style.display = 'block';
-    infoMenu.style.right = '-335px'; // 초기 위치 (화면 밖)
+    infoMenu.style.top = '300px';
+    infoMenu.style.right = '-25vw'; // 초기 위치 (화면 밖 오른쪽)
 
     // 애니메이션 시작
     setTimeout(() => {
         infoMenu.style.transition = 'right 0.5s ease-out';
-        infoMenu.style.right = '0';
+        infoMenu.style.right = '20px';
     }, 50);
 }
 
@@ -7516,7 +7633,7 @@ function closeAfterMealGreetingInfoMenu() {
 
     // 오른쪽으로 사라지는 애니메이션
     infoMenu.style.transition = 'right 0.5s ease-in';
-    infoMenu.style.right = '-335px';
+    infoMenu.style.right = '-25vw';
 
     // 애니메이션 완료 후 숨김
     setTimeout(() => {
@@ -8233,14 +8350,15 @@ function showPaymentInfoMenu() {
     const infoMenu = document.getElementById('payment-info-menu');
     if (!infoMenu) return;
 
-    // 오른쪽에서 등장하는 애니메이션
+    // 오른쪽에서 왼쪽으로 등장하는 애니메이션
     infoMenu.style.display = 'block';
-    infoMenu.style.right = '-335px'; // 초기 위치 (화면 밖)
+    infoMenu.style.top = '300px';
+    infoMenu.style.right = '-25vw'; // 초기 위치 (화면 밖 오른쪽)
 
     // 애니메이션 시작
     setTimeout(() => {
         infoMenu.style.transition = 'right 0.5s ease-out';
-        infoMenu.style.right = '0';
+        infoMenu.style.right = '20px';
     }, 50);
 }
 
@@ -8251,7 +8369,7 @@ function closePaymentInfoMenu() {
 
     // 오른쪽으로 사라지는 애니메이션
     infoMenu.style.transition = 'right 0.5s ease-in';
-    infoMenu.style.right = '-335px';
+    infoMenu.style.right = '-25vw';
 
     // 애니메이션 완료 후 숨김
     setTimeout(() => {

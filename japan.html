@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Japan - World Dining Etiquette</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -33,8 +36,10 @@
                     <div id="next-buttons-container" class="next-buttons-container" style="display: none;"></div>
                 </div>
 
-                <!-- 드롭 존 영역 -->
-                <div class="drop-zone-area">
+                <!-- 게임 플레이 컨테이너 -->
+                <div class="japan-game-container">
+                    <!-- 드롭 존 영역 -->
+                    <div class="drop-zone-area">
                     <div class="table-setting">
                         <!-- 상단 cheftable -->
                         <div class="top-cheftable" style="background-image: url('resource/jp/cheftable.png');"></div>
@@ -112,13 +117,17 @@
                         </div>
                     </div>
                 </div>
+                <!-- 게임 플레이 컨테이너 끝 -->
 
                 <!-- 젓가락 정보 슬롯 메뉴 -->
                 <div id="chopsticks-info-menu" class="info-menu">
                     <div class="info-menu-tab"></div>
-                    <button class="info-menu-close" onclick="closeChopsticksInfoMenu()">×</button>
+                    <div class="menu-header">
+                        <div class="menu-icon">☰</div>
+                        <h3>INFO</h3>
+                        <button class="info-menu-close" onclick="closeChopsticksInfoMenu()">×</button>
+                    </div>
                     <div class="info-menu-scroll-content">
-                        <h2 class="info-menu-title">INFO</h2>
                         <h3>젓가락 사용 예절</h3>
                         <div class="info-menu-image">
                             <img src="resource/jp/chopsticks.png" alt="젓가락">
@@ -135,9 +144,12 @@
                 <!-- 식기 손으로 들고 먹는 것 정보 메뉴 -->
                 <div id="utensil-holding-info-menu" class="info-menu">
                     <div class="info-menu-tab"></div>
-                    <button class="info-menu-close" onclick="closeUtensilHoldingInfoMenu()">×</button>
+                    <div class="menu-header">
+                        <div class="menu-icon">☰</div>
+                        <h3>INFO</h3>
+                        <button class="info-menu-close" onclick="closeUtensilHoldingInfoMenu()">×</button>
+                    </div>
                     <div class="info-menu-scroll-content">
-                        <h2 class="info-menu-title">INFO</h2>
                         <h3>식기 사용 예절</h3>
                         <div class="info-menu-image">
                             <img src="resource/jp/spoon.png" alt="숟가락">
@@ -153,9 +165,12 @@
                 <!-- 전부 먹는게 예의 정보 메뉴 -->
                 <div id="eating-etiquette-info-menu" class="info-menu">
                     <div class="info-menu-tab"></div>
-                    <button class="info-menu-close" onclick="closeEatingEtiquetteInfoMenu()">×</button>
+                    <div class="menu-header">
+                        <div class="menu-icon">☰</div>
+                        <h3>INFO</h3>
+                        <button class="info-menu-close" onclick="closeEatingEtiquetteInfoMenu()">×</button>
+                    </div>
                     <div class="info-menu-scroll-content">
-                        <h2 class="info-menu-title">INFO</h2>
                         <h3>식사 예절</h3>
                         <div class="info-menu-image">
                             <img src="resource/jp/dish.png" alt="밥그릇">
@@ -171,9 +186,12 @@
                 <!-- 식사 후 인사말 정보 메뉴 -->
                 <div id="after-meal-greeting-info-menu" class="info-menu">
                     <div class="info-menu-tab"></div>
-                    <button class="info-menu-close" onclick="closeAfterMealGreetingInfoMenu()">×</button>
+                    <div class="menu-header">
+                        <div class="menu-icon">☰</div>
+                        <h3>INFO</h3>
+                        <button class="info-menu-close" onclick="closeAfterMealGreetingInfoMenu()">×</button>
+                    </div>
                     <div class="info-menu-scroll-content">
-                        <h2 class="info-menu-title">INFO</h2>
                         <h3>식사 후 인사말</h3>
                         <div class="info-menu-image">
                             <img src="resource/jp/dish.png" alt="인사말">
@@ -189,9 +207,12 @@
                 <!-- 결제 정보 메뉴 -->
                 <div id="payment-info-menu" class="info-menu">
                     <div class="info-menu-tab"></div>
-                    <button class="info-menu-close" onclick="closePaymentInfoMenu()">×</button>
+                    <div class="menu-header">
+                        <div class="menu-icon">☰</div>
+                        <h3>INFO</h3>
+                        <button class="info-menu-close" onclick="closePaymentInfoMenu()">×</button>
+                    </div>
                     <div class="info-menu-scroll-content">
-                        <h2 class="info-menu-title">INFO</h2>
                         <h3>결제 예절</h3>
                         <div class="info-menu-image">
                             <img src="resource/jp/bill2.png" alt="결제">
@@ -257,7 +278,10 @@
     <!-- 슬롯 메뉴 (일본 스테이지) -->
     <div class="slot-menu" id="slot-menu-japan">
         <div class="slot-menu-tab"></div>
-        <h3>INVENTORY</h3>
+        <div class="menu-header">
+            <div class="menu-icon">☰</div>
+            <h3>INVENTORY</h3>
+        </div>
         <div class="slot-items">
             <div class="slot-item" data-item="spoon" data-image="resource/jp/spoon.png">
                 <div class="item-icon" style="background-image: url('resource/jp/spoon.png');"></div>

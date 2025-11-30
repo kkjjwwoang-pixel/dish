@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>France - World Dining Etiquette</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- 상단 헤더 -->
+    <header class="top-header">
+        <div class="header-content">
+            <button id="back-to-map-france" class="btn-secondary back-to-map-btn">지도 돌아가기</button>
+            <div class="header-square"></div>
+            <h1 class="header-title">France</h1>
+            <button id="reset-stage-btn" class="btn-secondary reset-btn">다시하기</button>
+        </div>
+    </header>
+
+    <!-- 프랑스 스테이지 -->
+    <div id="france-stage" class="screen active">
+        <div class="stage-container">
+            <div class="stage-content">
+                <!-- 말풍선 -->
+                <div id="speech-bubble-france" class="speech-bubble">
+                    <div class="speech-bubble-content">
+                        <p id="speech-text-france"></p>
+                    </div>
+                    <div class="speech-bubble-tail"></div>
+                    <div id="next-buttons-container-france" class="next-buttons-container" style="display: none;"></div>
+                    <button id="next-speech-btn-france" class="next-btn" style="display: none;">다음</button>
+                </div>
+
+                <!-- 게임 플레이 컨테이너 -->
+                <div class="france-game-container">
+                    <!-- 드롭 존 영역 -->
+                    <div class="drop-zone-area">
+                        <div class="table-setting">
+                            <!-- fr 폴더 이미지들 - 모든 이미지는 france-game-container 안에 추가 -->
+                            <div class="fr-table">
+                                <img src="resource/fr/fr_table.png" alt="테이블">
+                            </div>
+                            <div class="fr-tablemat">
+                                <img src="resource/fr/fr_tablemat.png" alt="테이블매트">
+                            </div>
+                            <div class="fr-dish1">
+                                <img class="shadow-img" src="resource/fr/fr_dish1_s.png" alt="접시1 그림자">
+                                <img src="resource/fr/fr_dish1.png" alt="접시1">
+                            </div>
+                            <div class="fr-fork2">
+                                <img class="shadow-img" src="resource/fr/fr_fork2_s.png" alt="포크2 그림자">
+                                <img src="resource/fr/fr_fork2.png" alt="포크2">
+                            </div>
+                            <div class="fr-fork1">
+                                <img class="shadow-img" src="resource/fr/fr_fork1_s.png" alt="포크1 그림자">
+                                <img src="resource/fr/fr_fork1.png" alt="포크1">
+                            </div>
+                            <div class="fr-fork0">
+                                <img class="shadow-img" src="resource/fr/fr_fork0_s.png" alt="포크0 그림자">
+                                <img src="resource/fr/fr_fork0.png" alt="포크0">
+                            </div>
+                            <div class="fr-knife2">
+                                <img class="shadow-img" src="resource/fr/fr_knife2_s.png" alt="나이프2 그림자">
+                                <img src="resource/fr/fr_knife2.png" alt="나이프2">
+                            </div>
+                            <div class="fr-knife1">
+                                <img class="shadow-img" src="resource/fr/fr_knife1_s.png" alt="나이프1 그림자">
+                                <img src="resource/fr/fr_knife1.png" alt="나이프1">
+                            </div>
+                            <div class="fr-spoon">
+                                <img class="shadow-img" src="resource/fr/fr_spoon_s.png" alt="숟가락 그림자">
+                                <img src="resource/fr/fr_spoon.png" alt="숟가락">
+                            </div>
+                            <div class="fr-dish2">
+                                <img class="shadow-img" src="resource/fr/fr_dish2_s.png" alt="접시2 그림자">
+                                <img src="resource/fr/fr_dish2.png" alt="접시2">
+                            </div>
+                            <div class="fr-wineglass">
+                                <img class="shadow-img" src="resource/fr/fr_wineglass_s.png" alt="와인잔 그림자">
+                                <img src="resource/fr/fr_wineglass.png" alt="와인잔">
+                            </div>
+                            <div class="fr-napkin">
+                                <img class="shadow-img" src="resource/fr/fr_napkin_s.png" alt="냅킨 그림자">
+                                <img src="resource/fr/fr_napkin.png" alt="냅킨">
+                            </div>
+                            <div class="fr-bread">
+                                <img class="shadow-img" src="resource/fr/fr_bread_s.png" alt="빵 그림자">
+                                <img src="resource/fr/fr_bread.png" alt="빵">
+                            </div>
+                            <div class="fr-maindish1">
+                                <img class="shadow-img" src="resource/fr/fr_maindish1_s.png" alt="메인요리1 그림자">
+                                <img src="resource/fr/fr_maindish1.png" alt="메인요리1">
+                            </div>
+                            <div class="fr-waterglass">
+                                <img class="shadow-img" src="resource/fr/fr_waterglass_s.png" alt="물잔 그림자">
+                                <img src="resource/fr/fr_waterglass.png" alt="물잔">
+                            </div>
+                            <div class="fr-hand" id="hand-draggable-france">
+                                <img src="resource/fr/fr_hand.png" alt="손">
+                            </div>
+                            <div class="fr-desertfork">
+                                <img class="shadow-img" src="resource/fr/fr_desrtfork_s.png" alt="디저트포크 그림자">
+                                <img src="resource/fr/fr_desrtfork.png" alt="디저트포크">
+                            </div>
+                            <div class="fr-desertspoon">
+                                <img class="shadow-img" src="resource/fr/fr_desrtspoon_s.png" alt="디저트스푼 그림자">
+                                <img src="resource/fr/fr_desrtspoon.png" alt="디저트스푼">
+                            </div>
+                            <!-- 앞으로 추가하는 이미지들도 여기에 추가 -->
+                        </div>
+                    </div>
+                </div>
+                <!-- 게임 플레이 컨테이너 끝 -->
+
+                <!-- 정보 메뉴들 -->
+                <!-- 정보 메뉴는 필요에 따라 추가 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 슬롯 메뉴 -->
+    <div class="slot-menu" id="slot-menu-france">
+        <div class="slot-menu-tab"></div>
+        <div class="menu-header">
+            <div class="menu-icon">☰</div>
+            <h3>INVENTORY</h3>
+        </div>
+        <div class="slot-items">
+            <!-- 슬롯 아이템은 여기에 추가 -->
+        </div>
+    </div>
+
+    <!-- 디버그 모드 토글 버튼 -->
+    <button id="debug-toggle-btn" class="debug-toggle-btn">🔧</button>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
+
