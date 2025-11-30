@@ -1,4 +1,3 @@
-
 @font-face {
     font-family: 'GangwonEducationModuche';
     src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/GangwonEdu_OTFLightA.woff') format('woff');
@@ -384,8 +383,8 @@ body {
 }
 
 .france-btn {
-    top: 65%;
-    right: 15%;
+    top: 35%;
+    left: 25%;
 }
 
 .world-map {
@@ -445,12 +444,6 @@ body {
     flex-direction: column;
 }
 
-/* 프랑스 스테이지 */
-#france-stage {
-    background: transparent;
-    flex-direction: column;
-}
-
 .stage-container {
     width: 105%;
     height: 100%;
@@ -486,6 +479,12 @@ body {
     left: -50px;
 }
 
+/* 프랑스 스테이지 */
+#france-stage {
+    background: transparent;
+    flex-direction: column;
+}
+
 /* 프랑스 스테이지 게임 플레이 컨테이너 */
 .france-game-container {
     width: 100%;
@@ -496,376 +495,573 @@ body {
 }
 
 /* 프랑스 테이블 이미지 */
-.fr-table {
+.france-table-image {
     position: absolute;
-    left: 35vw;
-    top: -21vw;
-    transform: translateX(-50%);
-    width: 80vw;
-    height: 80vw;
+    left: -0.5vw;
+    top: -3vw;
+    width: 75vw;
+    height: auto;
     z-index: 1;
     pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.fr-table img {
+.france-table-image img {
     width: 100%;
-    height: 100%;
+    height: auto;
     object-fit: contain;
 }
 
-/* 프랑스 테이블매트 이미지 */
-.fr-tablemat {
+/* 프랑스 테이블 매트 */
+.france-tablemat {
     position: absolute;
-    left: 37vw;
-    top: 0vw;
-    transform: translateX(-50%);
-    width: 58vw;
-    height: 58vw;
+    left: 8vw;
+    top: 15vw;
+    width: 55vw;
+    height: auto;
     z-index: 2;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.france-tablemat img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.france-tablemat::before {
+    content: '';
+    position: absolute;
+    left: -0.5vw;
+    top: 0.5vw;
+    width: 100%;
+    height: 100%;
+    background-image: url('resource/fr/fr_tablemat_s.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: -1;
     pointer-events: none;
 }
 
-.fr-tablemat img {
+/* 프랑스 접시 1 */
+.france-dish1 {
+    position: absolute;
+    left: 25vw;
+    top: 23vw;
+    width: 20vw;
+    height: auto;
+    z-index: 3;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.france-dish1 img {
     width: 100%;
-    height: 100%;
+    height: auto;
     object-fit: contain;
 }
 
-/* 프랑스 접시1 */
-.fr-dish1 {
+.france-dish1::before {
+    content: '';
     position: absolute;
-    left: 37vw;
-    top: 23vw;
-    transform: translateX(-50%);
-    width: 20vw;
-    height: 20vw;
-    z-index: 3;
+    left: -0.5vw;
+    top: 0.5vw;
+    width: 100%;
+    height: 100%;
+    background-image: url('resource/fr/fr_dish1_s.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: -1;
     pointer-events: none;
 }
 
 /* 프랑스 냅킨 */
-.fr-napkin {
+.france-napkin {
     position: absolute;
-    left: 37vw;
-    top: 26vw;
-    transform: translateX(-50%);
-    width: 19vw;
-    height: 19vw;
-    z-index: 3;
+    left: 27vw;
+    top: 27vw;
+    width: 17vw;
+    height: auto;
+    z-index: 4;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.france-napkin img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.france-napkin::before {
+    content: '';
+    position: absolute;
+    left: -0.5vw;
+    top: 0.5vw;
+    width: 100%;
+    height: 100%;
+    background-image: url('resource/fr/fr_napkin_s.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: -1;
     pointer-events: none;
 }
 
-.fr-napkin img {
+/* 프랑스 접시 2 */
+.france-dish2 {
+    position: absolute;
+    left: 9vw;
+    top: 16vw;
+    width: 12vw;
+    height: auto;
+    z-index: 3;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.france-dish2 img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.france-dish2::before {
+    content: '';
+    position: absolute;
+    left: -0.5vw;
+    top: 0.5vw;
     width: 100%;
     height: 100%;
+    background-image: url('resource/fr/fr_dish2_s.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* 프랑스 디저트 포크 */
+.france-desertfork {
+    position: absolute;
+    left: 26vw;
+    top: 20vw;
+    width: 9vw;
+    height: auto;
+    z-index: 4;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.france-desertfork img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.france-desertfork::before {
+    content: '';
+    position: absolute;
+    left: -0.5vw;
+    top: 0.5vw;
+    width: 100%;
+    height: 100%;
+    background-image: url('resource/fr/fr_desrtfork_s.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* 프랑스 디저트 숟가락 */
+.france-desertspoon {
+    position: absolute;
+    left: 26vw;
+    top: 17vw;
+    width: 9vw;
+    height: auto;
+    z-index: 4;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.france-desertspoon img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.france-desertspoon::before {
+    content: '';
+    position: absolute;
+    left: -0.5vw;
+    top: 0.5vw;
+    width: 100%;
+    height: 100%;
+    background-image: url('resource/fr/fr_desrtspoon_s.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* 프랑스 손 */
+.france-hand {
+    position: absolute;
+    left: 3vw;
+    top: 27vw;
+    width: 12vw;
+    height: auto;
+    z-index: 5;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.france-hand img {
+    width: 100%;
+    height: auto;
     object-fit: contain;
 }
 
 /* 프랑스 빵 */
-.fr-bread {
+.france-bread {
     position: absolute;
-    left: 15vw;
-    top: -1vw;
-    transform: translateX(-50%);
-    width: 18vw;
-    height: 18vw;
+    left: 7vw;
+    top: 3.8vw;
+    width: 19vw;
+    height: auto;
     z-index: 3;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.france-bread img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.france-bread::before {
+    content: '';
+    position: absolute;
+    left: -0.5vw;
+    top: 0.5vw;
+    width: 100%;
+    height: 100%;
+    background-image: url('resource/fr/fr_bread_s.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: -1;
     pointer-events: none;
 }
 
-.fr-bread img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
-/* 프랑스 메인요리1 */
-.fr-maindish1 {
+/* 프랑스 메인 디시 1 */
+.france-maindish1 {
     position: absolute;
-    left: 40vw;
-    top: -8vw;
-    transform: translateX(-50%);
-    width: 30vw;
-    height: 30vw;
+    left: 30vw;
+    top: 0vw;
+    width: 27vw;
+    height: auto;
     z-index: 3;
     pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.fr-maindish1 img {
+.france-maindish1 img {
     width: 100%;
-    height: 100%;
+    height: auto;
     object-fit: contain;
 }
 
-.fr-dish1 img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
-/* 프랑스 접시2 */
-.fr-dish2 {
+.france-maindish1::before {
+    content: '';
     position: absolute;
-    left: 15vw;
-    top: 14vw;
-    transform: translateX(-50%);
-    width: 12vw;
-    height: 12vw;
-    z-index: 3;
-    pointer-events: none;
-}
-
-.fr-dish2 img {
+    left: -0.5vw;
+    top: 0.5vw;
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    background-image: url('resource/fr/fr_maindish1_s.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: -1;
+    pointer-events: none;
 }
 
 /* 프랑스 와인잔 */
-.fr-wineglass {
+.france-wineglass {
     position: absolute;
-    left: 60vw;
-    top: 10vw;
-    transform: translateX(-50%);
-    width: 14vw;
-    height: 14vw;
-    z-index: 4;
+    left: 50vw;
+    top: 13.8vw;
+    width: 10vw;
+    height: auto;
+    z-index: 3;
     pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.fr-wineglass img {
+.france-wineglass img {
     width: 100%;
-    height: 100%;
+    height: auto;
     object-fit: contain;
 }
 
 /* 프랑스 물잔 */
-.fr-waterglass {
+.france-waterglass {
     position: absolute;
-    left: 67vw;
-    top: 19vw;
-    transform: translateX(-50%);
-    width: 13vw;
-    height: 13vw;
-    z-index: 4;
+    left: 58vw;
+    top: 22vw;
+    width: 9vw;
+    height: auto;
+    z-index: 3;
     pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.fr-waterglass img {
+.france-waterglass img {
     width: 100%;
-    height: 100%;
+    height: auto;
     object-fit: contain;
 }
 
-/* 프랑스 스테이지 그림자 이미지 스타일 */
-.fr-dish1 .shadow-img,
-.fr-dish2 .shadow-img,
-.fr-fork0 .shadow-img,
-.fr-fork1 .shadow-img,
-.fr-fork2 .shadow-img,
-.fr-knife1 .shadow-img,
-.fr-knife2 .shadow-img,
-.fr-spoon .shadow-img,
-.fr-wineglass .shadow-img,
-.fr-waterglass .shadow-img,
-.fr-napkin .shadow-img,
-.fr-bread .shadow-img,
-.fr-maindish1 .shadow-img,
-.fr-desertfork .shadow-img,
-.fr-desertspoon .shadow-img {
+/* 프랑스 나이프 2 */
+.france-knife2 {
     position: absolute;
-    left: 0.5vw;
+    left: 45.7vw;
+    top: 27.5vw;
+    width: 2vw;
+    height: auto;
+    z-index: 4;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.france-knife2 img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.france-knife2::before {
+    content: '';
+    position: absolute;
+    left: -0.5vw;
     top: 0.5vw;
+    width: 100%;
+    height: 100%;
+    background-image: url('resource/fr/fr_knife2_s.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
     z-index: -1;
-    transform: scale(1.02);
-}
-
-.fr-dish1 img:not(.shadow-img),
-.fr-dish2 img:not(.shadow-img),
-.fr-fork0 img:not(.shadow-img),
-.fr-fork1 img:not(.shadow-img),
-.fr-fork2 img:not(.shadow-img),
-.fr-knife1 img:not(.shadow-img),
-.fr-knife2 img:not(.shadow-img),
-.fr-spoon img:not(.shadow-img),
-.fr-wineglass img:not(.shadow-img),
-.fr-waterglass img:not(.shadow-img),
-.fr-napkin img:not(.shadow-img),
-.fr-bread img:not(.shadow-img),
-.fr-maindish1 img:not(.shadow-img),
-.fr-desertfork img:not(.shadow-img),
-.fr-desertspoon img:not(.shadow-img) {
-    position: relative;
-    z-index: 1;
-}
-
-/* 프랑스 손 이미지 */
-.fr-hand {
-    position: absolute;
-    left: 10%;
-    top: 39vw;
-    transform: translate(-50%, -50%);
-    width: 27vw;
-    height: 27vw;
-    z-index: 10;
-    cursor: grab;
-    pointer-events: auto;
-    user-select: none;
-}
-
-.fr-hand:active {
-    cursor: grabbing;
-}
-
-.fr-hand img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
     pointer-events: none;
 }
 
-/* 프랑스 포크2 */
-.fr-fork2 {
+/* 프랑스 나이프 1 */
+.france-knife1 {
     position: absolute;
-    left: 25vw;
+    left: 48vw;
     top: 28vw;
-    transform: translateX(-50%);
-    width: 14vw;
-    height: 14vw;
+    width: 2vw;
+    height: auto;
     z-index: 4;
     pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.fr-fork2 img {
+.france-knife1 img {
     width: 100%;
-    height: 100%;
+    height: auto;
     object-fit: contain;
 }
 
-/* 프랑스 포크1 */
-.fr-fork1 {
+.france-knife1::before {
+    content: '';
     position: absolute;
-    left: 22vw;
-    top: 27vw;
-    transform: translateX(-50%);
-    width: 15vw;
-    height: 15vw;
-    z-index: 4;
-    pointer-events: none;
-}
-
-.fr-fork1 img {
+    left: -0.5vw;
+    top: 0.5vw;
     width: 100%;
     height: 100%;
-    object-fit: contain;
-}
-
-/* 프랑스 포크0 */
-.fr-fork0 {
-    position: absolute;
-    left: 18vw;
-    top: 26vw;
-    transform: translateX(-50%);
-    width: 16vw;
-    height: 16vw;
-    z-index: 4;
+    background-image: url('resource/fr/fr_knife1_s.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: -1;
     pointer-events: none;
-}
-
-.fr-fork0 img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
-/* 프랑스 나이프2 */
-.fr-knife2 {
-    position: absolute;
-    left: 49vw;
-    top: 27vw;
-    transform: translateX(-50%);
-    width: 16vw;
-    height: 16vw;
-    z-index: 4;
-    pointer-events: none;
-}
-
-.fr-knife2 img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
-/* 프랑스 나이프1 */
-.fr-knife1 {
-    position: absolute;
-    left: 52vw;
-    top: 27vw;
-    transform: translateX(-50%);
-    width: 16vw;
-    height: 16vw;
-    z-index: 4;
-    pointer-events: none;
-}
-
-.fr-knife1 img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
 }
 
 /* 프랑스 숟가락 */
-.fr-spoon {
+.france-spoon {
     position: absolute;
-    left: 55.5vw;
+    left: 50.4vw;
+    top: 32vw;
+    width: 2.8vw;
+    height: auto;
+    z-index: 4;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.france-spoon img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.france-spoon::before {
+    content: '';
+    position: absolute;
+    left: -0.5vw;
+    top: 0.5vw;
+    width: 100%;
+    height: 100%;
+    background-image: url('resource/fr/fr_spoon_s.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* 프랑스 포크 2 */
+.france-fork2 {
+    position: absolute;
+    left: 22.5vw;
     top: 30vw;
-    transform: translateX(-50%);
-    width: 13vw;
-    height: 13vw;
+    width: 2vw;
+    height: auto;
     z-index: 4;
     pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.fr-spoon img {
+.france-fork2 img {
     width: 100%;
-    height: 100%;
+    height: auto;
     object-fit: contain;
 }
 
-/* 프랑스 디저트포크 */
-.fr-desertfork {
+.france-fork2::before {
+    content: '';
     position: absolute;
-    left: 32vw;
-    top: 13vw;
-    transform: translateX(-50%);
-    width: 11vw;
-    height: 11vw;
-    z-index: 4;
+    left: -0.5vw;
+    top: 0.5vw;
+    width: 100%;
+    height: 100%;
+    background-image: url('resource/fr/fr_fork2_s.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: -1;
     pointer-events: none;
 }
 
-.fr-desertfork img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
-/* 프랑스 디저트스푼 */
-.fr-desertspoon {
+/* 프랑스 포크 1 */
+.france-fork1 {
     position: absolute;
-    left: 32vw;
-    top: 16vw;
-    transform: translateX(-50%);
-    width: 11vw;
-    height: 11vw;
+    left: 20vw;
+    top: 32vw;
+    width: 2vw;
+    height: auto;
     z-index: 4;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.france-fork1 img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.france-fork1::before {
+    content: '';
+    position: absolute;
+    left: -0.5vw;
+    top: 0.5vw;
+    width: 100%;
+    height: 100%;
+    background-image: url('resource/fr/fr_fork1_s.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: -1;
     pointer-events: none;
 }
 
-.fr-desertspoon img {
+/* 프랑스 포크 0 */
+.france-fork0 {
+    position: absolute;
+    left: 17.5vw;
+    top: 30vw;
+    width: 2vw;
+    height: auto;
+    z-index: 4;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.france-fork0 img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.france-fork0::before {
+    content: '';
+    position: absolute;
+    left: -0.5vw;
+    top: 0.5vw;
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    background-image: url('resource/fr/fr_fork0_s.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: -1;
+    pointer-events: none;
 }
 
 .back-to-map-btn {
@@ -994,53 +1190,6 @@ body {
 
 .next-btn:active {
     transform: scale(0.95);
-}
-
-/* 되감기 아이콘 버튼 */
-.next-btn.rewind-btn {
-    position: relative;
-    padding-top: 1.2vw;
-    padding-bottom: 1.2vw;
-    padding-left: 2vw;
-    padding-right: 2vw;
-}
-
-.next-btn.rewind-btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 0;
-    height: 0;
-    border-top: 8px solid transparent;
-    border-bottom: 8px solid transparent;
-    border-right: 12px solid #905431;
-    margin-left: -2px;
-}
-
-.next-btn.rewind-btn::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 24px;
-    height: 24px;
-    border: 3px solid #905431;
-    border-top-color: transparent;
-    border-right-color: transparent;
-    border-radius: 50%;
-}
-
-.next-btn.rewind-btn:hover::before {
-    border-right-color: white;
-}
-
-.next-btn.rewind-btn:hover::after {
-    border-color: white;
-    border-top-color: transparent;
-    border-right-color: transparent;
 }
 
 /* 여러 버튼 컨테이너 */
@@ -1478,7 +1627,7 @@ body {
 
 .cn-tavlemat {
     position: absolute;
-    left: 0vw;
+    left: -0.5vw;
     top: -3vw;
     width: 63vw;
     height: 63vw;
@@ -1637,8 +1786,8 @@ body {
 
 .cn-chopstick2 {
     position: absolute;
-    left: 10vw;
-    top: 11.5vw;
+    left: 11.4vw;
+    top: 15.5vw;
     width: 22vw;
     height: 22vw;
     z-index: 3;
@@ -1702,7 +1851,7 @@ body {
     pointer-events: none;
 }
 
-.cn-table1.highlight-blink img:not(.shadow-img) {
+.cn-table1.highlight-blink img {
     filter: drop-shadow(0 0 0px rgba(255, 255, 255, 0.8));
 }
 
@@ -1902,7 +2051,7 @@ body {
 
 .cn-mandu {
     position: absolute;
-    left: 0vw;
+    left: -0.5vw;
     top: 0vw;
     width: 3.4vw;
     height: 3.4vw;
@@ -1917,7 +2066,7 @@ body {
 
 .cn-mandu2 {
     position: absolute;
-    left: 0vw;
+    left: -0.5vw;
     top: 0vw;
     width: 3.4vw;
     height: 3.4vw;
@@ -2442,6 +2591,16 @@ body {
     /* 크기는 JavaScript에서 이미지 natural size에 맞게 동적으로 설정 */
 }
 
+/* 프랑스 스테이지 와인잔 드랍존 */
+#drop-wineglass {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 8vw;
+    height: 12vw;
+    /* 크기는 나중에 이미지 크기에 맞게 조정 가능 */
+}
+
 /* 슬롯 메뉴 */
 .slot-menu {
     position: fixed;
@@ -2470,7 +2629,7 @@ body {
     display: flex !important;
 }
 
-.slot-menu > .slot-items {
+.slot-menu>.slot-items {
     padding: 20px;
     padding-top: 0;
     padding-right: 20px;
@@ -2479,32 +2638,34 @@ body {
     overflow-x: hidden;
     flex: 1;
     min-height: 0;
-    scrollbar-width: thin; /* Firefox */
-    scrollbar-color: #905431 transparent; /* Firefox */
+    scrollbar-width: thin;
+    /* Firefox */
+    scrollbar-color: #905431 transparent;
+    /* Firefox */
     scrollbar-gutter: stable;
 }
 
-.slot-menu > .slot-items::-webkit-scrollbar {
+.slot-menu>.slot-items::-webkit-scrollbar {
     width: 6px;
 }
 
-.slot-menu > .slot-items::-webkit-scrollbar-button {
+.slot-menu>.slot-items::-webkit-scrollbar-button {
     display: none;
 }
 
-.slot-menu > .slot-items::-webkit-scrollbar-track {
+.slot-menu>.slot-items::-webkit-scrollbar-track {
     background: transparent;
     border-radius: 10px;
     margin: 20px 0 20px 5px;
 }
 
-.slot-menu > .slot-items::-webkit-scrollbar-thumb {
+.slot-menu>.slot-items::-webkit-scrollbar-thumb {
     background: #905431;
     border-radius: 10px;
     min-height: 30px;
 }
 
-.slot-menu > .slot-items::-webkit-scrollbar-thumb:hover {
+.slot-menu>.slot-items::-webkit-scrollbar-thumb:hover {
     background: #7a4328;
 }
 
@@ -2543,7 +2704,7 @@ body {
     display: flex !important;
 }
 
-.info-menu > .info-menu-scroll-content {
+.info-menu>.info-menu-scroll-content {
     padding: 20px;
     padding-top: 0;
     padding-right: 20px;
@@ -2552,32 +2713,34 @@ body {
     overflow-x: hidden;
     flex: 1;
     min-height: 0;
-    scrollbar-width: thin; /* Firefox */
-    scrollbar-color: #F5F3E5 transparent; /* Firefox */
+    scrollbar-width: thin;
+    /* Firefox */
+    scrollbar-color: #F5F3E5 transparent;
+    /* Firefox */
     scrollbar-gutter: stable;
 }
 
-.info-menu > .info-menu-scroll-content::-webkit-scrollbar {
+.info-menu>.info-menu-scroll-content::-webkit-scrollbar {
     width: 6px;
 }
 
-.info-menu > .info-menu-scroll-content::-webkit-scrollbar-button {
+.info-menu>.info-menu-scroll-content::-webkit-scrollbar-button {
     display: none;
 }
 
-.info-menu > .info-menu-scroll-content::-webkit-scrollbar-track {
+.info-menu>.info-menu-scroll-content::-webkit-scrollbar-track {
     background: transparent;
     border-radius: 10px;
     margin: 20px 0 20px 5px;
 }
 
-.info-menu > .info-menu-scroll-content::-webkit-scrollbar-thumb {
+.info-menu>.info-menu-scroll-content::-webkit-scrollbar-thumb {
     background: #F5F3E5;
     border-radius: 10px;
     min-height: 30px;
 }
 
-.info-menu > .info-menu-scroll-content::-webkit-scrollbar-thumb:hover {
+.info-menu>.info-menu-scroll-content::-webkit-scrollbar-thumb:hover {
     background: #e0ddd0;
 }
 
@@ -2745,7 +2908,6 @@ body {
 .menu-header h3 {
     color: #905431;
     margin: 0;
-    margin-top: 10px;
     font-size: 1.8rem;
     padding: 0;
     position: relative;
@@ -2766,7 +2928,7 @@ body {
     color: #F5F3E5;
 }
 
-.slot-menu > h3 {
+.slot-menu>h3 {
     display: none;
 }
 
