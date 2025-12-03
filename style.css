@@ -510,7 +510,7 @@ body {
 }
 
 .japan-title {
-    top: 18%;
+    top: calc(35% - 150px);
     right: 10%;
     transform: scale(0.7);
 }
@@ -520,7 +520,7 @@ body {
 }
 
 .china-title {
-    top: 13%;
+    top: calc(30% - 150px);
     right: 21%;
     transform: scale(0.7);
 }
@@ -530,7 +530,7 @@ body {
 }
 
 .france-title {
-    top: 21%;
+    top: calc(38% - 140px);
     left: 52.5%;
     transform: translateX(-50%) scale(0.7);
 }
