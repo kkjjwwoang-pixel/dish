@@ -86,6 +86,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .header-square.slide-in {
@@ -190,7 +191,7 @@ body {
 
 .title-cheftable-m-image {
     position: absolute;
-    bottom: 0;
+    bottom: -2vw;
     left: 0;
     max-width: 100vw;
     max-height: 50vh;
@@ -201,23 +202,122 @@ body {
     transition: transform 0.8s ease-out, opacity 0.8s ease-out;
 }
 
+/* 타이틀 화면 액션 버튼 (Start, Info) */
+.title-action-btn {
+    position: absolute;
+    right: 20vw;
+    bottom: 15vh;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    z-index: 10;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.title-action-btn img {
+    width: 8.5vw;
+    height: auto;
+    display: block;
+    pointer-events: none;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
+}
+
+.title-btn-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: "Caveat Brush", cursive;
+    font-size: 1.7vw;
+    color: #42210E;
+    font-weight: normal;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 2;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.title-info-btn .title-btn-label {
+    color: #F5F3E5;
+}
+
+.title-action-btn:hover {
+    opacity: 0.9;
+    transform: scale(1.1);
+}
+
+.title-action-btn:hover img {
+    animation: rotate-clockwise-button-image 13s linear infinite;
+    animation-delay: 0.3s;
+}
+
+.title-action-btn:hover .title-btn-label {
+    transform: translate(-50%, -50%) scale(1.1);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6);
+}
+
+.title-action-btn:active {
+    transform: scale(0.95);
+}
+
+@keyframes rotate-clockwise-button-image {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.title-start-btn {
+    right: 24vw;
+}
+
+.title-info-btn {
+    right: 11vw;
+}
+
+.title-info-btn img {
+    width: 7.5vw;
+}
+
 #map-screen .title-cheftable-m-image.map-hide {
     transform: translateY(100%);
     opacity: 0;
 }
 
+.title-spoon-m-shadow {
+    position: absolute;
+    left: 0.3vw;
+    top: 17.3vw;
+    transform: translateY(-50%);
+    width: 25vw;
+    height: auto;
+    object-fit: contain;
+    z-index: 0;
+    transition: transform 0.8s ease-out, opacity 0.8s ease-out;
+    pointer-events: none;
+}
+
 .title-spoon-m-image {
     position: absolute;
     left: 0;
-    top: 40%;
+    top: 17vw;
     transform: translateY(-50%);
-    width: auto;
+    width: 25vw;
     height: auto;
-    max-width: 30vw;
-    max-height: 50vh;
     object-fit: contain;
     z-index: 1;
     transition: transform 0.8s ease-out, opacity 0.8s ease-out;
+}
+
+#map-screen .title-spoon-m-shadow.map-hide {
+    transform: translateX(-100%) translateY(-50%);
+    opacity: 0;
 }
 
 #map-screen .title-spoon-m-image.map-hide {
@@ -225,21 +325,107 @@ body {
     opacity: 0;
 }
 
+.title-chopsticks-m-shadow {
+    position: absolute;
+    left: 0.3vw;
+    top: 8.3vw;
+    transform: translateY(-50%);
+    width: 14vw;
+    height: auto;
+    object-fit: contain;
+    z-index: 0;
+    transition: transform 0.8s ease-out, opacity 0.8s ease-out;
+    pointer-events: none;
+}
+
 .title-chopsticks-m-image {
     position: absolute;
     left: 0;
-    top: 30%;
+    top: 8vw;
     transform: translateY(-50%);
-    width: auto;
+    width: 14vw;
     height: auto;
-    max-width: 30vw;
-    max-height: 50vh;
     object-fit: contain;
     z-index: 1;
     transition: transform 0.8s ease-out, opacity 0.8s ease-out;
 }
 
+#map-screen .title-chopsticks-m-shadow.map-hide {
+    transform: translateX(-100%) translateY(-50%);
+    opacity: 0;
+}
+
 #map-screen .title-chopsticks-m-image.map-hide {
+    transform: translateX(-100%) translateY(-50%);
+    opacity: 0;
+}
+
+.title-fork-m-shadow {
+    position: absolute;
+    left: 0.3vw;
+    top: 21.3vw;
+    transform: translateY(-50%);
+    width: 10vw;
+    height: auto;
+    object-fit: contain;
+    z-index: 0;
+    transition: transform 0.8s ease-out, opacity 0.8s ease-out;
+    pointer-events: none;
+}
+
+.title-fork-m-image {
+    position: absolute;
+    left: 0;
+    top: 21vw;
+    transform: translateY(-50%);
+    width: 10vw;
+    height: auto;
+    object-fit: contain;
+    z-index: 1;
+    transition: transform 0.8s ease-out, opacity 0.8s ease-out;
+}
+
+#map-screen .title-fork-m-shadow.map-hide {
+    transform: translateX(-100%) translateY(-50%);
+    opacity: 0;
+}
+
+#map-screen .title-fork-m-image.map-hide {
+    transform: translateX(-100%) translateY(-50%);
+    opacity: 0;
+}
+
+.title-knife-m-shadow {
+    position: absolute;
+    left: 0.3vw;
+    top: 13.3vw;
+    transform: translateY(-50%);
+    width: 18vw;
+    height: auto;
+    object-fit: contain;
+    z-index: 0;
+    transition: transform 0.8s ease-out, opacity 0.8s ease-out;
+    pointer-events: none;
+}
+
+.title-knife-m-image {
+    position: absolute;
+    left: 0;
+    top: 13vw;
+    transform: translateY(-50%);
+    width: 18vw;
+    height: auto;
+    object-fit: contain;
+    z-index: 1;
+    transition: transform 0.8s ease-out, opacity 0.8s ease-out;
+}
+
+#map-screen .title-knife-m-shadow.map-hide {
+    transform: translateX(-100%) translateY(-50%);
+    opacity: 0;
+}
+
+#map-screen .title-knife-m-image.map-hide {
     transform: translateX(-100%) translateY(-50%);
     opacity: 0;
 }
@@ -276,18 +462,22 @@ body {
 
 .title-content h1 {
     font-family: "Caveat Brush", cursive;
-    font-size: 5.74rem;
+    font-size: 5vw;
     font-weight: normal;
-    line-height: 1.2;
+    line-height: 1.0;
     margin-bottom: 0;
     color: #42210E;
     text-shadow: none;
     position: absolute;
-    bottom: 210px;
-    left: 50px;
+    bottom: 10vw;
+    left: 3.5vw;
     text-align: left;
     z-index: 2;
     transition: transform 0.8s ease-out, opacity 0.8s ease-out, color 0.8s ease-out;
+}
+
+.title-content h1 .world-dietary {
+    font-size: 0.85em;
 }
 
 #map-screen .title-content h1 {
@@ -1369,6 +1559,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     /* 버튼은 클릭 가능 */
 }
 
@@ -1394,6 +1585,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     /* 버튼은 클릭 가능 */
 }
 
@@ -2945,12 +3137,17 @@ body {
 }
 
 #drop-dish1 {
-    left: 25vw;
-    top: 23vw;
-    width: 20vw;
-    height: 20vw;
+    left: 28vw;
+    top: 26vw;
+    width: 15vw;
+    height: 15vw;
     /* 접시 1 위치에 맞춰 배치 */
     display: none; /* 처음에는 숨김 */
+}
+
+/* 프랑스 스테이지 접시1 드랍존에 드롭된 접시 이미지 크기 조정 */
+#drop-dish1 .dropped-item img {
+    transform: scale(0.7);
 }
 
 /* 슬롯 메뉴 */
@@ -2983,9 +3180,9 @@ body {
 
 .slot-menu>.slot-items {
     padding: 20px;
-    padding-top: 0;
+    padding-top: 20px;
     padding-right: 20px;
-    margin-top: 20px;
+    margin-top: 40px;
     overflow-y: auto;
     overflow-x: hidden;
     flex: 1;
@@ -3058,7 +3255,7 @@ body {
 
 .info-menu>.info-menu-scroll-content {
     padding: 20px;
-    padding-top: 0;
+    padding-top: 20px;
     padding-right: 20px;
     margin-top: 20px;
     overflow-y: auto;
@@ -3225,6 +3422,7 @@ body {
     top: 0;
     background: inherit;
     padding: 20px;
+    padding-top: 20px;
     padding-bottom: 15px;
     margin-bottom: 0;
     z-index: 10;
@@ -3274,10 +3472,128 @@ body {
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
+    margin-top: 11px;
 }
 
 .info-menu .menu-header h3 {
     color: #F5F3E5;
+}
+
+/* 빵 배치 예절 인포 메뉴 z-index 조정 (다른 인포 메뉴보다 아래에 표시) */
+#bread-placement-info-menu-france {
+    z-index: 10001 !important;
+}
+
+/* 기획의도 모달 */
+.info-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 20000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.info-modal-overlay.show {
+    opacity: 1;
+}
+
+.info-modal-container {
+    background: #F5F3E5;
+    border-radius: 20px;
+    padding: 0;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transform: scale(0.9);
+    transition: transform 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+}
+
+.info-modal-overlay.show .info-modal-container {
+    transform: scale(1);
+}
+
+.info-modal-container .menu-header {
+    background: #F5F3E5;
+    border-bottom: 2px solid rgba(144, 84, 49, 0.2);
+}
+
+.info-modal-container .menu-header h3 {
+    color: #905431;
+    margin-top: 11px;
+}
+
+.info-modal-container .menu-icon {
+    color: #905431;
+}
+
+.info-modal-close {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #905431;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s;
+    z-index: 11;
+    margin-left: auto;
+}
+
+.info-modal-close:hover {
+    background: #B56B41;
+    color: white;
+}
+
+.info-modal-content {
+    padding: 20px 40px;
+    padding-top: 20px;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+}
+
+.info-modal-content h2 {
+    font-family: 'GangwonEducationModuche', sans-serif;
+    font-size: 1.8rem;
+    color: #905431;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.info-modal-text {
+    color: #905431;
+    line-height: 1.6;
+    font-size: 1.2rem;
+    font-family: 'GangwonEducationModuche', sans-serif;
+}
+
+.info-modal-text p {
+    margin-bottom: 12px;
+}
+
+.info-modal-text p:last-child {
+    margin-bottom: 0;
 }
 
 .slot-menu>h3 {
@@ -3404,7 +3720,6 @@ body {
 
 .drop-zone.highlight-pulse {
     animation: dropZoneScalePulse 1.5s ease-in-out infinite;
-    transform-origin: center;
 }
 
 @keyframes dropZoneScalePulse {
@@ -3416,8 +3731,22 @@ body {
     }
 }
 
+/* 드롭존 내부의 드롭된 아이템에만 하이라이트 애니메이션 적용 (기존 transform 유지) */
+.drop-zone.highlight-pulse .dropped-item {
+    animation: pulseHighlightWithTransform 1.5s ease-in-out infinite;
+}
+
+@keyframes pulseHighlightWithTransform {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.08);
+    }
+}
+
 .drop-zone.highlight-pulse .dropped-item img {
-    animation: pulseHighlight 1.5s ease-in-out infinite;
+    animation: none;
 }
 
 .dropped-item.highlight-pulse img {
@@ -3457,6 +3786,7 @@ body {
     cursor: grab;
     transition: opacity 0.2s;
     top: 50%;
+    transform-origin: center;
     left: 50%;
     transform: translate(-50%, -50%);
 }
@@ -3478,11 +3808,38 @@ body {
     transform: translate(-50%, -60%);
 }
 
+/* 프랑스 스테이지 테이블 쪽 드랍존에 드롭된 빵 이미지 크기 조정 및 애니메이션 */
+#drop-rbread .dropped-item img:not(.shadow-img) {
+    transform: scale(0.9) translateX(1vw);
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+/* 프랑스 스테이지 테이블 쪽 드랍존에 드롭된 빵 그림자 이미지 크기 조정 */
+#drop-rbread .dropped-item .shadow-img {
+    transform: scale(0.9) translateX(1vw);
+}
+
 .dropped-item img {
     display: block;
     width: auto;
     height: auto;
     pointer-events: none;
+}
+
+/* 일본 스테이지 드랍된 밥그릇과 수저 크기 조정 */
+#japan-stage #drop-rice-bowl .dropped-item img {
+    transform: scale(0.85);
+}
+
+/* 일본 스테이지 드랍된 숟가락과 젓가락 크기 조정 */
+#japan-stage #drop-spoon .dropped-item img,
+#japan-stage #drop-chopsticks .dropped-item img {
+    transform: scale(0.7);
+}
+
+/* 일본 스테이지 드롭된 아이템의 하이라이트 애니메이션 (기존 transform 유지) */
+#japan-stage .drop-zone.highlight-pulse .dropped-item {
+    animation: pulseHighlightWithTransform 1.5s ease-in-out infinite;
 }
 
 /* 셰프테이블에서 나타나는 밥그릇 */
@@ -3540,7 +3897,7 @@ body {
 /* 반응형 디자인 */
 @media (max-width: 768px) {
     .title-content h1 {
-        font-size: 1.75rem;
+        font-size: 1.75vw;
     }
 
     .subtitle {
