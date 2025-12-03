@@ -55,10 +55,6 @@ body {
 }
 
 #map-screen .top-header {
-    transform: translateY(-100%);
-}
-
-#map-screen .top-header.header-slide-down {
     transform: translateY(0);
 }
 
@@ -85,6 +81,19 @@ body {
     border-radius: 10px 10px 10px 0;
     pointer-events: auto;
     /* 헤더 사각형은 클릭 가능 */
+    transform: translateX(-100%);
+    transition: transform 0.8s ease-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-square.slide-in {
+    transform: translateX(0);
+}
+
+.header-square.slide-out {
+    transform: translateX(-100%);
 }
 
 .header-title {
@@ -93,10 +102,6 @@ body {
     font-weight: normal;
     color: #905431;
     margin: 0;
-    position: absolute;
-    left: 110px;
-    top: 40px;
-    transform: translate(-50%, -50%);
     text-align: center;
     pointer-events: auto;
     /* 제목은 클릭 가능 */
@@ -130,6 +135,22 @@ body {
     height: 100%;
 }
 
+.map-container {
+    position: absolute;
+    top: 1vw;
+    right: 0;
+    width: 75vw;
+    height: auto;
+    z-index: 1;
+    transition: width 0.8s ease-out, top 0.8s ease-out, right 0.8s ease-out, transform 0.3s ease-out;
+}
+
+#map-screen .map-container.map-expand {
+    width: 90vw;
+    top: 5vh;
+    right: 5vw;
+}
+
 .title-map-image,
 .title-spoon-image,
 .title-chopsticks-image,
@@ -150,13 +171,20 @@ body {
     left: auto;
     z-index: 1;
     opacity: 0.8;
-    transition: width 0.8s ease-out, height 0.8s ease-out, top 0.8s ease-out, right 0.8s ease-out;
+    transition: width 0.8s ease-out, height 0.8s ease-out, top 0.8s ease-out, right 0.8s ease-out, opacity 0.8s ease-out;
 }
 
-#map-screen .title-map-image.map-expand {
-    width: 90vw;
-    top: 5vh;
-    right: 5vw;
+/* 맵 컨테이너 안의 지도 이미지 */
+.map-container .title-map-image {
+    position: relative;
+    width: 100%;
+    height: auto;
+    top: auto;
+    right: auto;
+    left: auto;
+}
+
+#map-screen .title-map-image {
     opacity: 1;
 }
 
@@ -259,12 +287,20 @@ body {
     left: 50px;
     text-align: left;
     z-index: 2;
-    transition: transform 0.8s ease-out, opacity 0.8s ease-out;
+    transition: transform 0.8s ease-out, opacity 0.8s ease-out, color 0.8s ease-out;
 }
 
-#map-screen .title-content h1.map-hide {
-    transform: translateY(100%);
-    opacity: 0;
+#map-screen .title-content h1 {
+    transform: scale(1);
+    transform-origin: left top;
+    color: #42210E;
+    transition: transform 0.8s ease-out, color 0.8s ease-out;
+    opacity: 1;
+}
+
+#map-screen .title-content h1.map-shrink {
+    transform: scale(0.85) translateY(100px) !important;
+    opacity: 0.7;
 }
 
 .subtitle {
@@ -352,39 +388,181 @@ body {
     font-family: "GangwonEducationModuche", sans-serif;
     font-weight: bold;
     line-height: 1.2;
-    background: #F5F3E5;
-    color: #905431;
+    background: #B56B41;
+    color: white;
     border: none;
     border-radius: 25px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.3s, opacity 0.8s ease-out, transform 0.8s ease-out;
     z-index: 10;
     pointer-events: auto;
     display: flex;
     align-items: center;
     justify-content: center;
+    opacity: 0;
+    transform: scale(0.8);
 }
 
-.map-country-btn:hover {
-    background: #B56B41;
+#map-screen .map-country-btn.map-show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.map-country-btn:hover,
+#map-screen .map-country-btn.map-show:hover {
+    background: #905431;
     color: white;
-    transform: scale(1.05);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transform: scale(1.15) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
 }
 
+.map-country-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(100%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 10px solid #B56B41;
+    transition: border-top-color 0.3s ease;
+}
+
+.map-country-btn:hover::after,
+#map-screen .map-country-btn.map-show:hover::after {
+    border-top-color: #905431;
+}
+
+/* 회전 애니메이션 */
+@keyframes rotate-clockwise-japan {
+    from {
+        transform: scale(1.0) translateY(-15px) rotate(0deg);
+    }
+    to {
+        transform: scale(1.0) translateY(-15px) rotate(360deg);
+    }
+}
+
+@keyframes rotate-clockwise-china {
+    from {
+        transform: scale(1.0) translateY(-15px) rotate(0deg);
+    }
+    to {
+        transform: scale(1.0) translateY(-15px) rotate(360deg);
+    }
+}
+
+@keyframes rotate-clockwise-france {
+    from {
+        transform: translateX(-50%) scale(1.0) translateY(-15px) rotate(0deg);
+    }
+    to {
+        transform: translateX(-50%) scale(1.0) translateY(-15px) rotate(360deg);
+    }
+}
+
+/* 버튼 호버 시 해당 타이틀 이미지도 효과 */
+#map-screen .japan-title.map-show {
+    transition: transform 0.3s ease;
+}
+
+#map-screen .japan-title.map-show.title-hover {
+    transform: scale(1.0) translateY(-15px);
+}
+
+#map-screen .japan-title.map-show.title-hover.title-rotate {
+    animation: rotate-clockwise-japan 13s linear infinite;
+    animation-delay: 0.1s;
+}
+
+#map-screen .china-title.map-show {
+    transition: transform 0.3s ease;
+}
+
+#map-screen .china-title.map-show.title-hover {
+    transform: scale(1.0) translateY(-15px);
+}
+
+#map-screen .china-title.map-show.title-hover.title-rotate {
+    animation: rotate-clockwise-china 13s linear infinite;
+    animation-delay: 0.1s;
+}
+
+
+/* 국가 타이틀 이미지 */
+.country-title-image {
+    position: absolute;
+    z-index: 11;
+    opacity: 0;
+    transform: scale(0.7);
+    transition: opacity 0.8s ease-out, transform 0.3s ease;
+    pointer-events: none;
+    max-width: 150px;
+    height: auto;
+}
+
+#map-screen .country-title-image.map-show {
+    opacity: 1;
+    transform: scale(0.8);
+}
+
+.japan-title {
+    top: 18%;
+    right: 10%;
+    transform: scale(0.7);
+}
+
+#map-screen .japan-title.map-show {
+    transform: scale(0.8);
+}
+
+.china-title {
+    top: 13%;
+    right: 21%;
+    transform: scale(0.7);
+}
+
+#map-screen .china-title.map-show {
+    transform: scale(0.8);
+}
+
+.france-title {
+    top: 21%;
+    left: 52.5%;
+    transform: translateX(-50%) scale(0.7);
+}
+
+#map-screen .france-title.map-show {
+    transform: translateX(-50%) scale(0.8);
+    transition: transform 0.3s ease;
+}
+
+#map-screen .france-title.map-show.title-hover {
+    transform: translateX(-50%) scale(1.0) translateY(-15px);
+}
+
+#map-screen .france-title.map-show.title-hover.title-rotate {
+    animation: rotate-clockwise-france 13s linear infinite;
+    animation-delay: 0.1s;
+}
+
+/* 지도 이미지 내부 상대 위치 */
 .japan-btn {
-    top: 25%;
-    right: 15%;
+    top: 35%;
+    right: 12%;
 }
 
 .china-btn {
-    top: 45%;
-    right: 20%;
+    top: 30%;
+    right: 23%;
 }
 
 .france-btn {
-    top: 35%;
-    left: 25%;
+    top: 38%;
+    left: 50%;
 }
 
 .world-map {
@@ -494,6 +672,26 @@ body {
     flex-direction: column;
 }
 
+/* 프랑스 무릎 */
+.france-knee {
+    position: absolute;
+    left: 22vw;
+    top: 45vw;
+    width: 25vw;
+    height: auto;
+    z-index: 0;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.france-knee img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
 /* 프랑스 테이블 이미지 */
 .france-table-image {
     position: absolute;
@@ -592,16 +790,30 @@ body {
     width: 17vw;
     height: auto;
     z-index: 4;
-    pointer-events: none;
+    pointer-events: auto;
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: grab;
+}
+
+.france-napkin:active {
+    cursor: grabbing;
 }
 
 .france-napkin img {
     width: 100%;
     height: auto;
     object-fit: contain;
+}
+
+.france-napkin.highlight-pulse {
+    animation: dropZoneScalePulse 1.5s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.france-napkin.highlight-pulse img {
+    animation: none;
 }
 
 .france-napkin::before {
@@ -744,6 +956,19 @@ body {
     object-fit: contain;
 }
 
+.france-hand:active {
+    cursor: grabbing;
+}
+
+.france-hand.highlight-pulse {
+    animation: dropZoneScalePulse 1.5s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.france-hand.highlight-pulse img {
+    animation: none;
+}
+
 /* 프랑스 빵 */
 .france-bread {
     position: absolute;
@@ -777,6 +1002,40 @@ body {
     background-position: center;
     z-index: -1;
     pointer-events: none;
+}
+
+/* 프랑스 라운드 빵 */
+.france-rbread {
+    position: absolute;
+    left: 10.3vw;
+    top: 5.2vw;
+    width: 13.5vw;
+    height: auto;
+    z-index: 3;
+    pointer-events: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: grab;
+}
+
+.france-rbread:active {
+    cursor: grabbing;
+}
+
+.france-rbread.highlight-pulse {
+    animation: dropZoneScalePulse 1.5s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.france-rbread.highlight-pulse img {
+    animation: none;
+}
+
+.france-rbread img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
 }
 
 /* 프랑스 메인 디시 1 */
@@ -1062,6 +1321,31 @@ body {
     background-position: center;
     z-index: -1;
     pointer-events: none;
+}
+
+.france-fork0:active,
+.france-fork1:active,
+.france-fork2:active,
+.france-knife1:active,
+.france-knife2:active {
+    cursor: grabbing;
+}
+
+.france-fork0.highlight-pulse,
+.france-fork1.highlight-pulse,
+.france-fork2.highlight-pulse,
+.france-knife1.highlight-pulse,
+.france-knife2.highlight-pulse {
+    animation: dropZoneScalePulse 1.5s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.france-fork0.highlight-pulse img,
+.france-fork1.highlight-pulse img,
+.france-fork2.highlight-pulse img,
+.france-knife1.highlight-pulse img,
+.france-knife2.highlight-pulse img {
+    animation: none;
 }
 
 .back-to-map-btn {
@@ -2537,7 +2821,7 @@ body {
 }
 
 .drop-zone.drag-over {
-    border: 2px dashed #905431;
+    border: 3px dashed #F5F3E5;
     background: rgba(245, 243, 229, 0.2);
     transform: scale(1.05);
 }
@@ -2599,6 +2883,70 @@ body {
     width: 8vw;
     height: 12vw;
     /* 크기는 나중에 이미지 크기에 맞게 조정 가능 */
+}
+
+#drop-napkin {
+    left: 21vw;
+    top: 44vw;
+    width: 28vw;
+    height: 23vw;
+    /* 무릎 위치에 맞춰 배치 */
+}
+
+#drop-rbread {
+    left: 28.3vw;
+    top: 25.2vw;
+    width: 15.5vw;
+    height: 13vw;
+    /* 라운드 빵 위치에 맞춰 배치 (테이블 매트 위) */
+    display: none; /* 처음에는 숨김 */
+}
+
+#drop-dish2 {
+    left: 9vw;
+    top: 16vw;
+    width: 12vw;
+    height: 12vw;
+    /* 접시 2 위치에 맞춰 배치 */
+    display: none; /* 처음에는 숨김 */
+    border-radius: 50%; /* 원형 */
+}
+
+#drop-rbread-utensils {
+    left: 28.3vw;
+    top: 25.2vw;
+    width: 15.5vw;
+    height: 13vw;
+    /* 빵 위치에 맞춰 배치 */
+    display: none; /* 처음에는 숨김 */
+}
+
+.drop-zone-text {
+    color: #F5F3E5;
+    font-size: 2rem;
+    font-weight: 900;
+    pointer-events: none;
+    user-select: none;
+    z-index: 1;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    position: relative;
+    top: 0.5vw;
+    display: none;
+}
+
+.drop-zone.drag-over .drop-zone-text {
+    color: #F5F3E5;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    display: block;
+}
+
+#drop-dish1 {
+    left: 25vw;
+    top: 23vw;
+    width: 20vw;
+    height: 20vw;
+    /* 접시 1 위치에 맞춰 배치 */
+    display: none; /* 처음에는 숨김 */
 }
 
 /* 슬롯 메뉴 */
@@ -3051,7 +3399,17 @@ body {
 }
 
 .drop-zone.highlight-pulse {
-    border: 2px dashed #905431 !important;
+    animation: dropZoneScalePulse 1.5s ease-in-out infinite;
+    transform-origin: center;
+}
+
+@keyframes dropZoneScalePulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
 }
 
 .drop-zone.highlight-pulse .dropped-item img {
@@ -3109,6 +3467,11 @@ body {
 
 .dropped-item.dragging {
     opacity: 0.5;
+}
+
+/* rbread가 drop-dish2에 배치될 때 위쪽으로 조정 */
+#drop-dish2 .dropped-item[data-item-type="rbread"] {
+    transform: translate(-50%, -60%);
 }
 
 .dropped-item img {
@@ -3498,4 +3861,52 @@ body {
     50% {
         transform: scale(1.1);
     }
+}
+
+/* 로딩 화면 */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #E3C199;
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 0.5s ease-out;
+}
+
+.loading-screen.hide {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 5px solid rgba(144, 84, 49, 0.2);
+    border-top-color: #905431;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-text {
+    font-family: 'GangwonEducationModuche', sans-serif;
+    font-size: 1.5rem;
+    color: #905431;
+    margin-top: 20px;
 }

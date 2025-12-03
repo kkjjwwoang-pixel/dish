@@ -145,6 +145,72 @@ document.addEventListener('DOMContentLoaded', () => {
     //     window.addEventListener('resize', adjustTitleImages);
     // }
 
+    // 마우스 위치에 따른 맵 이미지 parallax 효과 (맵 화면)
+    const mapContainer = document.querySelector('.map-container');
+    const mapScreen = document.getElementById('map-screen');
+    
+    if (mapContainer && mapScreen) {
+        let isMapScreenActive = mapScreen.classList.contains('active');
+        
+        // 맵 화면이 활성화될 때 이벤트 리스너 추가
+        const addParallaxEffect = () => {
+            const handleMouseMove = (e) => {
+                if (!isMapScreenActive) return;
+                
+                // 마우스가 창 밖에 있는지 확인
+                if (e.clientX < 0 || e.clientX > window.innerWidth || 
+                    e.clientY < 0 || e.clientY > window.innerHeight) {
+                    mapContainer.style.transform = 'translate(0, 0)';
+                    return;
+                }
+                
+                const rect = mapScreen.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // 마우스가 맵 화면 영역 밖에 있으면 원위치
+                if (x < 0 || x > rect.width || y < 0 || y > rect.height) {
+                    mapContainer.style.transform = 'translate(0, 0)';
+                    return;
+                }
+                
+                // 화면 중앙을 기준으로 -1 ~ 1 범위로 정규화
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const normalizedX = (x - centerX) / centerX;
+                const normalizedY = (y - centerY) / centerY;
+                
+                // 최대 이동 거리 (픽셀 단위) - 마우스 방향과 반대로 이동
+                const maxMove = 15;
+                const moveX = -normalizedX * maxMove;
+                const moveY = -normalizedY * maxMove;
+                
+                mapContainer.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            };
+            
+            // 창 밖으로 마우스가 나갔을 때
+            const handleMouseLeave = () => {
+                mapContainer.style.transform = 'translate(0, 0)';
+            };
+            
+            // 문서 전체에서 마우스 이동 감지 (창 밖으로 나갔을 때도 감지)
+            document.addEventListener('mousemove', handleMouseMove);
+            mapScreen.addEventListener('mouseleave', handleMouseLeave);
+            
+            // 화면 전환 감지를 위한 MutationObserver
+            const observer = new MutationObserver(() => {
+                isMapScreenActive = mapScreen.classList.contains('active');
+                if (!isMapScreenActive) {
+                    mapContainer.style.transform = 'translate(0, 0)';
+                }
+            });
+            observer.observe(mapScreen, { attributes: true, attributeFilter: ['class'] });
+        };
+        
+        addParallaxEffect();
+    }
+
+
     // URL 파라미터 확인하여 맵 화면 활성화
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('screen') === 'map' && document.getElementById('map-screen')) {
@@ -155,12 +221,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const slotMenuJapan = document.getElementById('slot-menu-japan');
         if (slotMenuJapan) slotMenuJapan.style.display = 'block';
         initializeJapanStage();
+        // 헤더 사각형 애니메이션 트리거 (약간의 지연 추가)
+        setTimeout(() => {
+            triggerHeaderSquareAnimation();
+        }, 100);
     }
 
     if (document.getElementById('china-stage')) {
         const slotMenuChina = document.getElementById('slot-menu-china');
         if (slotMenuChina) slotMenuChina.style.display = 'block';
         initializeChinaStage();
+        // 헤더 사각형 애니메이션 트리거 (약간의 지연 추가)
+        setTimeout(() => {
+            triggerHeaderSquareAnimation();
+        }, 100);
     }
 
     if (document.getElementById('france-stage')) {
@@ -175,6 +249,10 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('initializeFranceStage 호출 전');
         initializeFranceStage();
         console.log('initializeFranceStage 호출 후');
+        // 헤더 사각형 애니메이션 트리거 (약간의 지연 추가)
+        setTimeout(() => {
+            triggerHeaderSquareAnimation();
+        }, 100);
     } else {
         console.log('프랑스 스테이지 요소를 찾을 수 없습니다');
     }
@@ -263,11 +341,33 @@ const correctPositionsChina = {
 
 // 프랑스 스테이지 정답 위치 매핑
 const correctPositionsFrance = {
-    'wineglass': 'drop-wineglass'
+    'wineglass': 'drop-wineglass',
+    'napkin': 'drop-napkin',
+    'rbread': 'drop-rbread',
+    'dish2': 'drop-dish2',
+    'dish1': 'drop-dish1'
 };
 
 // 배치된 아이템 추적
 const placedItems = {};
+
+// 헤더 사각형 애니메이션 트리거 함수
+function triggerHeaderSquareAnimation() {
+    const headerSquare = document.querySelector('.header-square');
+    if (headerSquare) {
+        // 초기 상태로 리셋
+        headerSquare.classList.remove('slide-in');
+        headerSquare.style.transform = 'translateX(-100%)';
+        
+        // 브라우저 렌더링 후 애니메이션 시작
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                headerSquare.style.transform = '';
+                headerSquare.classList.add('slide-in');
+            });
+        });
+    }
+}
 
 // 화면 전환 함수
 function showScreen(screenName) {
@@ -329,37 +429,73 @@ function showScreen(screenName) {
             const header = mapScreen.querySelector('.top-header');
 
             // 먼저 기존 애니메이션 클래스 제거
-            const mapImage = mapScreen.querySelector('.title-map-image');
+            const mapContainer = mapScreen.querySelector('.map-container');
             const cheftable = mapScreen.querySelector('.title-cheftable-m-image');
             const spoon = mapScreen.querySelector('.title-spoon-m-image');
             const chopsticks = mapScreen.querySelector('.title-chopsticks-m-image');
-            const titleText = mapScreen.querySelector('h1');
+            const titleText = mapScreen.querySelector('.title-content h1');
+            const headerSquare = mapScreen.querySelector('.header-square');
+            const countryButtons = mapScreen.querySelectorAll('.map-country-btn');
+            const countryTitles = mapScreen.querySelectorAll('.country-title-image');
 
-            if (mapImage) mapImage.classList.remove('map-expand');
+            if (mapContainer) mapContainer.classList.remove('map-expand');
             if (cheftable) cheftable.classList.remove('map-hide');
             if (spoon) spoon.classList.remove('map-hide');
             if (chopsticks) chopsticks.classList.remove('map-hide');
-            if (titleText) titleText.classList.remove('map-hide');
-            if (header) header.classList.remove('header-slide-down');
+            if (titleText) {
+                titleText.classList.remove('map-hide');
+                titleText.classList.remove('map-shrink');
+            }
+            if (headerSquare) headerSquare.classList.remove('slide-in');
+            countryButtons.forEach(btn => btn.classList.remove('map-show'));
+            countryTitles.forEach(title => title.classList.remove('map-show'));
 
             // 브라우저 렌더링 후 애니메이션 시작
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
-                    // 헤더 애니메이션 먼저 시작
-                    if (header) {
-                        header.classList.add('header-slide-down');
-                    }
-
                     // 다른 애니메이션 클래스 추가
-                    if (mapImage) {
-                        mapImage.classList.add('map-expand');
+                    if (mapContainer) {
+                        mapContainer.classList.add('map-expand');
                     }
                     if (cheftable) cheftable.classList.add('map-hide');
                     if (spoon) spoon.classList.add('map-hide');
                     if (chopsticks) chopsticks.classList.add('map-hide');
-                    if (titleText) titleText.classList.add('map-hide');
+                    if (titleText) {
+                        // 작아지는 애니메이션 트리거
+                        titleText.classList.add('map-shrink');
+                    }
+                    if (headerSquare) {
+                        // 헤더 사각형과 텍스트 함께 x축으로만 슬라이드 인 애니메이션
+                        headerSquare.classList.add('slide-in');
+                    }
+                    // 스테이지 버튼들 나타나는 애니메이션
+                    countryButtons.forEach((btn, index) => {
+                        setTimeout(() => {
+                            btn.classList.add('map-show');
+                        }, index * 100); // 각 버튼을 순차적으로 나타나게
+                    });
+                    // 국가 타이틀 이미지들 나타나는 애니메이션
+                    countryTitles.forEach((title, index) => {
+                        setTimeout(() => {
+                            title.classList.add('map-show');
+                        }, index * 100 + 50); // 버튼보다 조금 늦게 나타나게
+                    });
                 });
             });
+        }
+
+        // 스테이지로 전환 시 헤더 사각형 애니메이션 트리거
+        if (screenName === 'japan' || screenName === 'china' || screenName === 'france') {
+            const headerSquare = document.querySelector('.header-square');
+            if (headerSquare) {
+                headerSquare.classList.remove('slide-in');
+                // 브라우저 렌더링 후 애니메이션 시작
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        headerSquare.classList.add('slide-in');
+                    });
+                });
+            }
         }
 
         // 스테이지에 따라 해당 버튼 표시
@@ -406,6 +542,21 @@ if (chinaCountry) {
 // 맵 이미지 위 일본 버튼
 const japanMapBtn = document.getElementById('japan-map-btn');
 if (japanMapBtn) {
+    const japanTitle = document.querySelector('.japan-title');
+    japanMapBtn.addEventListener('mouseenter', () => {
+        if (japanTitle) {
+            japanTitle.classList.add('title-hover');
+            // 확대 애니메이션 후 회전 시작
+            setTimeout(() => {
+                japanTitle.classList.add('title-rotate');
+            }, 100);
+        }
+    });
+    japanMapBtn.addEventListener('mouseleave', () => {
+        if (japanTitle) {
+            japanTitle.classList.remove('title-hover', 'title-rotate');
+        }
+    });
     japanMapBtn.addEventListener('click', () => {
         window.location.href = 'japan.html';
     });
@@ -414,6 +565,21 @@ if (japanMapBtn) {
 // 맵 이미지 위 중국 버튼
 const chinaMapBtn = document.getElementById('china-map-btn');
 if (chinaMapBtn) {
+    const chinaTitle = document.querySelector('.china-title');
+    chinaMapBtn.addEventListener('mouseenter', () => {
+        if (chinaTitle) {
+            chinaTitle.classList.add('title-hover');
+            // 확대 애니메이션 후 회전 시작
+            setTimeout(() => {
+                chinaTitle.classList.add('title-rotate');
+            }, 100);
+        }
+    });
+    chinaMapBtn.addEventListener('mouseleave', () => {
+        if (chinaTitle) {
+            chinaTitle.classList.remove('title-hover', 'title-rotate');
+        }
+    });
     chinaMapBtn.addEventListener('click', () => {
         window.location.href = 'china.html';
     });
@@ -421,6 +587,21 @@ if (chinaMapBtn) {
 
 const franceMapBtn = document.getElementById('france-map-btn');
 if (franceMapBtn) {
+    const franceTitle = document.querySelector('.france-title');
+    franceMapBtn.addEventListener('mouseenter', () => {
+        if (franceTitle) {
+            franceTitle.classList.add('title-hover');
+            // 확대 애니메이션 후 회전 시작
+            setTimeout(() => {
+                franceTitle.classList.add('title-rotate');
+            }, 100);
+        }
+    });
+    franceMapBtn.addEventListener('mouseleave', () => {
+        if (franceTitle) {
+            franceTitle.classList.remove('title-hover', 'title-rotate');
+        }
+    });
     franceMapBtn.addEventListener('click', () => {
         window.location.href = 'france.html';
     });
@@ -619,6 +800,63 @@ function resetStage(stageName) {
             Object.keys(placedItems).forEach(key => delete placedItems[key]);
         }
     }
+}
+
+// 타이틀 돌아가기 버튼 (월드맵 화면)
+const backToTitle = document.getElementById('back-to-title');
+if (backToTitle) {
+    backToTitle.addEventListener('click', () => {
+        const mapScreen = screens['map'];
+        if (mapScreen && mapScreen.classList.contains('active')) {
+            // 반대 애니메이션 적용
+            const mapImage = mapScreen.querySelector('.title-map-image');
+            const cheftable = mapScreen.querySelector('.title-cheftable-m-image');
+            const spoon = mapScreen.querySelector('.title-spoon-m-image');
+            const chopsticks = mapScreen.querySelector('.title-chopsticks-m-image');
+            const titleText = mapScreen.querySelector('.title-content h1');
+            const headerSquare = mapScreen.querySelector('.header-square');
+
+            // 반대 애니메이션 시작
+            const mapContainer = mapScreen.querySelector('.map-container');
+            const countryButtons = mapScreen.querySelectorAll('.map-country-btn');
+            const countryTitles = mapScreen.querySelectorAll('.country-title-image');
+            
+            if (mapContainer) mapContainer.classList.remove('map-expand');
+            if (cheftable) cheftable.classList.remove('map-hide');
+            if (spoon) spoon.classList.remove('map-hide');
+            if (chopsticks) chopsticks.classList.remove('map-hide');
+            if (titleText) {
+                titleText.classList.remove('map-shrink');
+            }
+            if (headerSquare) {
+                headerSquare.classList.remove('slide-in');
+                headerSquare.classList.add('slide-out');
+            }
+            // 스테이지 버튼들 사라지는 애니메이션
+            countryButtons.forEach((btn, index) => {
+                setTimeout(() => {
+                    btn.classList.remove('map-show');
+                }, index * 50); // 각 버튼을 순차적으로 사라지게
+            });
+            // 국가 타이틀 이미지들 사라지는 애니메이션
+            countryTitles.forEach((title, index) => {
+                setTimeout(() => {
+                    title.classList.remove('map-show');
+                }, index * 50); // 각 타이틀을 순차적으로 사라지게
+            });
+
+            // 애니메이션 완료 후 타이틀 화면으로 전환
+            setTimeout(() => {
+                showScreen('title');
+                // 애니메이션 클래스 제거
+                if (headerSquare) {
+                    headerSquare.classList.remove('slide-out');
+                }
+            }, 800); // transition 시간과 동일하게
+        } else {
+            showScreen('title');
+        }
+    });
 }
 
 // 지도 돌아가기 버튼
@@ -841,8 +1079,13 @@ function initializeChinaStage() {
 
 // 프랑스 스테이지 대사 배열 (대사와 버튼 텍스트를 함께 관리)
 const speechSequenceFrance = [
-    { text: 'Bienvenue! 자리에 앉아주세요.', buttonText: '다음' },
-    { text: '환영합니다', buttonText: '감사합니다' }
+    { text: 'Bonjour! 비스트로 파리에 오신 것을 환영합니다!', buttonText: '안녕하세요' },
+    { text: '저희 식당을 찾아 주셔서 감사합니다. 첫 방문이신가요?', buttonText: '네' },
+    { text: '걱정 마세요! 쉽진 않지만, 제가 손님께 도움을 드리겠습니다.', buttonText: '고마워요' },
+    { text: '첫 번째 순서입니다, 냅킨을 펼쳐볼까요?', buttonText: '네', showNextButton: false, onShow: highlightNapkinAndDropZone },
+    { text: '처음 순서는 아페리티프(Apéritif) 입니다.', buttonText: '다음' },
+    { text: '식전에 빵과 함께 식욕을 돋구는 단계죠.', buttonText: '오호' },
+    { text: '빵 좀 드셔보시겠어요?', buttonText: '네', onShow: highlightRbread },
 ];
 
 // 프랑스 스테이지 초기화
@@ -906,6 +1149,24 @@ function initializeFranceStage() {
             item.addEventListener('dragstart', handleDragStart);
             item.addEventListener('dragend', handleDragEnd);
         });
+    }
+    
+    // 프랑스 스테이지에 배치된 냅킨 드래그 활성화
+    const franceNapkin = document.getElementById('france-napkin-draggable');
+    if (franceNapkin) {
+        franceNapkin.setAttribute('draggable', 'true');
+        franceNapkin.style.cursor = 'grab';
+        franceNapkin.addEventListener('dragstart', handleDragStart);
+        franceNapkin.addEventListener('dragend', handleDragEnd);
+    }
+    
+    // 프랑스 스테이지에 배치된 라운드 빵 드래그 활성화
+    const franceRbread = document.getElementById('france-rbread-draggable');
+    if (franceRbread) {
+        franceRbread.setAttribute('draggable', 'true');
+        franceRbread.style.cursor = 'grab';
+        franceRbread.addEventListener('dragstart', handleDragStart);
+        franceRbread.addEventListener('dragend', handleDragEnd);
     }
     }
 
@@ -1975,6 +2236,140 @@ function handleDragStart(e) {
         if (fingerGuide) {
             fingerGuide.remove();
         }
+    } else if (this.id === 'france-napkin-draggable' || this.classList.contains('france-napkin')) {
+        // 스테이지에 배치된 냅킨인 경우
+        e.dataTransfer.setData('source', 'stage');
+        
+        // 냅킨의 실제 이미지 크기에 맞춰 드래그 이미지 설정
+        const img = this.querySelector('img');
+        if (img) {
+            const createDragImage = (naturalWidth, naturalHeight) => {
+                // 원본 크기를 vw로 변환
+                const widthVw = pxToVw(naturalWidth);
+                const heightVw = pxToVw(naturalHeight);
+                const widthPx = vwToPx(widthVw);
+                const heightPx = vwToPx(heightVw);
+                
+                // 임시 이미지 요소 생성
+                const dragImage = document.createElement('div');
+                dragImage.style.position = 'absolute';
+                dragImage.style.top = '-1000px';
+                dragImage.style.width = widthPx + 'px';
+                dragImage.style.height = heightPx + 'px';
+                dragImage.style.backgroundImage = `url('${img.src}')`;
+                dragImage.style.backgroundSize = 'contain';
+                dragImage.style.backgroundPosition = 'center';
+                dragImage.style.backgroundRepeat = 'no-repeat';
+                document.body.appendChild(dragImage);
+                
+                // 드래그 이미지 설정
+                e.dataTransfer.setDragImage(dragImage, widthPx / 2, heightPx / 2);
+                
+                setTimeout(() => {
+                    if (document.body.contains(dragImage)) {
+                        document.body.removeChild(dragImage);
+                    }
+                }, 0);
+            };
+            
+            if (img.complete && img.naturalWidth > 0) {
+                createDragImage(img.naturalWidth, img.naturalHeight);
+            } else {
+                img.onload = function() {
+                    createDragImage(this.naturalWidth, this.naturalHeight);
+                };
+            }
+        }
+    } else if (this.id === 'france-rbread-draggable' || this.classList.contains('france-rbread')) {
+        // 스테이지에 배치된 라운드 빵인 경우
+        e.dataTransfer.setData('source', 'stage');
+        
+        // 라운드 빵의 실제 이미지 크기에 맞춰 드래그 이미지 설정
+        const img = this.querySelector('img');
+        if (img) {
+            const createDragImage = (naturalWidth, naturalHeight) => {
+                // 원본 크기를 vw로 변환
+                const widthVw = pxToVw(naturalWidth);
+                const heightVw = pxToVw(naturalHeight);
+                const widthPx = vwToPx(widthVw);
+                const heightPx = vwToPx(heightVw);
+                
+                // 임시 이미지 요소 생성
+                const dragImage = document.createElement('div');
+                dragImage.style.position = 'absolute';
+                dragImage.style.top = '-1000px';
+                dragImage.style.width = widthPx + 'px';
+                dragImage.style.height = heightPx + 'px';
+                dragImage.style.backgroundImage = `url('${img.src}')`;
+                dragImage.style.backgroundSize = 'contain';
+                dragImage.style.backgroundPosition = 'center';
+                dragImage.style.backgroundRepeat = 'no-repeat';
+                document.body.appendChild(dragImage);
+                
+                // 드래그 이미지 설정
+                e.dataTransfer.setDragImage(dragImage, widthPx / 2, heightPx / 2);
+                
+                setTimeout(() => {
+                    if (document.body.contains(dragImage)) {
+                        document.body.removeChild(dragImage);
+                    }
+                }, 0);
+            };
+            
+            if (img.complete && img.naturalWidth > 0) {
+                createDragImage(img.naturalWidth, img.naturalHeight);
+            } else {
+                img.onload = function() {
+                    createDragImage(this.naturalWidth, this.naturalHeight);
+                };
+            }
+        }
+    } else if (this.classList.contains('france-fork0') || this.classList.contains('france-fork1') || 
+               this.classList.contains('france-fork2') || this.classList.contains('france-knife1') || 
+               this.classList.contains('france-knife2') || this.classList.contains('france-hand')) {
+        // 스테이지에 배치된 포크, 나이프, 손인 경우
+        e.dataTransfer.setData('source', 'stage');
+        
+        // 실제 이미지 크기에 맞춰 드래그 이미지 설정
+        const img = this.querySelector('img');
+        if (img) {
+            const createDragImage = (naturalWidth, naturalHeight) => {
+                // 원본 크기를 vw로 변환
+                const widthVw = pxToVw(naturalWidth);
+                const heightVw = pxToVw(naturalHeight);
+                const widthPx = vwToPx(widthVw);
+                const heightPx = vwToPx(heightVw);
+                
+                // 임시 이미지 요소 생성
+                const dragImage = document.createElement('div');
+                dragImage.style.position = 'absolute';
+                dragImage.style.top = '-1000px';
+                dragImage.style.width = widthPx + 'px';
+                dragImage.style.height = heightPx + 'px';
+                dragImage.style.backgroundImage = `url('${img.src}')`;
+                dragImage.style.backgroundSize = 'contain';
+                dragImage.style.backgroundPosition = 'center';
+                dragImage.style.backgroundRepeat = 'no-repeat';
+                document.body.appendChild(dragImage);
+                
+                // 드래그 이미지 설정
+                e.dataTransfer.setDragImage(dragImage, widthPx / 2, heightPx / 2);
+                
+                setTimeout(() => {
+                    if (document.body.contains(dragImage)) {
+                        document.body.removeChild(dragImage);
+                    }
+                }, 0);
+            };
+            
+            if (img.complete && img.naturalWidth > 0) {
+                createDragImage(img.naturalWidth, img.naturalHeight);
+            } else {
+                img.onload = function() {
+                    createDragImage(this.naturalWidth, this.naturalHeight);
+                };
+            }
+        }
     } else {
         e.dataTransfer.setData('source', 'slot');
     }
@@ -2098,6 +2493,10 @@ function handleDroppedItemDragEnd(e) {
 }
 
 function handleDragOver(e) {
+    // 비활성화된 드랍존에서는 드래그 오버 막기
+    if (this.style.display === 'none' || this.style.pointerEvents === 'none' || this.classList.contains('disabled')) {
+        return false;
+    }
     if (e.preventDefault) {
         e.preventDefault();
     }
@@ -2116,7 +2515,7 @@ function handleDrop(e) {
     }
 
     // 비활성화된 드랍존에서는 드롭 막기
-    if (this.style.display === 'none' || this.style.pointerEvents === 'none') {
+    if (this.style.display === 'none' || this.style.pointerEvents === 'none' || this.classList.contains('disabled')) {
         return false;
     }
 
@@ -2154,12 +2553,34 @@ function handleDrop(e) {
 
         // 그림자 이미지 표시 업데이트 (원래 위치에서 제거됨)
         updateShadowVisibility();
-    } else if (source === 'slot' || source === 'cheftable') {
-        // 슬롯 또는 셰프테이블에서 드래그한 경우
+    } else if (source === 'slot' || source === 'cheftable' || source === 'stage') {
+        // 슬롯, 셰프테이블, 또는 스테이지에 배치된 요소에서 드래그한 경우
         if (!draggedElement) return;
 
         itemType = draggedElement.getAttribute('data-item');
         imageSrc = draggedElement.getAttribute('data-image');
+        
+        // 스테이지에 배치된 요소인 경우 이미지 소스 직접 가져오기 및 itemType 설정
+        if (source === 'stage' && !imageSrc) {
+            const img = draggedElement.querySelector('img');
+            if (img) {
+                imageSrc = img.src;
+            }
+            // 포크, 나이프, 손의 itemType 설정
+            if (draggedElement.classList.contains('france-fork0')) {
+                itemType = 'fork0';
+            } else if (draggedElement.classList.contains('france-fork1')) {
+                itemType = 'fork1';
+            } else if (draggedElement.classList.contains('france-fork2')) {
+                itemType = 'fork2';
+            } else if (draggedElement.classList.contains('france-knife1')) {
+                itemType = 'knife1';
+            } else if (draggedElement.classList.contains('france-knife2')) {
+                itemType = 'knife2';
+            } else if (draggedElement.classList.contains('france-hand')) {
+                itemType = 'hand';
+            }
+        }
     } else {
         return false;
     }
@@ -2189,11 +2610,107 @@ function handleDrop(e) {
     }
 
     // 아이템을 드롭 존에 배치
-    const slotElement = (source === 'slot' || source === 'cheftable') ? draggedElement : null;
+    const slotElement = (source === 'slot' || source === 'cheftable' || source === 'stage') ? draggedElement : null;
+    
+    // 스테이지에 배치된 요소를 드롭존에 드롭하면 원본 요소 숨기기
+    if (source === 'stage' && draggedElement) {
+        draggedElement.style.display = 'none';
+    }
+    
     placeItemInZone(itemType, imageSrc, this, dropZoneId, correctZoneId, slotElement);
 
     // 그림자 이미지 표시 업데이트 (새 위치에 배치됨)
     updateShadowVisibility();
+    
+    // 프랑스 스테이지에서 냅킨이 드랍존에 드롭되면 무릎 이미지 변경 및 다음 말풍선 표시
+    if (currentStage === 'france' && itemType === 'napkin' && dropZoneId === 'drop-napkin') {
+        const kneeImage = document.querySelector('.france-knee img');
+        if (kneeImage) {
+            kneeImage.src = 'resource/fr/fr_knee_2.png';
+        }
+        
+        // 하이라이팅 제거
+        const napkinElement = document.getElementById('france-napkin-draggable');
+        const napkinDropZone = document.getElementById('drop-napkin');
+        if (napkinElement) {
+            napkinElement.classList.remove('highlight-pulse');
+        }
+        if (napkinDropZone) {
+            napkinDropZone.classList.remove('highlight-pulse');
+        }
+        
+        // 다음 말풍선 표시
+        currentSpeechIndexFrance = 4; // 아페리티프 말풍선 인덱스
+        setTimeout(() => {
+            showNextSpeechFrance();
+        }, 500);
+    }
+    
+    // 프랑스 스테이지에서 라운드 빵이 드랍존에 드롭되면 하이라이팅 제거 및 인포 메뉴 표시
+    if (currentStage === 'france' && itemType === 'rbread') {
+        // 하이라이팅 제거
+        const rbreadElement = document.getElementById('france-rbread-draggable');
+        const rbreadDropZone = document.getElementById('drop-rbread');
+        const dish2DropZone = document.getElementById('drop-dish2');
+        if (rbreadElement) {
+            rbreadElement.classList.remove('highlight-pulse');
+        }
+        if (rbreadDropZone) {
+            rbreadDropZone.classList.remove('highlight-pulse');
+        }
+        if (dish2DropZone) {
+            dish2DropZone.classList.remove('highlight-pulse');
+        }
+        
+        if (dropZoneId === 'drop-dish2') {
+            // dish2에 드롭된 경우 말풍선 표시
+            setTimeout(() => {
+                showSpeechBubbleFrance('거기가 아닐텐데요', 3000, false, null, null, null, null);
+            }, 250);
+        } else if (dropZoneId === 'drop-rbread') {
+            // 테이블 쪽에 드롭된 경우 드랍존 비활성화 및 말풍선 표시
+            // 드랍존 비활성화
+            if (rbreadDropZone) {
+                rbreadDropZone.style.pointerEvents = 'none';
+                rbreadDropZone.classList.add('disabled');
+            }
+            if (dish2DropZone) {
+                dish2DropZone.style.pointerEvents = 'none';
+                dish2DropZone.style.display = 'none';
+                dish2DropZone.classList.add('disabled');
+            }
+            // 말풍선 표시 및 포크/나이프 활성화
+            setTimeout(() => {
+                showSpeechBubbleFrance('좋습니다!', 3000, false, null, null, null, null);
+                enableForksAndKnives();
+            }, 250);
+        }
+    }
+    
+    // 프랑스 스테이지에서 포크, 나이프, 손이 빵 위 드랍존에 드롭되면 하이라이팅 제거
+    if (currentStage === 'france' && dropZoneId === 'drop-rbread-utensils' && 
+        (itemType === 'fork0' || itemType === 'fork1' || itemType === 'fork2' || 
+         itemType === 'knife1' || itemType === 'knife2' || itemType === 'hand')) {
+        // 하이라이팅 제거
+        const fork0 = document.querySelector('.france-fork0');
+        const fork1 = document.querySelector('.france-fork1');
+        const fork2 = document.querySelector('.france-fork2');
+        const knife1 = document.querySelector('.france-knife1');
+        const knife2 = document.querySelector('.france-knife2');
+        const hand = document.querySelector('.france-hand');
+        const rbreadUtensilsDropZone = document.getElementById('drop-rbread-utensils');
+        
+        const allItems = [fork0, fork1, fork2, knife1, knife2, hand];
+        allItems.forEach(item => {
+            if (item) {
+                item.classList.remove('highlight-pulse');
+            }
+        });
+        
+        if (rbreadUtensilsDropZone) {
+            rbreadUtensilsDropZone.classList.remove('highlight-pulse');
+        }
+    }
 
     // 셰프테이블에서 온 경우 드롭 성공 후 제거
     if (source === 'cheftable' && draggedElement && draggedElement.classList.contains('cheftable-rice-bowl')) {
@@ -2221,21 +2738,14 @@ function placeItemInZone(itemType, imageSrc, dropZone, dropZoneId, correctZoneId
     const img = document.createElement('img');
     img.style.display = 'block';
 
-    // 이미지 크기 설정 함수 (드롭 존이 이미지 크기의 80%로 맞춰져 있으므로 80% 사용) - vw 단위
+    // 이미지 크기 설정 함수 (기존 이미지 사이즈 유지) - vw 단위
     const setImageSize = function () {
         const naturalWidth = img.naturalWidth;
         const naturalHeight = img.naturalHeight;
 
-        // 숟가락은 원본 크기의 72%로 설정 (80% * 0.9 = 72%), 
-        // 찻잔은 120%로 설정 (더 크게), 나머지는 80%로 설정 (20% 축소) - vw 단위
-        let scaleFactor = 0.8;
-        if (itemType === 'spoon') {
-            scaleFactor = 0.72;
-        } else if (itemType === 'cup') {
-            scaleFactor = 1.2;
-        }
-        img.style.width = `${pxToVw(naturalWidth * scaleFactor)}vw`;
-        img.style.height = `${pxToVw(naturalHeight * scaleFactor)}vw`;
+        // 원본 크기 그대로 유지
+        img.style.width = `${pxToVw(naturalWidth)}vw`;
+        img.style.height = `${pxToVw(naturalHeight)}vw`;
     };
 
     // 이미지 로드 이벤트 설정
@@ -2269,6 +2779,27 @@ function placeItemInZone(itemType, imageSrc, dropZone, dropZoneId, correctZoneId
 
         droppedItem.appendChild(shadowImg);
     }
+    
+    // France stage items: add shadow image
+    if (itemType === 'rbread') {
+        droppedItem.style.position = 'relative'; // Ensure relative positioning for shadow
+
+        const shadowImg = document.createElement('img');
+        shadowImg.className = 'shadow-img';
+        shadowImg.src = imageSrc.replace('.png', '_s.png');
+        shadowImg.alt = itemType + ' shadow';
+
+        // Shadow styling is handled by CSS (.shadow-img), but we need to ensure it fits
+        shadowImg.style.position = 'absolute';
+        shadowImg.style.left = '-0.5vw';
+        shadowImg.style.top = '0.5vw';
+        shadowImg.style.width = '100%';
+        shadowImg.style.height = '100%';
+        shadowImg.style.zIndex = '-1';
+        shadowImg.style.pointerEvents = 'none';
+
+        droppedItem.appendChild(shadowImg);
+    }
 
     droppedItem.appendChild(img);
 
@@ -2286,6 +2817,10 @@ function placeItemInZone(itemType, imageSrc, dropZone, dropZoneId, correctZoneId
     droppedItem.addEventListener('click', function (e) {
         // 드래그가 아닌 클릭인 경우에만 실행
         if (!this.classList.contains('dragging')) {
+            // rbread는 클릭해도 사라지지 않음
+            if (itemType === 'rbread') {
+                return;
+            }
             // 올바른 위치에 놓인 아이템은 클릭해도 인벤토리로 돌아가지 않음
             const dropZone = document.getElementById(dropZoneId);
             if (dropZone && dropZone.classList.contains('correct')) {
@@ -6479,8 +7014,10 @@ function showNextSpeechFrance() {
         const currentText = typeof currentSpeech === 'string' ? currentSpeech : currentSpeech.text;
         const buttonText = typeof currentSpeech === 'string' ? BUTTON_TEXTS.nextFrance : (currentSpeech.buttonText || BUTTON_TEXTS.nextFrance);
         const buttons = typeof currentSpeech === 'string' ? null : (currentSpeech.buttons || null);
+        const onShow = typeof currentSpeech === 'string' ? null : (currentSpeech.onShow || null);
+        const showNextButton = typeof currentSpeech === 'string' ? !isLast : (currentSpeech.showNextButton !== undefined ? currentSpeech.showNextButton : !isLast);
 
-        console.log('대사 정보:', { currentText, buttonText, isLast });
+        console.log('대사 정보:', { currentText, buttonText, isLast, showNextButton });
 
         // 다음 대사로 넘어가는 콜백
         const nextCallback = () => {
@@ -6491,12 +7028,103 @@ function showNextSpeechFrance() {
             }
         };
 
-        showSpeechBubbleFrance(currentText, 0, !isLast, nextCallback, null, buttonText, buttons);
+        showSpeechBubbleFrance(currentText, 0, showNextButton, nextCallback, onShow, buttonText, buttons);
     } else {
         console.warn('showNextSpeechFrance: 대사 배열 범위를 벗어남', {
             currentSpeechIndexFrance,
             speechSequenceFranceLength: speechSequenceFrance.length
         });
+    }
+}
+
+// 냅킨과 냅킨 드랍존 하이라이팅
+function highlightNapkinAndDropZone() {
+    const napkinElement = document.getElementById('france-napkin-draggable');
+    const napkinDropZone = document.getElementById('drop-napkin');
+    
+    if (napkinElement) {
+        napkinElement.classList.add('highlight-pulse');
+    }
+    if (napkinDropZone) {
+        napkinDropZone.classList.add('highlight-pulse');
+    }
+}
+
+// 라운드 빵 하이라이팅
+function highlightRbread() {
+    const rbreadElement = document.getElementById('france-rbread-draggable');
+    const rbreadDropZone = document.getElementById('drop-rbread');
+    const dish2DropZone = document.getElementById('drop-dish2');
+    
+    if (rbreadElement) {
+        rbreadElement.classList.add('highlight-pulse');
+    }
+    if (rbreadDropZone) {
+        rbreadDropZone.style.display = 'flex';
+        rbreadDropZone.classList.add('highlight-pulse');
+    }
+    if (dish2DropZone) {
+        dish2DropZone.style.display = 'flex';
+        dish2DropZone.classList.add('highlight-pulse');
+    }
+}
+
+// 포크와 나이프 드래그 활성화 및 하이라이팅
+function enableForksAndKnives() {
+    // 포크 0, 1, 2 활성화
+    const fork0 = document.querySelector('.france-fork0');
+    const fork1 = document.querySelector('.france-fork1');
+    const fork2 = document.querySelector('.france-fork2');
+    
+    // 나이프 1, 2 활성화
+    const knife1 = document.querySelector('.france-knife1');
+    const knife2 = document.querySelector('.france-knife2');
+    
+    // 손 하이라이팅
+    const hand = document.querySelector('.france-hand');
+    
+    const forks = [fork0, fork1, fork2];
+    const knives = [knife1, knife2];
+    
+    // 포크 활성화
+    forks.forEach(fork => {
+        if (fork) {
+            fork.style.pointerEvents = 'auto';
+            fork.setAttribute('draggable', 'true');
+            fork.style.cursor = 'grab';
+            fork.classList.add('highlight-pulse');
+            fork.addEventListener('dragstart', handleDragStart);
+            fork.addEventListener('dragend', handleDragEnd);
+        }
+    });
+    
+    // 나이프 활성화
+    knives.forEach(knife => {
+        if (knife) {
+            knife.style.pointerEvents = 'auto';
+            knife.setAttribute('draggable', 'true');
+            knife.style.cursor = 'grab';
+            knife.classList.add('highlight-pulse');
+            knife.addEventListener('dragstart', handleDragStart);
+            knife.addEventListener('dragend', handleDragEnd);
+        }
+    });
+    
+    // 손 드래그 활성화 및 하이라이팅
+    if (hand) {
+        hand.style.pointerEvents = 'auto';
+        hand.setAttribute('draggable', 'true');
+        hand.style.cursor = 'grab';
+        hand.classList.add('highlight-pulse');
+        hand.addEventListener('dragstart', handleDragStart);
+        hand.addEventListener('dragend', handleDragEnd);
+    }
+    
+    // 빵 위 식기 드랍존 표시 및 하이라이팅
+    const rbreadUtensilsDropZone = document.getElementById('drop-rbread-utensils');
+    if (rbreadUtensilsDropZone) {
+        rbreadUtensilsDropZone.style.display = 'flex';
+        rbreadUtensilsDropZone.classList.add('highlight-pulse');
     }
 }
 
@@ -6901,6 +7529,30 @@ function showTableRotationInfoMenuChina() {
         infoMenu.style.transition = 'right 0.5s ease-out';
         infoMenu.style.right = '20px';
     }, 50);
+}
+
+// 프랑스 스테이지 빵 먹기 예절 정보 메뉴 표시
+function showBreadEtiquetteInfoMenuFrance() {
+    const infoMenu = document.getElementById('bread-etiquette-info-menu-france');
+    if (!infoMenu) return;
+    infoMenu.style.display = 'block';
+    infoMenu.style.top = '300px';
+    infoMenu.style.right = '-25vw';
+    setTimeout(() => {
+        infoMenu.style.transition = 'right 0.5s ease-out';
+        infoMenu.style.right = '20px';
+    }, 50);
+}
+
+// 프랑스 스테이지 빵 먹기 예절 정보 메뉴 닫기
+function closeBreadEtiquetteInfoMenuFrance() {
+    const infoMenu = document.getElementById('bread-etiquette-info-menu-france');
+    if (!infoMenu) return;
+    infoMenu.style.transition = 'right 0.5s ease-in';
+    infoMenu.style.right = '-25vw';
+    setTimeout(() => {
+        infoMenu.style.display = 'none';
+    }, 500);
 }
 
 // 중국 스테이지 테이블 회전 예절 정보 메뉴 닫기

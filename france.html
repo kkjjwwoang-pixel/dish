@@ -12,12 +12,21 @@
 </head>
 
 <body>
+    <!-- 로딩 화면 -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">테이블 세팅하는 중..</p>
+        </div>
+    </div>
+
     <!-- 상단 헤더 -->
     <header class="top-header">
         <div class="header-content">
             <button id="back-to-map-france" class="btn-secondary back-to-map-btn">지도 돌아가기</button>
-            <div class="header-square"></div>
-            <h1 class="header-title">France</h1>
+            <div class="header-square">
+                <h1 class="header-title">France</h1>
+            </div>
             <button id="reset-stage-btn" class="btn-secondary reset-btn">다시하기</button>
         </div>
     </header>
@@ -41,6 +50,11 @@
                     <!-- 드롭 존 영역 -->
                     <div class="drop-zone-area">
                         <div class="table-setting">
+                            <!-- 프랑스 무릎 -->
+                            <div class="france-knee">
+                                <img src="resource/fr/fr_knee.png" alt="프랑스 무릎">
+                            </div>
+                            
                             <!-- 프랑스 테이블 이미지 -->
                             <div class="france-table-image">
                                 <img src="resource/fr/fr_table.png" alt="프랑스 테이블">
@@ -51,13 +65,13 @@
                                 <img src="resource/fr/fr_tablemat.png" alt="프랑스 테이블 매트">
                             </div>
                             
-                            <!-- 프랑스 접시 1 -->
-                            <div class="france-dish1">
+                            <!-- 프랑스 접시 1 (인벤토리에서 배치) -->
+                            <div class="france-dish1" style="display: none;">
                                 <img src="resource/fr/fr_dish1.png" alt="프랑스 접시 1">
                             </div>
                             
                             <!-- 프랑스 냅킨 -->
-                            <div class="france-napkin">
+                            <div class="france-napkin" id="france-napkin-draggable" draggable="true" data-item="napkin">
                                 <img src="resource/fr/fr_napkin.png" alt="프랑스 냅킨">
                             </div>
                             
@@ -84,6 +98,11 @@
                             <!-- 프랑스 빵 -->
                             <div class="france-bread">
                                 <img src="resource/fr/fr_bread.png" alt="프랑스 빵">
+                            </div>
+                            
+                            <!-- 프랑스 라운드 빵 -->
+                            <div class="france-rbread" id="france-rbread-draggable" draggable="true" data-item="rbread">
+                                <img src="resource/fr/fr_rbread.png" alt="프랑스 라운드 빵">
                             </div>
                             
                             <!-- 프랑스 메인 디시 1 -->
@@ -133,6 +152,27 @@
                             
                             <!-- 와인잔 드랍존 -->
                             <div id="drop-wineglass" class="drop-zone" data-zone="wineglass"></div>
+                            
+                            <!-- 냅킨 드랍존 -->
+                            <div id="drop-napkin" class="drop-zone" data-zone="napkin"></div>
+                            
+                            <!-- 라운드 빵 드랍존 -->
+                            <div id="drop-rbread" class="drop-zone" data-zone="rbread" style="display: none;">
+                                <span class="drop-zone-text">놓기</span>
+                            </div>
+                            
+                            <!-- 접시 2 드랍존 (원형) -->
+                            <div id="drop-dish2" class="drop-zone drop-zone-circle" data-zone="dish2" style="display: none;">
+                                <span class="drop-zone-text">놓기</span>
+                            </div>
+                            
+                            <!-- 빵 위 식기 드랍존 -->
+                            <div id="drop-rbread-utensils" class="drop-zone" data-zone="rbread-utensils" style="display: none;">
+                                <span class="drop-zone-text">놓기</span>
+                            </div>
+                            
+                            <!-- 접시 1 드랍존 -->
+                            <div id="drop-dish1" class="drop-zone" data-zone="dish1"></div>
                         </div>
                     </div>
                 </div>
@@ -156,13 +196,50 @@
                 <div class="item-icon" style="background-image: url('resource/fr/fr_wineglass.png');"></div>
                 <span>와인잔</span>
             </div>
+            <div class="slot-item" data-item="dish1" data-image="resource/fr/fr_dish1.png">
+                <div class="item-icon" style="background-image: url('resource/fr/fr_dish1.png');"></div>
+                <span>접시 1</span>
+            </div>
         </div>
     </div>
 
     <!-- 디버그 모드 토글 버튼 -->
     <button id="debug-toggle-btn" class="debug-toggle-btn">🔧</button>
+    
+    <!-- 빵 먹기 예절 정보 메뉴 -->
+    <div id="bread-etiquette-info-menu-france" class="info-menu">
+        <div class="info-menu-tab"></div>
+        <div class="menu-header">
+            <div class="menu-icon">☰</div>
+            <h3>INFO</h3>
+            <button class="info-menu-close" onclick="closeBreadEtiquetteInfoMenuFrance()">×</button>
+        </div>
+        <div class="info-menu-scroll-content">
+            <h3>빵 먹기 예절</h3>
+            <div class="info-menu-image">
+            </div>
+            <div class="info-menu-content">
+                <p>빵은 접시가 아닌 테이블에 둬야 한다.</p>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
+    <script>
+        // 로딩 화면 제어
+        window.addEventListener('load', () => {
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+                // 최소 500ms 표시 후 페이드 아웃
+                setTimeout(() => {
+                    loadingScreen.classList.add('hide');
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                    }, 500);
+                }, 500);
+            }
+        });
+    </script>
 </body>
 
 </html>

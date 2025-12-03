@@ -29,19 +29,26 @@
         <!-- 상단 헤더 -->
         <header class="top-header">
             <div class="header-content">
-                <div class="header-square"></div>
-                <h1 class="header-title">World Map</h1>
+                <button id="back-to-title" class="btn-secondary back-to-map-btn">돌아가기</button>
+                <div class="header-square">
+                    <h1 class="header-title">World Map</h1>
+                </div>
             </div>
         </header>
         <div class="title-content">
-            <img src="resource/title/map.png" alt="Map" class="title-map-image">
+            <div class="map-container">
+                <img src="resource/title/map.png" alt="Map" class="title-map-image">
+                <img src="resource/title/TitleJp.png" alt="Japan Title" class="country-title-image japan-title">
+                <img src="resource/title/TitleCn.png" alt="China Title" class="country-title-image china-title">
+                <img src="resource/title/TitleFr.png" alt="France Title" class="country-title-image france-title">
+                <button id="japan-map-btn" class="map-country-btn japan-btn">일본</button>
+                <button id="china-map-btn" class="map-country-btn china-btn">중국</button>
+                <button id="france-map-btn" class="map-country-btn france-btn">프랑스</button>
+            </div>
             <img src="resource/title/cheftable_m.png" alt="Cheftable" class="title-cheftable-m-image">
             <img src="resource/title/spoon_m.png" alt="Spoon" class="title-spoon-m-image">
             <img src="resource/title/chopsticks_m.png" alt="Chopsticks" class="title-chopsticks-m-image">
             <h1>World Dietary <br> Etiquette Trip</h1>
-            <button id="japan-map-btn" class="map-country-btn japan-btn">일본</button>
-            <button id="china-map-btn" class="map-country-btn china-btn">중국</button>
-            <button id="france-map-btn" class="map-country-btn france-btn">프랑스</button>
             <div class="world-map" style="display: none;">
                 <div class="country korea active" data-country="japan">
                     <span>일본</span>

@@ -12,12 +12,21 @@
 </head>
 
 <body>
+    <!-- 로딩 화면 -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">테이블 세팅하는 중..</p>
+        </div>
+    </div>
+
     <!-- 상단 헤더 -->
     <header class="top-header">
         <div class="header-content">
             <button id="back-to-map-japan" class="btn-secondary back-to-map-btn">지도 돌아가기</button>
-            <div class="header-square"></div>
-            <h1 class="header-title">Japan</h1>
+            <div class="header-square">
+                <h1 class="header-title">Japan</h1>
+            </div>
             <button id="reset-stage-btn" class="btn-secondary reset-btn">다시하기</button>
         </div>
     </header>
@@ -298,6 +307,21 @@
     <button id="debug-toggle-btn" class="debug-toggle-btn">🔧</button>
 
     <script src="script.js"></script>
+    <script>
+        // 로딩 화면 제어
+        window.addEventListener('load', () => {
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+                // 최소 500ms 표시 후 페이드 아웃
+                setTimeout(() => {
+                    loadingScreen.classList.add('hide');
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                    }, 500);
+                }, 500);
+            }
+        });
+    </script>
 </body>
 
 </html>
