@@ -848,6 +848,23 @@ if (backToTitle) {
             // 애니메이션 완료 후 타이틀 화면으로 전환
             setTimeout(() => {
                 showScreen('title');
+                
+                // 타이틀 화면의 지도 이미지가 올바른 위치에 있는지 확인
+                const titleScreen = screens['title'];
+                if (titleScreen) {
+                    const titleMapImage = titleScreen.querySelector('.title-map-image');
+                    if (titleMapImage) {
+                        // 타이틀 화면 이미지 스타일 강제 적용
+                        titleMapImage.style.position = 'absolute';
+                        titleMapImage.style.width = '75vw';
+                        titleMapImage.style.height = 'auto';
+                        titleMapImage.style.top = '1vw';
+                        titleMapImage.style.right = '0';
+                        titleMapImage.style.left = 'auto';
+                        titleMapImage.style.opacity = '1';
+                    }
+                }
+                
                 // 애니메이션 클래스 제거
                 if (headerSquare) {
                     headerSquare.classList.remove('slide-out');
