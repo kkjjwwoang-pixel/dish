@@ -471,6 +471,7 @@ body {
 
 #map-screen .japan-title.map-show.title-hover {
     transform: scale(1.0) translateY(-15px);
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
 }
 
 #map-screen .japan-title.map-show.title-hover.title-rotate {
@@ -484,6 +485,7 @@ body {
 
 #map-screen .china-title.map-show.title-hover {
     transform: scale(1.0) translateY(-15px);
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
 }
 
 #map-screen .china-title.map-show.title-hover.title-rotate {
@@ -502,6 +504,7 @@ body {
     pointer-events: none;
     max-width: 150px;
     height: auto;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
 #map-screen .country-title-image.map-show {
@@ -542,6 +545,7 @@ body {
 
 #map-screen .france-title.map-show.title-hover {
     transform: translateX(-50%) scale(1.0) translateY(-15px);
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
 }
 
 #map-screen .france-title.map-show.title-hover.title-rotate {

@@ -302,12 +302,37 @@
         // 로딩 화면 제어
         window.addEventListener('load', () => {
             const loadingScreen = document.getElementById('loading-screen');
+            const speechBubble = document.getElementById('speech-bubble-china');
+            const nextBtn = document.getElementById('next-speech-btn-china');
+            const nextButtonsContainer = document.getElementById('next-buttons-container-china');
+            
+            // 로딩 중에는 말풍선 버튼 비활성화
+            if (speechBubble) {
+                speechBubble.style.pointerEvents = 'none';
+            }
+            if (nextBtn) {
+                nextBtn.style.pointerEvents = 'none';
+            }
+            if (nextButtonsContainer) {
+                nextButtonsContainer.style.pointerEvents = 'none';
+            }
+            
             if (loadingScreen) {
                 // 최소 500ms 표시 후 페이드 아웃
                 setTimeout(() => {
                     loadingScreen.classList.add('hide');
                     setTimeout(() => {
                         loadingScreen.style.display = 'none';
+                        // 로딩 완료 후 말풍선 버튼 활성화
+                        if (speechBubble) {
+                            speechBubble.style.pointerEvents = 'auto';
+                        }
+                        if (nextBtn) {
+                            nextBtn.style.pointerEvents = 'auto';
+                        }
+                        if (nextButtonsContainer) {
+                            nextButtonsContainer.style.pointerEvents = 'auto';
+                        }
                     }, 500);
                 }, 500);
             }
