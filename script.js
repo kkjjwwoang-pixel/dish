@@ -1320,6 +1320,13 @@ function initializeFranceStage() {
         franceRbread.addEventListener('dragstart', handleDragStart);
         franceRbread.addEventListener('dragend', handleDragEnd);
     }
+    
+    // 와인잔 드랍존 비활성화
+    const wineglassDropZone = document.getElementById('drop-wineglass');
+    if (wineglassDropZone) {
+        wineglassDropZone.style.display = 'none';
+        wineglassDropZone.style.pointerEvents = 'none';
+    }
     }
 
     // 말풍선 초기화 및 시작 메시지 표시
@@ -2769,12 +2776,98 @@ function handleDrop(e) {
         e.preventDefault();
         e.stopPropagation();
         
-        // knife1인 경우 말풍선 및 인포 메뉴 표시
-        if (itemType === 'knife1') {
-            const currentStage = document.getElementById('france-stage')?.classList.contains('active') ? 'france' : null;
-            if (currentStage === 'france') {
+        const currentStage = document.getElementById('france-stage')?.classList.contains('active') ? 'france' : null;
+        if (currentStage === 'france') {
+            // knife1인 경우 말풍선 및 인포 메뉴 표시
+            if (itemType === 'knife1') {
                 showSpeechBubbleFrance('제일 안쪽에 있는 나이프를 사용하세요', 3000, false, null, null, null, null);
                 showKnifeEtiquetteInfoMenuFrance();
+            }
+            // knife2가 전부 자르기 드랍존에 드롭된 경우
+            else if (itemType === 'knife2' && dropZoneId === 'drop-dish1-meat-full') {
+                showSpeechBubbleFrance('오... 그건 아닌 것 같은데요', 3000, false, null, null, null, null);
+                showMeatCuttingEtiquetteInfoMenuFrance();
+            }
+            // knife2가 조금만 자르기 드랍존에 드롭된 경우
+            else if (itemType === 'knife2' && dropZoneId === 'drop-dish1-meat-partial') {
+                showSpeechBubbleFrance('저희 식당에서 제일 유명한 뵈프 부르기뇽입니다.', 3000, false, null, null, null, null);
+                showMeatCuttingEtiquetteInfoMenuFrance();
+                
+                // fr_dish1_a.png를 fr_dish1_b.png로 변경 (페이드 인/아웃 애니메이션)
+                const dish1DropZone = document.getElementById('drop-dish1');
+                if (dish1DropZone) {
+                    const droppedDish1 = dish1DropZone.querySelector('.dropped-item');
+                    if (droppedDish1) {
+                        // 메인 이미지 찾기 (shadow-img가 아닌 이미지)
+                        const allImgs = droppedDish1.querySelectorAll('img');
+                        const mainImg = Array.from(allImgs).find(img => !img.classList.contains('shadow-img'));
+                        if (mainImg && mainImg.src.includes('fr_dish1_a.png')) {
+                            // transition 설정
+                            mainImg.style.transition = 'opacity 0.5s ease-in-out';
+                            
+                            // 이미지 미리 로드
+                            const newImg = new Image();
+                            newImg.src = 'resource/fr/fr_dish1_b.png';
+                            
+                            // 이미지 로드 완료 후 fade-out과 동시에 이미지 교체 및 fade-in
+                            const changeImage = () => {
+                                // fade-out 시작
+                                mainImg.style.opacity = '0';
+                                
+                                // fade-out이 절반 진행될 때 이미지 교체 (동시에 진행)
+                                setTimeout(() => {
+                                    mainImg.src = 'resource/fr/fr_dish1_b.png';
+                                    
+                                    // 바로 fade-in 시작
+                                    setTimeout(() => {
+                                        mainImg.style.opacity = '1';
+                                        
+                                        // 애니메이션 완료 후 transition 제거
+                                        setTimeout(() => {
+                                            mainImg.style.transition = '';
+                                        }, 500);
+                                    }, 10);
+                                }, 250);
+                            };
+                            
+                            // 이미지가 이미 로드된 경우
+                            if (newImg.complete) {
+                                setTimeout(changeImage, 10);
+                            } else {
+                                newImg.onload = changeImage;
+                            }
+                        }
+                    }
+                }
+                
+                // 나이프들 하이라이팅 제거
+                const knife1 = document.querySelector('.france-knife1');
+                const knife2 = document.querySelector('.france-knife2');
+                if (knife1) {
+                    knife1.classList.remove('highlight-pulse');
+                }
+                if (knife2) {
+                    knife2.classList.remove('highlight-pulse');
+                }
+                
+                // 원형 드랍존 비활성화
+                const meatDropZoneContainer = document.getElementById('drop-dish1-meat');
+                if (meatDropZoneContainer) {
+                    // 하이라이팅 제거
+                    const meatDropZoneLeft = document.getElementById('drop-dish1-meat-full');
+                    const meatDropZoneRight = document.getElementById('drop-dish1-meat-partial');
+                    if (meatDropZoneLeft) {
+                        meatDropZoneLeft.classList.remove('highlight-pulse');
+                        meatDropZoneLeft.style.pointerEvents = 'none';
+                    }
+                    if (meatDropZoneRight) {
+                        meatDropZoneRight.classList.remove('highlight-pulse');
+                        meatDropZoneRight.style.pointerEvents = 'none';
+                    }
+                    
+                    // 컨테이너 숨기기
+                    meatDropZoneContainer.style.display = 'none';
+                }
             }
         }
         
@@ -2843,114 +2936,137 @@ function handleDrop(e) {
         if (dropRbreadZone) {
             const droppedRbread = dropRbreadZone.querySelector('.dropped-item');
             if (droppedRbread) {
-                // 메인 이미지 찾기 (shadow-img가 아닌 이미지)
+                // 메인 이미지와 그림자 이미지 찾기
                 const allImgs = droppedRbread.querySelectorAll('img');
                 const mainImg = Array.from(allImgs).find(img => !img.classList.contains('shadow-img'));
+                const shadowImg = Array.from(allImgs).find(img => img.classList.contains('shadow-img'));
                 if (mainImg) {
-                    // 애니메이션을 위한 초기 상태 설정
-                    mainImg.style.opacity = '0';
-                    mainImg.style.transition = 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out';
-                    mainImg.style.transform = 'scale(0.9)';
+                    // 애니메이션을 위한 초기 상태 설정 (메인 이미지) - 페이드 아웃과 동시에 이미지 교체
+                    mainImg.style.opacity = '1';
+                    mainImg.style.transition = 'opacity 0.5s ease-in-out';
                     
-                    // 이미지 교체
+                    // 그림자 이미지도 함께 페이드 아웃
+                    if (shadowImg) {
+                        shadowImg.style.opacity = '1';
+                        shadowImg.style.transition = 'opacity 0.5s ease-in-out';
+                    }
+                    
+                    // 페이드 아웃 시작과 동시에 이미지 교체
                     mainImg.src = 'resource/fr/fr_rbread_a.png';
                     
-                    // 이미지 로드 후 애니메이션 시작
+                    // 이미지 로드 후 페이드 인/아웃 동시 진행
                     const animateImage = () => {
-                        mainImg.style.opacity = '1';
-                        mainImg.style.transform = 'scale(1)';
+                        // 페이드 아웃 시작
+                        mainImg.style.opacity = '0';
+                        if (shadowImg) {
+                            shadowImg.style.opacity = '0';
+                        }
                         
-                        // 애니메이션 완료 후 (500ms) + 150ms 딜레이 후 드랍된 빵 숨기고 원래 위치로 복귀
+                        // 페이드 아웃이 끝나면 바로 페이드 인 시작
                         setTimeout(() => {
-                            mainImg.style.transition = '';
-                            mainImg.style.transform = '';
+                            mainImg.style.opacity = '1';
                             
-                            // 2.5초 딜레이 후 드랍된 빵 숨기고 원래 위치로 복귀
+                            // 그림자 이미지도 함께 페이드 인
+                            if (shadowImg) {
+                                shadowImg.style.opacity = '1';
+                            }
+                            
+                            // 페이드 인 완료 후 transition 제거
                             setTimeout(() => {
-                                // 드랍존의 빵 fade-out 애니메이션
-                                if (droppedRbread) {
-                                    droppedRbread.style.transition = 'opacity 0.5s ease-out';
-                                    droppedRbread.style.opacity = '0';
-                                    
-                                    // 애니메이션 완료 후 제거
-                                    setTimeout(() => {
-                                        droppedRbread.remove();
-                                    }, 500);
+                                mainImg.style.transition = '';
+                                
+                                // 그림자 이미지도 transition 제거
+                                if (shadowImg) {
+                                    shadowImg.style.transition = '';
                                 }
                                 
-                                // 원래 빵 위치에 fr_rbread_a.png 표시 (fade-in 애니메이션)
-                                const rbreadElement = document.getElementById('france-rbread-draggable');
-                                if (rbreadElement) {
-                                    const rbreadImg = rbreadElement.querySelector('img');
-                                    if (rbreadImg) {
-                                        // 초기 상태: 숨김 및 투명
-                                        rbreadElement.style.display = '';
-                                        rbreadElement.style.opacity = '0';
-                                        rbreadElement.style.transition = 'opacity 0.5s ease-in';
+                                // 1초 딜레이 후 드랍된 빵 숨기고 원래 위치로 복귀
+                                setTimeout(() => {
+                                    // 드랍존의 빵 fade-out 애니메이션
+                                    if (droppedRbread) {
+                                        droppedRbread.style.transition = 'opacity 0.5s ease-out';
+                                        droppedRbread.style.opacity = '0';
                                         
-                                        // 이미지 교체
-                                        rbreadImg.src = 'resource/fr/fr_rbread_a.png';
-                                        
-                                        // 이미지 로드 후 fade-in 애니메이션
-                                        const showRbread = () => {
-                                            rbreadElement.style.opacity = '1';
+                                        // 애니메이션 완료 후 제거
+                                        setTimeout(() => {
+                                            droppedRbread.remove();
+                                        }, 500);
+                                    }
+                                    
+                                    // 원래 빵 위치에 fr_rbread_a.png 표시 (fade-in 애니메이션)
+                                    const rbreadElement = document.getElementById('france-rbread-draggable');
+                                    if (rbreadElement) {
+                                        const rbreadImg = rbreadElement.querySelector('img');
+                                        if (rbreadImg) {
+                                            // 초기 상태: 숨김 및 투명
+                                            rbreadElement.style.display = '';
+                                            rbreadElement.style.opacity = '0';
+                                            rbreadElement.style.transition = 'opacity 0.5s ease-in';
                                             
-                                            // 애니메이션 완료 후 transition 제거 및 말풍선 표시
-                                            setTimeout(() => {
-                                                rbreadElement.style.transition = '';
+                                            // 이미지 교체
+                                            rbreadImg.src = 'resource/fr/fr_rbread_a.png';
+                                            
+                                            // 이미지 로드 후 fade-in 애니메이션
+                                            const showRbread = () => {
+                                                rbreadElement.style.opacity = '1';
                                                 
-                                                // 말풍선 및 버튼 표시
-                                                const showDish1DropZone = () => {
-                                                    // 모든 인포 메뉴 닫기
-                                                    closeBreadEtiquetteInfoMenuFrance();
-                                                    closeBreadPlacementInfoMenuFrance();
+                                                // 애니메이션 완료 후 transition 제거 및 말풍선 표시
+                                                setTimeout(() => {
+                                                    rbreadElement.style.transition = '';
                                                     
-                                                    // 빵 드래그 드랍 비활성화
-                                                    const franceRbread = document.getElementById('france-rbread-draggable');
-                                                    if (franceRbread) {
-                                                        franceRbread.setAttribute('draggable', 'false');
-                                                        franceRbread.style.pointerEvents = 'none';
-                                                        franceRbread.style.cursor = 'default';
-                                                    }
-                                                    
-                                                    // 접시1 드랍존 표시 및 하이라이팅
-                                                    const dish1DropZone = document.getElementById('drop-dish1');
-                                                    if (dish1DropZone) {
-                                                        dish1DropZone.style.display = 'block';
-                                                        dish1DropZone.classList.add('highlight-pulse');
-                                                    }
-                                                    
-                                                    // 인벤토리의 접시 활성화 및 하이라이팅
-                                                    const dish1SlotItem = document.querySelector('#slot-menu-france .slot-item[data-item="dish1"]');
-                                                    if (dish1SlotItem) {
-                                                        dish1SlotItem.setAttribute('draggable', 'true');
-                                                        dish1SlotItem.classList.remove('disabled');
-                                                        dish1SlotItem.style.opacity = '1';
-                                                        dish1SlotItem.style.pointerEvents = 'auto';
-                                                        dish1SlotItem.classList.add('highlight-pulse');
+                                                    // 말풍선 및 버튼 표시
+                                                    const showDish1DropZone = () => {
+                                                        // 모든 인포 메뉴 닫기
+                                                        closeBreadEtiquetteInfoMenuFrance();
+                                                        closeBreadPlacementInfoMenuFrance();
                                                         
-                                                        // 드래그 이벤트 리스너 추가
-                                                        dish1SlotItem.addEventListener('dragstart', handleDragStart);
-                                                        dish1SlotItem.addEventListener('dragend', handleDragEnd);
-                                                    }
+                                                        // 빵 드래그 드랍 비활성화
+                                                        const franceRbread = document.getElementById('france-rbread-draggable');
+                                                        if (franceRbread) {
+                                                            franceRbread.setAttribute('draggable', 'false');
+                                                            franceRbread.style.pointerEvents = 'none';
+                                                            franceRbread.style.cursor = 'default';
+                                                        }
+                                                        
+                                                        // 접시1 드랍존 표시 및 하이라이팅
+                                                        const dish1DropZone = document.getElementById('drop-dish1');
+                                                        if (dish1DropZone) {
+                                                            dish1DropZone.style.display = 'block';
+                                                            dish1DropZone.classList.add('highlight-pulse');
+                                                        }
+                                                        
+                                                        // 인벤토리의 접시 활성화 및 하이라이팅
+                                                        const dish1SlotItem = document.querySelector('#slot-menu-france .slot-item[data-item="dish1"]');
+                                                        if (dish1SlotItem) {
+                                                            dish1SlotItem.setAttribute('draggable', 'true');
+                                                            dish1SlotItem.classList.remove('disabled');
+                                                            dish1SlotItem.style.opacity = '1';
+                                                            dish1SlotItem.style.pointerEvents = 'auto';
+                                                            dish1SlotItem.classList.add('highlight-pulse');
+                                                            
+                                                            // 드래그 이벤트 리스너 추가
+                                                            dish1SlotItem.addEventListener('dragstart', handleDragStart);
+                                                            dish1SlotItem.addEventListener('dragend', handleDragEnd);
+                                                        }
+                                                        
+                                                        // 말풍선 표시
+                                                        showSpeechBubbleFrance('접시를 놓아 볼까요?', 0, false, null, null, null, null);
+                                                    };
                                                     
-                                                    // 말풍선 표시
-                                                    showSpeechBubbleFrance('접시를 놓아 볼까요?', 0, false, null, null, null, null);
-                                                };
-                                                
-                                                showSpeechBubbleFrance('이제 메인 디쉬를 맛보는 앙트레 (Entrée) 단계입니다!', 0, true, showDish1DropZone, null, '드디어!', null);
-                                            }, 500);
-                                        };
-                                        
-                                        // 이미지가 이미 로드된 경우
-                                        if (rbreadImg.complete) {
-                                            setTimeout(showRbread, 10);
-                                        } else {
-                                            rbreadImg.onload = showRbread;
+                                                    showSpeechBubbleFrance('이제 메인 디쉬를 맛보는 앙트레 (Entrée) 단계입니다!', 0, true, showDish1DropZone, null, '드디어!', null);
+                                                }, 500);
+                                            };
+                                            
+                                            // 이미지가 이미 로드된 경우
+                                            if (rbreadImg.complete) {
+                                                setTimeout(showRbread, 10);
+                                            } else {
+                                                rbreadImg.onload = showRbread;
+                                            }
                                         }
                                     }
-                                }
-                            }, 2500);
+                                }, 1000);
+                            }, 500);
                         }, 500);
                     };
                     
@@ -2998,6 +3114,9 @@ function handleDrop(e) {
         }
         if (napkinDropZone) {
             napkinDropZone.classList.remove('highlight-pulse');
+            // 냅킨 드랍존 비활성화
+            napkinDropZone.style.display = 'none';
+            napkinDropZone.style.pointerEvents = 'none';
         }
         
         // 다음 말풍선 표시
@@ -8157,6 +8276,30 @@ function showKnifeEtiquetteInfoMenuFrance() {
 // 프랑스 스테이지 나이프 사용 예절 정보 메뉴 닫기
 function closeKnifeEtiquetteInfoMenuFrance() {
     const infoMenu = document.getElementById('knife-etiquette-info-menu-france');
+    if (!infoMenu) return;
+    infoMenu.style.transition = 'right 0.5s ease-in';
+    infoMenu.style.right = '-25vw';
+    setTimeout(() => {
+        infoMenu.style.display = 'none';
+    }, 500);
+}
+
+// 프랑스 스테이지 고기 자르기 예절 정보 메뉴 표시
+function showMeatCuttingEtiquetteInfoMenuFrance() {
+    const infoMenu = document.getElementById('meat-cutting-etiquette-info-menu-france');
+    if (!infoMenu) return;
+    infoMenu.style.display = 'block';
+    infoMenu.style.top = '300px';
+    infoMenu.style.right = '-25vw';
+    setTimeout(() => {
+        infoMenu.style.transition = 'right 0.5s ease-out';
+        infoMenu.style.right = '20px';
+    }, 50);
+}
+
+// 프랑스 스테이지 고기 자르기 예절 정보 메뉴 닫기
+function closeMeatCuttingEtiquetteInfoMenuFrance() {
+    const infoMenu = document.getElementById('meat-cutting-etiquette-info-menu-france');
     if (!infoMenu) return;
     infoMenu.style.transition = 'right 0.5s ease-in';
     infoMenu.style.right = '-25vw';
