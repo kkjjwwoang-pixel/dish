@@ -214,7 +214,47 @@ document.addEventListener('DOMContentLoaded', () => {
     // URL 파라미터 확인하여 맵 화면 활성화
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('screen') === 'map' && document.getElementById('map-screen')) {
+        // 이미지들이 완전히 로드된 후 맵 화면 표시
+        const mapScreen = document.getElementById('map-screen');
+        const images = mapScreen.querySelectorAll('img');
+        let loadedCount = 0;
+        const totalImages = images.length;
+        
+        if (totalImages === 0) {
+            // 이미지가 없으면 즉시 표시
         showScreen('map');
+        } else {
+            // 모든 이미지가 로드될 때까지 기다림
+            images.forEach(img => {
+                if (img.complete && img.naturalWidth > 0) {
+                    loadedCount++;
+                } else {
+                    img.onload = () => {
+                        loadedCount++;
+                        if (loadedCount === totalImages) {
+                            setTimeout(() => {
+                                showScreen('map');
+                            }, 100);
+                        }
+                    };
+                    img.onerror = () => {
+                        loadedCount++;
+                        if (loadedCount === totalImages) {
+                            setTimeout(() => {
+                                showScreen('map');
+                            }, 100);
+                        }
+                    };
+                }
+            });
+            
+            // 모든 이미지가 이미 로드된 경우
+            if (loadedCount === totalImages) {
+                setTimeout(() => {
+                    showScreen('map');
+                }, 100);
+            }
+        }
     }
 
     if (document.getElementById('japan-stage')) {
@@ -454,40 +494,80 @@ function showScreen(screenName) {
             countryButtons.forEach(btn => btn.classList.remove('map-show'));
             countryTitles.forEach(title => title.classList.remove('map-show'));
 
+            // 이미지들이 완전히 로드되고 렌더링된 후 애니메이션 시작
+            const startMapAnimation = () => {
             // 브라우저 렌더링 후 애니메이션 시작
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     // 다른 애니메이션 클래스 추가
-                    if (mapContainer) {
-                        mapContainer.classList.add('map-expand');
+                        if (mapContainer) {
+                            mapContainer.classList.add('map-expand');
                     }
                     if (cheftable) cheftable.classList.add('map-hide');
                     if (spoon) spoon.classList.add('map-hide');
                     if (chopsticks) chopsticks.classList.add('map-hide');
-                    if (fork) fork.classList.add('map-hide');
-                    if (knife) knife.classList.add('map-hide');
-                    if (titleText) {
-                        // 작아지는 애니메이션 트리거
-                        titleText.classList.add('map-shrink');
-                    }
-                    if (headerSquare) {
-                        // 헤더 사각형과 텍스트 함께 x축으로만 슬라이드 인 애니메이션
-                        headerSquare.classList.add('slide-in');
-                    }
-                    // 스테이지 버튼들 나타나는 애니메이션
-                    countryButtons.forEach((btn, index) => {
-                        setTimeout(() => {
-                            btn.classList.add('map-show');
-                        }, index * 100); // 각 버튼을 순차적으로 나타나게
-                    });
-                    // 국가 타이틀 이미지들 나타나는 애니메이션
-                    countryTitles.forEach((title, index) => {
-                        setTimeout(() => {
-                            title.classList.add('map-show');
-                        }, index * 100 + 50); // 버튼보다 조금 늦게 나타나게
+                        if (fork) fork.classList.add('map-hide');
+                        if (knife) knife.classList.add('map-hide');
+                        if (titleText) {
+                            // 작아지는 애니메이션 트리거
+                            titleText.classList.add('map-shrink');
+                        }
+                        if (headerSquare) {
+                            // 헤더 사각형과 텍스트 함께 x축으로만 슬라이드 인 애니메이션
+                            headerSquare.classList.add('slide-in');
+                        }
+                        // 스테이지 버튼들 나타나는 애니메이션
+                        countryButtons.forEach((btn, index) => {
+                            setTimeout(() => {
+                                btn.classList.add('map-show');
+                            }, index * 100); // 각 버튼을 순차적으로 나타나게
+                        });
+                        // 국가 타이틀 이미지들 나타나는 애니메이션
+                        countryTitles.forEach((title, index) => {
+                            setTimeout(() => {
+                                title.classList.add('map-show');
+                            }, index * 100 + 50); // 버튼보다 조금 늦게 나타나게
+                        });
                     });
                 });
-            });
+            };
+
+            // 이미지 로드 확인
+            const images = mapScreen.querySelectorAll('img');
+            let loadedCount = 0;
+            const totalImages = images.length;
+            
+            if (totalImages === 0) {
+                // 이미지가 없으면 즉시 시작
+                startMapAnimation();
+            } else {
+                let allLoaded = false;
+                images.forEach(img => {
+                    if (img.complete && img.naturalWidth > 0) {
+                        loadedCount++;
+                    } else {
+                        img.onload = () => {
+                            loadedCount++;
+                            if (loadedCount === totalImages && !allLoaded) {
+                                allLoaded = true;
+                                setTimeout(startMapAnimation, 50);
+                            }
+                        };
+                        img.onerror = () => {
+                            loadedCount++;
+                            if (loadedCount === totalImages && !allLoaded) {
+                                allLoaded = true;
+                                setTimeout(startMapAnimation, 50);
+                            }
+                        };
+                    }
+                });
+                
+                // 모든 이미지가 이미 로드된 경우
+                if (loadedCount === totalImages) {
+                    setTimeout(startMapAnimation, 50);
+                }
+            }
         }
 
         // 스테이지로 전환 시 헤더 사각형 애니메이션 트리거
@@ -2409,31 +2489,31 @@ function handleDragStart(e) {
             const computedStyle = window.getComputedStyle(this);
             const width = parseFloat(computedStyle.width);
             const height = parseFloat(computedStyle.height);
-            
-            // 임시 이미지 요소 생성
-            const dragImage = document.createElement('div');
-            dragImage.style.position = 'absolute';
-            dragImage.style.top = '-1000px';
+                
+                // 임시 이미지 요소 생성
+                const dragImage = document.createElement('div');
+                dragImage.style.position = 'absolute';
+                dragImage.style.top = '-1000px';
             dragImage.style.width = width + 'px';
             dragImage.style.height = height + 'px';
-            dragImage.style.backgroundImage = `url('${img.src}')`;
-            dragImage.style.backgroundSize = 'contain';
-            dragImage.style.backgroundPosition = 'center';
-            dragImage.style.backgroundRepeat = 'no-repeat';
-            document.body.appendChild(dragImage);
+                dragImage.style.backgroundImage = `url('${img.src}')`;
+                dragImage.style.backgroundSize = 'contain';
+                dragImage.style.backgroundPosition = 'center';
+                dragImage.style.backgroundRepeat = 'no-repeat';
+                document.body.appendChild(dragImage);
             
             // 클릭한 위치와 요소의 중심점 사이의 오프셋 계산
             const offsetX = e.clientX - rect.left;
             const offsetY = e.clientY - rect.top;
-            
-            // 드래그 이미지 설정
+                
+                // 드래그 이미지 설정
             e.dataTransfer.setDragImage(dragImage, offsetX, offsetY);
-            
-            setTimeout(() => {
-                if (document.body.contains(dragImage)) {
-                    document.body.removeChild(dragImage);
-                }
-            }, 0);
+                
+                setTimeout(() => {
+                    if (document.body.contains(dragImage)) {
+                        document.body.removeChild(dragImage);
+                    }
+                }, 0);
         }
     } else {
         e.dataTransfer.setData('source', 'slot');
@@ -2682,6 +2762,24 @@ function handleDrop(e) {
     }
 
     const dropZoneId = this.id;
+    
+    // 원형 드랍존에 나이프 드롭 방지 (배치되지 않게)
+    if ((dropZoneId === 'drop-dish1-meat-full' || dropZoneId === 'drop-dish1-meat-partial') && 
+        (itemType === 'knife1' || itemType === 'knife2')) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // knife1인 경우 말풍선 및 인포 메뉴 표시
+        if (itemType === 'knife1') {
+            const currentStage = document.getElementById('france-stage')?.classList.contains('active') ? 'france' : null;
+            if (currentStage === 'france') {
+                showSpeechBubbleFrance('제일 안쪽에 있는 나이프를 사용하세요', 3000, false, null, null, null, null);
+                showKnifeEtiquetteInfoMenuFrance();
+            }
+        }
+        
+        return false;
+    }
     const currentStage = document.getElementById('japan-stage')?.classList.contains('active') ? 'japan' :
         document.getElementById('china-stage')?.classList.contains('active') ? 'china' :
         document.getElementById('france-stage')?.classList.contains('active') ? 'france' : 'japan';
@@ -2711,7 +2809,7 @@ function handleDrop(e) {
                 showBreadEtiquetteInfoMenuFrance();
             }, 250);
             // 스테이지에 배치된 요소를 드롭존에 드롭하려고 했지만 취소하는 경우 원본 요소 다시 표시
-            if (source === 'stage' && draggedElement) {
+    if (source === 'stage' && draggedElement) {
                 draggedElement.style.display = '';
             }
             // 아이템 배치하지 않고 종료 (하이라이팅은 유지)
@@ -2880,22 +2978,13 @@ function handleDrop(e) {
         // 아이템 배치하지 않고 종료
         return false;
     }
-    
-    // 아이템을 드롭 존에 배치
-    const slotElement = (source === 'slot' || source === 'cheftable' || source === 'stage') ? draggedElement : null;
-    
-    // 스테이지에 배치된 요소를 드롭존에 드롭하면 원본 요소 숨기기
-    if (source === 'stage' && draggedElement) {
-        draggedElement.style.display = 'none';
-    }
-    
-    placeItemInZone(itemType, imageSrc, this, dropZoneId, correctZoneId, slotElement);
 
-    // 그림자 이미지 표시 업데이트 (새 위치에 배치됨)
-    updateShadowVisibility();
-    
-    // 프랑스 스테이지에서 냅킨이 드랍존에 드롭되면 무릎 이미지 변경 및 다음 말풍선 표시
+    // 프랑스 스테이지에서 냅킨이 드랍존에 드롭되면 무릎 이미지 변경 및 다음 말풍선 표시 (배치하지 않음)
     if (currentStage === 'france' && itemType === 'napkin' && dropZoneId === 'drop-napkin') {
+        // 스테이지에 배치된 요소를 드롭존에 드롭하면 원본 요소 숨기기
+        if (source === 'stage' && draggedElement) {
+            draggedElement.style.display = 'none';
+        }
         const kneeImage = document.querySelector('.france-knee img');
         if (kneeImage) {
             kneeImage.src = 'resource/fr/fr_knee_2.png';
@@ -2916,7 +3005,23 @@ function handleDrop(e) {
         setTimeout(() => {
             showNextSpeechFrance();
         }, 500);
+        
+        // 냅킨은 드랍존에 배치하지 않음
+        return false;
     }
+    
+    // 아이템을 드롭 존에 배치
+    const slotElement = (source === 'slot' || source === 'cheftable' || source === 'stage') ? draggedElement : null;
+    
+    // 스테이지에 배치된 요소를 드롭존에 드롭하면 원본 요소 숨기기
+    if (source === 'stage' && draggedElement) {
+        draggedElement.style.display = 'none';
+    }
+    
+    placeItemInZone(itemType, imageSrc, this, dropZoneId, correctZoneId, slotElement);
+
+    // 그림자 이미지 표시 업데이트 (새 위치에 배치됨)
+    updateShadowVisibility();
     
     // 프랑스 스테이지에서 라운드 빵이 드랍존에 드롭되면 하이라이팅 제거 및 인포 메뉴 표시
     if (currentStage === 'france' && itemType === 'rbread') {
@@ -2969,10 +3074,18 @@ function handleDrop(e) {
             dish1DropZone.classList.remove('highlight-pulse');
         }
         
-        // 인벤토리 접시 하이라이팅 제거
+        // 인벤토리 접시 하이라이팅 제거 및 드래그 비활성화
         const dish1SlotItem = document.querySelector('#slot-menu-france .slot-item[data-item="dish1"]');
         if (dish1SlotItem) {
             dish1SlotItem.classList.remove('highlight-pulse');
+            // 드래그 비활성화
+            dish1SlotItem.setAttribute('draggable', 'false');
+            dish1SlotItem.style.pointerEvents = 'none';
+            dish1SlotItem.style.cursor = 'default';
+            dish1SlotItem.classList.add('disabled');
+            // 드래그 이벤트 리스너 제거
+            dish1SlotItem.removeEventListener('dragstart', handleDragStart);
+            dish1SlotItem.removeEventListener('dragend', handleDragEnd);
         }
         
         // 말풍선 표시
@@ -3008,9 +3121,73 @@ function handleDrop(e) {
                             setTimeout(() => {
                                 mainImg.style.opacity = '1';
                                 
-                                // 애니메이션 완료 후 transition 제거
+                                // 애니메이션 완료 후 transition 제거 및 말풍선 표시, 원형 드랍존 생성
                                 setTimeout(() => {
                                     mainImg.style.transition = '';
+                                    
+                                    // 말풍선 표시
+                                    showSpeechBubbleFrance('이제 고기를 잘라볼까요?', 2000, false, null, null, null, null);
+                                    
+                                    // 나이프만 활성화 및 하이라이팅
+                                    enableKnivesOnly();
+                                    
+                                    // 원형 드랍존 생성 (fr_dish1_a.png 위에)
+                                    const droppedDish1 = dish1DropZone.querySelector('.dropped-item');
+                                    if (droppedDish1) {
+                                        // 기존 원형 드랍존이 있으면 제거
+                                        const existingCircularDropZone = document.getElementById('drop-dish1-meat');
+                                        if (existingCircularDropZone) {
+                                            existingCircularDropZone.remove();
+                                        }
+                                        
+                                        // 원형 드랍존 컨테이너 생성 (크기와 위치는 CSS에서 관리)
+                                        const dropZoneArea = dish1DropZone.closest('.drop-zone-area');
+                                        if (dropZoneArea) {
+                                            // 기존 드랍존 제거
+                                            const existingContainer = document.getElementById('drop-dish1-meat');
+                                            if (existingContainer) {
+                                                existingContainer.remove();
+                                            }
+                                            
+                                            // 컨테이너 생성
+                                            const container = document.createElement('div');
+                                            container.id = 'drop-dish1-meat';
+                                            container.className = 'drop-zone-meat-container';
+                                            
+                                            // 왼쪽 반원 드랍존 (전부 자르기)
+                                            const leftHalf = document.createElement('div');
+                                            leftHalf.id = 'drop-dish1-meat-full';
+                                            leftHalf.className = 'drop-zone drop-zone-meat-half drop-zone-meat-left';
+                                            leftHalf.setAttribute('data-zone', 'dish1-meat-full');
+                                            const leftText = document.createElement('span');
+                                            leftText.className = 'drop-zone-meat-text';
+                                            leftText.textContent = '전부 자르기';
+                                            leftHalf.appendChild(leftText);
+                                            
+                                            // 오른쪽 반원 드랍존 (조금만 자르기)
+                                            const rightHalf = document.createElement('div');
+                                            rightHalf.id = 'drop-dish1-meat-partial';
+                                            rightHalf.className = 'drop-zone drop-zone-meat-half drop-zone-meat-right';
+                                            rightHalf.setAttribute('data-zone', 'dish1-meat-partial');
+                                            const rightText = document.createElement('span');
+                                            rightText.className = 'drop-zone-meat-text';
+                                            rightText.textContent = '조금만 자르기';
+                                            rightHalf.appendChild(rightText);
+                                            
+                                            container.appendChild(leftHalf);
+                                            container.appendChild(rightHalf);
+                                            dropZoneArea.appendChild(container);
+                                            
+                                            // 드래그 앤 드롭 이벤트 리스너 추가
+                                            leftHalf.addEventListener('dragover', handleDragOver);
+                                            leftHalf.addEventListener('dragleave', handleDragLeave);
+                                            leftHalf.addEventListener('drop', handleDrop);
+                                            
+                                            rightHalf.addEventListener('dragover', handleDragOver);
+                                            rightHalf.addEventListener('dragleave', handleDragLeave);
+                                            rightHalf.addEventListener('drop', handleDrop);
+                                        }
+                                    }
                                 }, 500);
                             }, 10);
                         }, 250);
@@ -3119,15 +3296,21 @@ function placeItemInZone(itemType, imageSrc, dropZone, dropZoneId, correctZoneId
 
     droppedItem.appendChild(img);
 
-    // 드롭된 아이템을 드래그 가능하게 설정
+    // 드롭된 아이템을 드래그 가능하게 설정 (dish1은 프랑스 스테이지에서 비활성화)
+    const isDish1InFrance = itemType === 'dish1' && dropZoneId === 'drop-dish1';
+    if (isDish1InFrance) {
+        droppedItem.draggable = false;
+        droppedItem.style.pointerEvents = 'none';
+        droppedItem.style.cursor = 'default';
+    } else {
     droppedItem.draggable = true;
+        // 드롭된 아이템 드래그 이벤트
+        droppedItem.addEventListener('dragstart', handleDroppedItemDragStart);
+        droppedItem.addEventListener('dragend', handleDroppedItemDragEnd);
+    }
     droppedItem.setAttribute('data-drop-zone', dropZoneId);
     droppedItem.setAttribute('data-item-type', itemType);
     droppedItem.setAttribute('data-image-src', imageSrc);
-
-    // 드롭된 아이템 드래그 이벤트
-    droppedItem.addEventListener('dragstart', handleDroppedItemDragStart);
-    droppedItem.addEventListener('dragend', handleDroppedItemDragEnd);
 
     // 드롭된 아이템에 클릭 이벤트 추가 (인벤토리로 되돌리기)
     droppedItem.addEventListener('click', function (e) {
@@ -7386,6 +7569,69 @@ function highlightRbread() {
 }
 
 // 포크와 나이프 드래그 활성화 및 하이라이팅
+// 나이프만 활성화하는 함수 (고기 자르기 단계)
+function enableKnivesOnly() {
+    // 포크 0, 1, 2 비활성화
+    const fork0 = document.querySelector('.france-fork0');
+    const fork1 = document.querySelector('.france-fork1');
+    const fork2 = document.querySelector('.france-fork2');
+    
+    // 나이프 1, 2 활성화
+    const knife1 = document.querySelector('.france-knife1');
+    const knife2 = document.querySelector('.france-knife2');
+    
+    // 손 비활성화
+    const hand = document.querySelector('.france-hand');
+    
+    const forks = [fork0, fork1, fork2];
+    const knives = [knife1, knife2];
+    
+    // 포크 비활성화
+    forks.forEach(fork => {
+        if (fork) {
+            fork.style.pointerEvents = 'none';
+            fork.setAttribute('draggable', 'false');
+            fork.style.cursor = 'default';
+            fork.classList.remove('highlight-pulse');
+            // 이벤트 리스너는 유지 (나중에 다시 활성화할 수 있도록)
+        }
+    });
+    
+    // 나이프 활성화 및 하이라이팅
+    knives.forEach(knife => {
+        if (knife) {
+            knife.style.pointerEvents = 'auto';
+            knife.setAttribute('draggable', 'true');
+            knife.style.cursor = 'grab';
+            knife.classList.add('highlight-pulse');
+            // 이벤트 리스너가 없으면 추가
+            if (!knife.hasAttribute('data-drag-listener-added')) {
+                knife.addEventListener('dragstart', handleDragStart);
+                knife.addEventListener('dragend', handleDragEnd);
+                knife.setAttribute('data-drag-listener-added', 'true');
+            }
+        }
+    });
+    
+    // 손 비활성화
+    if (hand) {
+        hand.style.pointerEvents = 'none';
+        hand.setAttribute('draggable', 'false');
+        hand.style.cursor = 'default';
+        hand.classList.remove('highlight-pulse');
+    }
+    
+    // 원형 드랍존 하이라이팅
+    const meatDropZoneLeft = document.getElementById('drop-dish1-meat-full');
+    const meatDropZoneRight = document.getElementById('drop-dish1-meat-partial');
+    if (meatDropZoneLeft) {
+        meatDropZoneLeft.classList.add('highlight-pulse');
+    }
+    if (meatDropZoneRight) {
+        meatDropZoneRight.classList.add('highlight-pulse');
+    }
+}
+
 function enableForksAndKnives() {
     // 포크 0, 1, 2 활성화
     const fork0 = document.querySelector('.france-fork0');
@@ -7887,6 +8133,30 @@ function showBreadPlacementInfoMenuFrance() {
 // 프랑스 스테이지 빵 배치 예절 정보 메뉴 닫기
 function closeBreadPlacementInfoMenuFrance() {
     const infoMenu = document.getElementById('bread-placement-info-menu-france');
+    if (!infoMenu) return;
+    infoMenu.style.transition = 'right 0.5s ease-in';
+    infoMenu.style.right = '-25vw';
+    setTimeout(() => {
+        infoMenu.style.display = 'none';
+    }, 500);
+}
+
+// 프랑스 스테이지 나이프 사용 예절 정보 메뉴 표시
+function showKnifeEtiquetteInfoMenuFrance() {
+    const infoMenu = document.getElementById('knife-etiquette-info-menu-france');
+    if (!infoMenu) return;
+    infoMenu.style.display = 'block';
+    infoMenu.style.top = '300px';
+    infoMenu.style.right = '-25vw';
+    setTimeout(() => {
+        infoMenu.style.transition = 'right 0.5s ease-out';
+        infoMenu.style.right = '20px';
+    }, 50);
+}
+
+// 프랑스 스테이지 나이프 사용 예절 정보 메뉴 닫기
+function closeKnifeEtiquetteInfoMenuFrance() {
+    const infoMenu = document.getElementById('knife-etiquette-info-menu-france');
     if (!infoMenu) return;
     infoMenu.style.transition = 'right 0.5s ease-in';
     infoMenu.style.right = '-25vw';
@@ -9900,12 +10170,6 @@ const defaultDebugPositions = {
         "x": 63.386258660508076,
         "y": 8.696189376443417,
         "size": 8.490588914549653,
-        "rotation": 0
-    },
-    "dropped-chopsticks-japan": {
-        "x": 0,
-        "y": 0,
-        "size": 4.17,
         "rotation": 0
     },
     "soup-bowl-japan": {

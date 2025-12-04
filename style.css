@@ -243,6 +243,7 @@ body {
 
 .title-info-btn .title-btn-label {
     color: #F5F3E5;
+    font-size: 1.5vw;
 }
 
 .title-action-btn:hover {
@@ -274,15 +275,15 @@ body {
 }
 
 .title-start-btn {
-    right: 24vw;
+    right: 22vw;
 }
 
 .title-info-btn {
-    right: 11vw;
+    right: 13vw;
 }
 
 .title-info-btn img {
-    width: 7.5vw;
+    width: 6.5vw;
 }
 
 #map-screen .title-cheftable-m-image.map-hide {
@@ -3147,7 +3148,87 @@ body {
 
 /* 프랑스 스테이지 접시1 드랍존에 드롭된 접시 이미지 크기 조정 */
 #drop-dish1 .dropped-item img {
-    transform: scale(0.7);
+    width: 19vw !important;
+    height: auto !important;
+    transform: none;
+}
+
+/* 프랑스 스테이지 접시1 위 원형 드랍존 (고기 자르기용) */
+#drop-dish1-meat {
+    position: absolute;
+    left: 25.5vw;
+    top: 22vw;
+    width: 20vw;
+    height: 20vw;
+    z-index: 10;
+    overflow: visible;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+}
+
+/* 반원 드랍존 공통 스타일 */
+.drop-zone-meat-half {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+    border: 3px dashed #F5F3E5;
+    background: rgba(255, 255, 255, 0.15);
+    transition: all 0.3s;
+    box-sizing: border-box;
+}
+
+/* 왼쪽 반원 (전부 자르기) */
+.drop-zone-meat-left {
+    left: 0;
+    border-radius: 10vw 0 0 10vw;
+    border-right: 2px solid #F5F3E5;
+}
+
+/* 오른쪽 반원 (조금만 자르기) */
+.drop-zone-meat-right {
+    right: 0;
+    border-radius: 0 10vw 10vw 0;
+    border-left: none;
+}
+
+/* 반원 드랍존 텍스트 */
+.drop-zone-meat-text {
+    color: #905431;
+    font-size: 1.2vw;
+    font-weight: 900;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    letter-spacing: 0.05em;
+    pointer-events: none;
+    user-select: none;
+    text-shadow: 0 0 3px rgba(255, 255, 255, 0.8), 1px 1px 2px rgba(255, 255, 255, 0.6), 0 0 1px rgba(144, 84, 49, 0.3);
+    white-space: nowrap;
+    z-index: 1;
+    display: none;
+}
+
+/* 드래그 오버 시 텍스트 표시 */
+.drop-zone-meat-half.drag-over .drop-zone-meat-text {
+    display: block;
+}
+
+/* 드래그 오버 시 하이라이팅 */
+.drop-zone-meat-half.drag-over {
+    background: rgba(255, 255, 255, 0.5);
+    transform: scale(1.05);
+}
+
+/* 원형 드랍존 하이라이팅 */
+.drop-zone-meat-half.highlight-pulse {
+    animation: dropZoneScalePulse 1.5s ease-in-out infinite;
+    transform-origin: center;
 }
 
 /* 슬롯 메뉴 */
@@ -3182,7 +3263,7 @@ body {
     padding: 20px;
     padding-top: 20px;
     padding-right: 20px;
-    margin-top: 40px;
+    margin-top: 10px;
     overflow-y: auto;
     overflow-x: hidden;
     flex: 1;
@@ -3257,7 +3338,7 @@ body {
     padding: 20px;
     padding-top: 20px;
     padding-right: 20px;
-    margin-top: 20px;
+    margin-top: 10px;
     overflow-y: auto;
     overflow-x: hidden;
     flex: 1;
@@ -3477,6 +3558,7 @@ body {
 
 .info-menu .menu-header h3 {
     color: #F5F3E5;
+    margin-top: 11px;
 }
 
 /* 빵 배치 예절 인포 메뉴 z-index 조정 (다른 인포 메뉴보다 아래에 표시) */
@@ -3574,7 +3656,7 @@ body {
 
 .info-modal-content h2 {
     font-family: 'GangwonEducationModuche', sans-serif;
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     color: #905431;
     margin-bottom: 20px;
     text-align: center;
@@ -3583,13 +3665,14 @@ body {
 
 .info-modal-text {
     color: #905431;
-    line-height: 1.6;
-    font-size: 1.2rem;
+    line-height: 1.4;
+    font-size: 1.1rem;
     font-family: 'GangwonEducationModuche', sans-serif;
+    text-align: center;
 }
 
 .info-modal-text p {
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 }
 
 .info-modal-text p:last-child {
@@ -3722,6 +3805,11 @@ body {
     animation: dropZoneScalePulse 1.5s ease-in-out infinite;
 }
 
+/* 일본 스테이지 드랍존 하이라이팅 시 드랍존 자체는 scale하지 않음 (내부 아이템 위치 유지) */
+#japan-stage .drop-zone.highlight-pulse {
+    animation: none;
+}
+
 @keyframes dropZoneScalePulse {
     0%, 100% {
         transform: scale(1);
@@ -3748,6 +3836,8 @@ body {
 .drop-zone.highlight-pulse .dropped-item img {
     animation: none;
 }
+
+/* 일본 스테이지 예외 처리 - 더 구체적인 규칙이 나중에 오므로 우선순위가 높음 */
 
 .dropped-item.highlight-pulse img {
     animation: pulseHighlight 1.5s ease-in-out infinite;
@@ -3810,13 +3900,17 @@ body {
 
 /* 프랑스 스테이지 테이블 쪽 드랍존에 드롭된 빵 이미지 크기 조정 및 애니메이션 */
 #drop-rbread .dropped-item img:not(.shadow-img) {
-    transform: scale(0.9) translateX(1vw);
+    width: 14vw !important;
+    height: auto !important;
+    transform: translateX(-1vw);
     transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
 }
 
 /* 프랑스 스테이지 테이블 쪽 드랍존에 드롭된 빵 그림자 이미지 크기 조정 */
 #drop-rbread .dropped-item .shadow-img {
-    transform: scale(0.9) translateX(1vw);
+    width: 14vw !important;
+    height: auto !important;
+    transform: translateX(-1vw);
 }
 
 .dropped-item img {
@@ -3831,15 +3925,58 @@ body {
     transform: scale(0.85);
 }
 
-/* 일본 스테이지 드랍된 숟가락과 젓가락 크기 조정 */
-#japan-stage #drop-spoon .dropped-item img,
-#japan-stage #drop-chopsticks .dropped-item img {
+/* 일본 스테이지 드랍된 숟가락 크기 조정 */
+#japan-stage #drop-spoon .dropped-item img {
     transform: scale(0.7);
 }
 
-/* 일본 스테이지 드롭된 아이템의 하이라이트 애니메이션 (기존 transform 유지) */
+/* 일본 스테이지 드랍된 젓가락 크기 설정 */
+#japan-stage #drop-chopsticks .dropped-item img,
+#japan-stage #drop-chopsticks-2 .dropped-item img {
+    width: 4vw !important;
+    height: auto !important;
+    transform: none;
+}
+
+/* 일본 스테이지 드롭된 아이템의 하이라이트 애니메이션 (이미지에만 적용) */
 #japan-stage .drop-zone.highlight-pulse .dropped-item {
-    animation: pulseHighlightWithTransform 1.5s ease-in-out infinite;
+    animation: none !important;
+    transform: translate(-50%, -50%) !important;
+    transform-origin: center;
+}
+
+/* 일본 스테이지 드롭된 숟가락 이미지 하이라이트 애니메이션 (기존 scale(0.7) 유지) */
+#japan-stage #drop-spoon.highlight-pulse .dropped-item img,
+#japan-stage .drop-zone.highlight-pulse #drop-spoon .dropped-item img {
+    animation: pulseHighlightSpoon 1.5s ease-in-out infinite !important;
+    transform-origin: center !important;
+}
+
+/* 일본 스테이지 드롭된 젓가락 이미지 하이라이트 애니메이션 (기존 transform 유지) */
+#japan-stage #drop-chopsticks.highlight-pulse .dropped-item img,
+#japan-stage .drop-zone.highlight-pulse #drop-chopsticks .dropped-item img,
+#japan-stage #drop-chopsticks-2.highlight-pulse .dropped-item img,
+#japan-stage .drop-zone.highlight-pulse #drop-chopsticks-2 .dropped-item img {
+    animation: pulseHighlightChopsticks 1.5s ease-in-out infinite !important;
+    transform-origin: center !important;
+}
+
+@keyframes pulseHighlightSpoon {
+    0%, 100% {
+        transform: scale(0.7);
+    }
+    50% {
+        transform: scale(0.756);
+    }
+}
+
+@keyframes pulseHighlightChopsticks {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.08);
+    }
 }
 
 /* 셰프테이블에서 나타나는 밥그릇 */
