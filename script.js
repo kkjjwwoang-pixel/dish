@@ -1060,6 +1060,20 @@ if (resetStageBtn) {
 
 // 일본 스테이지 초기화
 function initializeJapanStage() {
+    // 말풍선 버튼 비활성화 (로딩 완료 전까지)
+    const speechBubble = document.getElementById('speech-bubble');
+    const nextBtn = document.getElementById('next-speech-btn');
+    const nextButtonsContainer = document.getElementById('next-buttons-container');
+    if (speechBubble) {
+        speechBubble.style.pointerEvents = 'none';
+    }
+    if (nextBtn) {
+        nextBtn.style.pointerEvents = 'none';
+    }
+    if (nextButtonsContainer) {
+        nextButtonsContainer.style.pointerEvents = 'none';
+    }
+    
     // 완료 상태 초기화 (다시 플레이 가능하도록)
     japanCompleted = false;
     resetPhase('japan');
@@ -1156,11 +1170,74 @@ function initializeJapanStage() {
 
     // 말풍선 초기화 및 시작 메시지 표시
     currentSpeechIndex = 0;
-    showNextSpeech();
+    
+    // 로딩 완료 후 말풍선 버튼 활성화
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen) {
+        // 로딩 화면이 이미 숨겨졌는지 확인
+        if (loadingScreen.style.display === 'none' || loadingScreen.classList.contains('hide')) {
+            // 이미 로딩 완료된 경우 즉시 활성화
+            if (speechBubble) {
+                speechBubble.style.pointerEvents = 'auto';
+            }
+            if (nextBtn) {
+                nextBtn.style.pointerEvents = 'auto';
+            }
+            if (nextButtonsContainer) {
+                nextButtonsContainer.style.pointerEvents = 'auto';
+            }
+            showNextSpeech();
+        } else {
+            // 로딩 화면이 표시 중인 경우, 로딩 완료를 기다림
+            const checkLoadingComplete = () => {
+                if (loadingScreen.style.display === 'none' || loadingScreen.classList.contains('hide')) {
+                    if (speechBubble) {
+                        speechBubble.style.pointerEvents = 'auto';
+                    }
+                    if (nextBtn) {
+                        nextBtn.style.pointerEvents = 'auto';
+                    }
+                    if (nextButtonsContainer) {
+                        nextButtonsContainer.style.pointerEvents = 'auto';
+                    }
+                    showNextSpeech();
+                } else {
+                    setTimeout(checkLoadingComplete, 100);
+                }
+            };
+            setTimeout(checkLoadingComplete, 100);
+        }
+    } else {
+        // 로딩 화면이 없는 경우 즉시 활성화
+        if (speechBubble) {
+            speechBubble.style.pointerEvents = 'auto';
+        }
+        if (nextBtn) {
+            nextBtn.style.pointerEvents = 'auto';
+        }
+        if (nextButtonsContainer) {
+            nextButtonsContainer.style.pointerEvents = 'auto';
+        }
+        showNextSpeech();
+    }
 }
 
 // 중국 스테이지 초기화
 function initializeChinaStage() {
+    // 말풍선 버튼 비활성화 (로딩 완료 전까지)
+    const speechBubble = document.getElementById('speech-bubble-china');
+    const nextBtn = document.getElementById('next-speech-btn-china');
+    const nextButtonsContainer = document.getElementById('next-buttons-container-china');
+    if (speechBubble) {
+        speechBubble.style.pointerEvents = 'none';
+    }
+    if (nextBtn) {
+        nextBtn.style.pointerEvents = 'none';
+    }
+    if (nextButtonsContainer) {
+        nextButtonsContainer.style.pointerEvents = 'none';
+    }
+    
     // 완료 상태 초기화 (다시 플레이 가능하도록)
     chinaCompleted = false;
     resetPhase('china');
@@ -1230,7 +1307,56 @@ function initializeChinaStage() {
 
     // 말풍선 초기화 및 시작 메시지 표시
     currentSpeechIndexChina = 0;
-    showNextSpeechChina();
+    
+    // 로딩 완료 후 말풍선 버튼 활성화
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen) {
+        // 로딩 화면이 이미 숨겨졌는지 확인
+        if (loadingScreen.style.display === 'none' || loadingScreen.classList.contains('hide')) {
+            // 이미 로딩 완료된 경우 즉시 활성화
+            if (speechBubble) {
+                speechBubble.style.pointerEvents = 'auto';
+            }
+            if (nextBtn) {
+                nextBtn.style.pointerEvents = 'auto';
+            }
+            if (nextButtonsContainer) {
+                nextButtonsContainer.style.pointerEvents = 'auto';
+            }
+            showNextSpeechChina();
+        } else {
+            // 로딩 화면이 표시 중인 경우, 로딩 완료를 기다림
+            const checkLoadingComplete = () => {
+                if (loadingScreen.style.display === 'none' || loadingScreen.classList.contains('hide')) {
+                    if (speechBubble) {
+                        speechBubble.style.pointerEvents = 'auto';
+                    }
+                    if (nextBtn) {
+                        nextBtn.style.pointerEvents = 'auto';
+                    }
+                    if (nextButtonsContainer) {
+                        nextButtonsContainer.style.pointerEvents = 'auto';
+                    }
+                    showNextSpeechChina();
+                } else {
+                    setTimeout(checkLoadingComplete, 100);
+                }
+            };
+            setTimeout(checkLoadingComplete, 100);
+        }
+    } else {
+        // 로딩 화면이 없는 경우 즉시 활성화
+        if (speechBubble) {
+            speechBubble.style.pointerEvents = 'auto';
+        }
+        if (nextBtn) {
+            nextBtn.style.pointerEvents = 'auto';
+        }
+        if (nextButtonsContainer) {
+            nextButtonsContainer.style.pointerEvents = 'auto';
+        }
+        showNextSpeechChina();
+    }
 }
 
 // 프랑스 스테이지 대사 배열 (대사와 버튼 텍스트를 함께 관리)
@@ -1247,6 +1373,20 @@ const speechSequenceFrance = [
 // 프랑스 스테이지 초기화
 function initializeFranceStage() {
     console.log('initializeFranceStage 호출됨');
+    
+    // 말풍선 버튼 비활성화 (로딩 완료 전까지)
+    const speechBubble = document.getElementById('speech-bubble-france');
+    const nextBtn = document.getElementById('next-speech-btn-france');
+    const nextButtonsContainer = document.getElementById('next-buttons-container-france');
+    if (speechBubble) {
+        speechBubble.style.pointerEvents = 'none';
+    }
+    if (nextBtn) {
+        nextBtn.style.pointerEvents = 'none';
+    }
+    if (nextButtonsContainer) {
+        nextButtonsContainer.style.pointerEvents = 'none';
+    }
 
     // 완료 상태 초기화 (다시 플레이 가능하도록)
     franceCompleted = false;
@@ -1336,11 +1476,64 @@ function initializeFranceStage() {
     console.log('currentSpeechIndexFrance:', currentSpeechIndexFrance);
     console.log('speechSequenceFrance.length:', speechSequenceFrance.length);
 
-    // 약간의 딜레이를 주어 DOM이 완전히 로드된 후 말풍선 표시
-    setTimeout(() => {
-        console.log('showNextSpeechFrance 호출 예정');
-        showNextSpeechFrance();
-    }, 100);
+    // 로딩 완료 후 말풍선 버튼 활성화
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen) {
+        // 로딩 화면이 이미 숨겨졌는지 확인
+        if (loadingScreen.style.display === 'none' || loadingScreen.classList.contains('hide')) {
+            // 이미 로딩 완료된 경우 즉시 활성화
+            if (speechBubble) {
+                speechBubble.style.pointerEvents = 'auto';
+            }
+            if (nextBtn) {
+                nextBtn.style.pointerEvents = 'auto';
+            }
+            if (nextButtonsContainer) {
+                nextButtonsContainer.style.pointerEvents = 'auto';
+            }
+            setTimeout(() => {
+                console.log('showNextSpeechFrance 호출 예정');
+                showNextSpeechFrance();
+            }, 100);
+        } else {
+            // 로딩 화면이 표시 중인 경우, 로딩 완료를 기다림
+            const checkLoadingComplete = () => {
+                if (loadingScreen.style.display === 'none' || loadingScreen.classList.contains('hide')) {
+                    if (speechBubble) {
+                        speechBubble.style.pointerEvents = 'auto';
+                    }
+                    if (nextBtn) {
+                        nextBtn.style.pointerEvents = 'auto';
+                    }
+                    if (nextButtonsContainer) {
+                        nextButtonsContainer.style.pointerEvents = 'auto';
+                    }
+                    setTimeout(() => {
+                        console.log('showNextSpeechFrance 호출 예정');
+                        showNextSpeechFrance();
+                    }, 100);
+                } else {
+                    setTimeout(checkLoadingComplete, 100);
+                }
+            };
+            setTimeout(checkLoadingComplete, 100);
+        }
+    } else {
+        // 로딩 화면이 없는 경우 즉시 활성화
+        if (speechBubble) {
+            speechBubble.style.pointerEvents = 'auto';
+        }
+        if (nextBtn) {
+            nextBtn.style.pointerEvents = 'auto';
+        }
+        if (nextButtonsContainer) {
+            nextButtonsContainer.style.pointerEvents = 'auto';
+        }
+        setTimeout(() => {
+            console.log('showNextSpeechFrance 호출 예정');
+            showNextSpeechFrance();
+        }, 100);
+    }
 }
 
 // 드롭 존 크기를 실제 이미지 사이즈에 맞게 조정하고 위치 설정
