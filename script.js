@@ -1186,7 +1186,7 @@ function initializeJapanStage() {
             if (nextButtonsContainer) {
                 nextButtonsContainer.style.pointerEvents = 'auto';
             }
-            showNextSpeech();
+    showNextSpeech();
         } else {
             // 로딩 화면이 표시 중인 경우, 로딩 완료를 기다림
             const checkLoadingComplete = () => {
@@ -1323,7 +1323,7 @@ function initializeChinaStage() {
             if (nextButtonsContainer) {
                 nextButtonsContainer.style.pointerEvents = 'auto';
             }
-            showNextSpeechChina();
+    showNextSpeechChina();
         } else {
             // 로딩 화면이 표시 중인 경우, 로딩 완료를 기다림
             const checkLoadingComplete = () => {
@@ -1491,10 +1491,10 @@ function initializeFranceStage() {
             if (nextButtonsContainer) {
                 nextButtonsContainer.style.pointerEvents = 'auto';
             }
-            setTimeout(() => {
-                console.log('showNextSpeechFrance 호출 예정');
-                showNextSpeechFrance();
-            }, 100);
+    setTimeout(() => {
+        console.log('showNextSpeechFrance 호출 예정');
+        showNextSpeechFrance();
+    }, 100);
         } else {
             // 로딩 화면이 표시 중인 경우, 로딩 완료를 기다림
             const checkLoadingComplete = () => {
@@ -1537,7 +1537,6 @@ function initializeFranceStage() {
 }
 
 // 드롭 존 크기를 실제 이미지 사이즈에 맞게 조정하고 위치 설정
-// 일본 스테이지 밥그릇, 숟가락, 젓가락 드랍존 크기 및 위치 설정
 function adjustDropZonesToImageSize() {
     const imageMapping = {
         'drop-rice-bowl': 'resource/jp/dish.png',
@@ -1546,47 +1545,194 @@ function adjustDropZonesToImageSize() {
         'drop-chopsticks-2': 'resource/jp/chopsticks.png'
     };
 
+    // 모든 이미지 로드 후 위치 조정
     const images = {};
     let loadedCount = 0;
     const totalImages = Object.keys(imageMapping).length;
 
-    // 드랍존 크기 설정 및 위치 조정
-    const setDropZoneSize = (dropZoneId, naturalWidth, naturalHeight) => {
+    Object.keys(imageMapping).forEach(dropZoneId => {
         const dropZone = document.getElementById(dropZoneId);
         if (!dropZone) return;
 
-        // 드롭존 크기를 이미지 natural size의 80%로 설정 (vw 단위)
-        const scaledWidth = naturalWidth * 0.8;
-        const scaledHeight = naturalHeight * 0.8;
-        dropZone.style.width = `${pxToVw(scaledWidth)}vw`;
-        dropZone.style.height = `${pxToVw(scaledHeight)}vw`;
-
-        // 이미지 정보 저장
-        images[dropZoneId] = { width: scaledWidth, height: scaledHeight };
-        loadedCount++;
-
-        // 모든 이미지 로드 완료 시 위치 조정
-        if (loadedCount === totalImages) {
-            applyDebugPositions();
-            setTimeout(() => {
-                adjustDropZonePositions(images);
-                syncShadowPositions();
-            }, 100);
-        }
-    };
-
-    // 각 드랍존 이미지 로드
-    Object.keys(imageMapping).forEach(dropZoneId => {
+        const imageSrc = imageMapping[dropZoneId];
         const img = new Image();
-        img.onload = () => setDropZoneSize(dropZoneId, img.naturalWidth, img.naturalHeight);
-        img.src = imageMapping[dropZoneId];
-        
+
+        img.onload = function () {
+            const naturalWidth = this.naturalWidth;
+            const naturalHeight = this.naturalHeight;
+
+            // 드롭 존 크기를 이미지 natural size의 80%로 설정 (20% 축소) - vw 단위
+            const scaledWidth = naturalWidth * 0.8;
+            const scaledHeight = naturalHeight * 0.8;
+            dropZone.style.width = `${pxToVw(scaledWidth)}vw`;
+            dropZone.style.height = `${pxToVw(scaledHeight)}vw`;
+
+            // 이미지 정보 저장 (스케일된 크기)
+            images[dropZoneId] = {
+                width: scaledWidth,
+                height: scaledHeight
+            };
+
+            loadedCount++;
+
+            // 모든 이미지가 로드되면 위치 조정
+            if (loadedCount === totalImages) {
+                // 기본 위치 설정 (디버그 위치가 없을 때만)
+                adjustDropZonePositions(images);
+                // 저장된 디버그 위치 적용 (기본 위치를 덮어씀)
+                setTimeout(() => {
+                    applyDebugPositions();
+                    syncShadowPositions();
+                }, 50);
+            }
+        };
+
+        img.src = imageSrc;
+
         // 이미 로드된 경우 즉시 실행
-        if (img.complete && img.naturalWidth > 0) {
-            setDropZoneSize(dropZoneId, img.naturalWidth, img.naturalHeight);
+        if (img.complete) {
+            const naturalWidth = img.naturalWidth;
+            const naturalHeight = img.naturalHeight;
+            const scaledWidth = naturalWidth * 0.8;
+            const scaledHeight = naturalHeight * 0.8;
+            dropZone.style.width = `${pxToVw(scaledWidth)}vw`;
+            dropZone.style.height = `${pxToVw(scaledHeight)}vw`;
+
+            images[dropZoneId] = {
+                width: scaledWidth,
+                height: scaledHeight
+            };
+
+            loadedCount++;
+
+            if (loadedCount === totalImages) {
+                adjustDropZonePositions(images);
+                // 드랍존 위치 설정 후 저장된 디버그 위치 적용
+                setTimeout(() => {
+                    applyDebugPositions();
+                    syncShadowPositions();
+                }, 50);
+            }
         }
     });
 
+    // 상단 cheftable 이미지 크기 조정 (20% 축소)
+    const topCheftable = document.querySelector('.top-cheftable');
+    if (topCheftable) {
+        const img = new Image();
+        img.onload = function () {
+            const naturalWidth = this.naturalWidth;
+            const naturalHeight = this.naturalHeight;
+
+            // 상단 cheftable 크기를 이미지 natural size의 75%로 설정 (25% 축소) - vw 단위
+            const widthVw = pxToVw(naturalWidth * 0.75);
+            const heightVw = pxToVw(naturalHeight * 0.75);
+            topCheftable.style.width = `${widthVw}vw`;
+            topCheftable.style.height = `${heightVw}vw`;
+        };
+
+        img.src = 'resource/jp/cheftable.png';
+
+        // 이미 로드된 경우 즉시 실행
+        if (img.complete && img.naturalWidth > 0) {
+            const naturalWidth = img.naturalWidth;
+            const naturalHeight = img.naturalHeight;
+            const widthVw = pxToVw(naturalWidth * 0.75);
+            const heightVw = pxToVw(naturalHeight * 0.75);
+            topCheftable.style.width = `${widthVw}vw`;
+            topCheftable.style.height = `${heightVw}vw`;
+        }
+    }
+
+    // reciept 이미지 크기 조정 (20% 축소)
+    const cardNapkin = document.querySelector('.card-napkin');
+    if (cardNapkin) {
+        const img = new Image();
+        img.onload = function () {
+            const naturalWidth = this.naturalWidth;
+            const naturalHeight = this.naturalHeight;
+
+            // reciept 크기를 이미지 natural size의 80%로 설정 (20% 축소) - vw 단위
+            cardNapkin.style.width = `${pxToVw(naturalWidth * 0.7)}vw`;
+            cardNapkin.style.height = `${pxToVw(naturalHeight * 0.7)}vw`;
+        };
+
+        img.src = 'reciepts.png';
+
+        // 이미 로드된 경우 즉시 실행
+        if (img.complete) {
+            const naturalWidth = img.naturalWidth;
+            const naturalHeight = img.naturalHeight;
+            cardNapkin.style.width = `${pxToVw(naturalWidth * 0.8)}vw`;
+            cardNapkin.style.height = `${pxToVw(naturalHeight * 0.8)}vw`;
+        }
+    }
+
+    // 국그릇 이미지 크기 조정 (20% 축소) - 위치는 CSS에서 고정되어 있음
+    const soupBowlImage = document.querySelector('.soup-bowl-image img');
+    if (soupBowlImage) {
+        const img = new Image();
+        img.onload = function () {
+            const naturalWidth = this.naturalWidth;
+            const naturalHeight = this.naturalHeight;
+
+            // 국그릇 크기를 이미지 natural size의 80%로 설정 (20% 축소) - vw 단위
+            soupBowlImage.style.width = `${pxToVw(naturalWidth * 0.8)}vw`;
+            soupBowlImage.style.height = `${pxToVw(naturalHeight * 0.8)}vw`;
+
+            // 그림자 이미지 크기도 설정
+            syncShadowPositions();
+        };
+
+        img.src = 'resource/jp/dish2.png';
+
+        // 이미 로드된 경우 즉시 실행
+        if (img.complete) {
+            const naturalWidth = img.naturalWidth;
+            const naturalHeight = img.naturalHeight;
+            soupBowlImage.style.width = `${pxToVw(naturalWidth * 0.8)}vw`;
+            soupBowlImage.style.height = `${pxToVw(naturalHeight * 0.8)}vw`;
+            syncShadowPositions();
+        }
+    }
+
+    // 그림자 이미지 초기 크기 설정
+    const shadowImages = {
+        'resource/jp/dish2_s.png': '.shadow-dish2 img',
+        'resource/jp/dish3_s.png': '.shadow-dish3 img',
+        'resource/jp/dish4_s.png': '.shadow-dish4 img',
+        'resource/jp/dish5_s.png': '.shadow-dish5 img',
+        'resource/jp/dish_s.png': '.shadow-dish img',
+        'resource/jp/spoon_s.png': '.shadow-spoon img',
+        'resource/jp/chopsticks_s.png': '.shadow-chopsticks img'
+    };
+
+    Object.keys(shadowImages).forEach(shadowSrc => {
+        const selector = shadowImages[shadowSrc];
+        const shadowImg = document.querySelector(selector);
+        if (shadowImg) {
+            const img = new Image();
+            img.onload = function () {
+                const naturalWidth = this.naturalWidth;
+                const naturalHeight = this.naturalHeight;
+                // 그림자 이미지 크기를 원본의 80%로 설정
+                shadowImg.style.width = `${pxToVw(naturalWidth * 0.8)}vw`;
+                shadowImg.style.height = `${pxToVw(naturalHeight * 0.8)}vw`;
+                // 위치 동기화
+                setTimeout(() => syncShadowPositions(), 50);
+            };
+            img.src = shadowSrc;
+
+            // 이미 로드된 경우 즉시 실행
+            if (img.complete && img.naturalWidth > 0) {
+                const naturalWidth = img.naturalWidth;
+                const naturalHeight = img.naturalHeight;
+                shadowImg.style.width = `${pxToVw(naturalWidth * 0.8)}vw`;
+                shadowImg.style.height = `${pxToVw(naturalHeight * 0.8)}vw`;
+                setTimeout(() => syncShadowPositions(), 50);
+            }
+        }
+    });
 }
 
 // 그림자 이미지 표시/숨김 제어 (드롭존에 아이템이 배치되었을 때만 표시)
@@ -1796,28 +1942,23 @@ function syncShadowPositions() {
     // (updateShadowVisibility가 젓가락이 배치된 드롭존의 위치를 따라가도록 처리)
 }
 
-// 일본 스테이지 드랍존 위치 설정 (밥그릇, 숟가락, 젓가락)
+// 드롭 존 위치를 vw 단위로 고정 배치
 function adjustDropZonePositions(images) {
-    const riceBowl = document.getElementById('drop-rice-bowl');
     const spoon = document.getElementById('drop-spoon');
     const chopsticks = document.getElementById('drop-chopsticks');
     const chopsticks2 = document.getElementById('drop-chopsticks-2');
 
-    if (!riceBowl || !spoon || !chopsticks) return;
+    if (!spoon || !chopsticks) return;
 
-    // 밥그릇은 중앙 (CSS에서 이미 설정됨)
-    // 숟가락: 밥그릇 오른쪽 배치
+    // 숟가락: vw 단위 고정 위치 (디버그 위치가 없을 때만)
     if (!debugPositions['drop-zone-spoon-japan']) {
-        spoon.style.left = '50%';
-        spoon.style.top = '60%';
-        spoon.style.transform = 'translate(0, -50%)';
-        const marginLeftPx = images['drop-rice-bowl'].width / 2 + images['drop-spoon'].width / 2 + 40;
-        spoon.style.marginLeft = `${pxToVw(marginLeftPx)}vw`;
-    } else {
+        spoon.style.left = '58vw';
+        spoon.style.top = '50vw';
+        spoon.style.transform = 'translateY(-50%)';
         spoon.style.marginLeft = '';
     }
 
-    // 젓가락: 기본 위치 설정
+    // 젓가락: vw 단위 고정 위치 (디버그 위치가 없을 때만)
     if (!debugPositions['drop-zone-chopsticks-japan']) {
         chopsticks.style.left = '50vw';
         chopsticks.style.top = '50vw';
@@ -1825,28 +1966,17 @@ function adjustDropZonePositions(images) {
         chopsticks.style.transformOrigin = '';
         chopsticks.style.marginTop = '';
         chopsticks.style.marginLeft = '';
-    } else {
-        chopsticks.style.marginTop = '';
-        chopsticks.style.marginLeft = '';
     }
 
-    // 젓가락 2: 기본 위치 및 크기 설정
-    if (chopsticks2) {
-        if (!debugPositions['drop-zone-chopsticks-2-japan']) {
-            chopsticks2.style.left = '20vw';
-            chopsticks2.style.top = '20vw';
-            chopsticks2.style.transform = 'none';
-            chopsticks2.style.transformOrigin = '';
-            chopsticks2.style.marginTop = '';
-            chopsticks2.style.marginLeft = '';
-            const width = images['drop-chopsticks-2']?.width || images['drop-chopsticks']?.width || 100;
-            const height = images['drop-chopsticks-2']?.height || images['drop-chopsticks']?.height || 100;
-            chopsticks2.style.width = `${pxToVw(width * 0.8)}vw`;
-            chopsticks2.style.height = `${pxToVw(height * 0.8)}vw`;
-        } else {
-            chopsticks2.style.marginTop = '';
-            chopsticks2.style.marginLeft = '';
-        }
+    // 젓가락 2: vw 단위 고정 위치 및 크기 (디버그 위치가 없을 때만)
+    if (chopsticks2 && !debugPositions['drop-zone-chopsticks-2-japan']) {
+        chopsticks2.style.left = '20vw';
+        chopsticks2.style.top = '20vw';
+        chopsticks2.style.transform = 'none';
+        chopsticks2.style.transformOrigin = '';
+        chopsticks2.style.marginTop = '';
+        chopsticks2.style.marginLeft = '';
+        // 크기는 이미 adjustDropZonesToImageSize에서 설정됨
     }
 }
 
