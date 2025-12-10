@@ -1268,6 +1268,136 @@ body {
     pointer-events: none;
 }
 
+/* 프랑스 디저트 */
+.france-dessert {
+    position: absolute;
+    left: 33vw;
+    top: 0vw;
+    width: 16vw;
+    height: auto;
+    z-index: 3;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.france-dessert img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.france-dessert::before {
+    content: '';
+    position: absolute;
+    left: -0.5vw;
+    top: 0.5vw;
+    width: 100%;
+    height: 100%;
+    background-image: url('resource/fr/fr_dessert_s.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* 프랑스 식사 마무리 접시 (dishon) - CSS에서 수정 가능 */
+.france-dishon {
+    position: absolute;
+    left: 32.2vw;
+    top: 29vw;
+    width: 11vw;
+    height: auto;
+    z-index: 6;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+}
+
+.france-dishon img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.france-dishon.dishon-appear {
+    animation: dishonAppearAnimation 0.8s ease-out forwards;
+}
+
+@keyframes dishonAppearAnimation {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 스테이지 클리어 오버레이 (CSS에서 세부 조절 가능) */
+.stage-clear-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 30000;
+}
+
+/* 스테이지 클리어 텍스트 (CSS에서 세부 조절 가능) */
+.stage-clear-text {
+    color: #fff;
+    font-size: 5rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* 스테이지 클리어 버튼 (CSS에서 세부 조절 가능) */
+.stage-clear-button {
+    padding: 15px 40px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #B56B41;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    margin-top: 4rem;
+    transition: all 0.5s ease-in-out 1s;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    font-family: 'GangwonEducationModuche', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.stage-clear-button:hover {
+    background-color: #905431;
+    transform: translateY(0) scale(1.05);
+}
+
+.stage-clear-button:active {
+    transform: translateY(0) scale(0.95);
+}
+
+.france-dessert.highlight-pulse {
+    animation: dropZoneScalePulse 1.5s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.france-dessert.highlight-pulse img {
+    animation: none;
+}
+
 /* 프랑스 와인잔 */
 .france-wineglass {
     position: absolute;
@@ -1288,10 +1418,57 @@ body {
     object-fit: contain;
 }
 
+.france-winebottle {
+    position: absolute;
+    left: 65vw;
+    top: 4vw;
+    width: 9vw;
+    height: auto;
+    z-index: 10;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.france-winebottle img {
+    width: 100%;
+    height: auto;
+}
+
+/* 와인병 애니메이션 */
+.france-winebottle {
+    opacity: 0;
+    transform: translate(40px, -50px) rotate(-15deg);
+}
+
+.france-winebottle.pour-wine {
+    animation: winePourAnimation 2.5s ease-in-out forwards;
+}
+
+@keyframes winePourAnimation {
+    0% {
+        opacity: 0;
+        transform: translate(40px, -50px) rotate(-15deg);
+    }
+    20% {
+        opacity: 1;
+        transform: translate(20px, 0) rotate(-15deg);
+    }
+    60% {
+        opacity: 1;
+        transform: translate(10px, 5px) rotate(-45deg);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(0, 10px) rotate(-60deg);
+    }
+}
+
 /* 프랑스 물잔 */
 .france-waterglass {
     position: absolute;
-    left: 58vw;
+    left: 60vw;
     top: 22vw;
     width: 9vw;
     height: auto;
@@ -1688,6 +1865,26 @@ body {
     flex: 1;
     min-width: 6.25vw;
     max-width: 10.42vw;
+}
+
+/* 선택 버튼 이미지 컨테이너 (확장 가능한 구조) */
+.selection-button-image-container {
+    width: 200px;
+    height: 200px;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* 선택 버튼 이미지 (CSS에서 수정 가능) */
+.selection-button-image {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
 }
 
 .speech-bubble-tail {
@@ -2332,8 +2529,13 @@ body {
     pointer-events: none;
 }
 
-.cn-table1.highlight-blink img {
+.cn-table1.highlight-blink img:not(.shadow-img) {
     filter: drop-shadow(0 0 0px rgba(255, 255, 255, 0.8));
+}
+
+/* maindish 그림자는 하이라이팅 제외 */
+.cn-table1.highlight-blink .shadow-img {
+    filter: none !important;
 }
 
 .cn-table2 {
@@ -2477,10 +2679,10 @@ body {
 /* Other China Stage Shadows */
 .cn-chopstick .shadow-img {
     position: absolute;
-    left: 7vw;
-    top: 1vw;
-    z-index: -1;
-    transform: scale(1.1);
+    left: 6.7vw;
+    top: 0.3vw;
+    z-index: -10;
+    transform: scale(0.95);
 }
 
 .cn-chopstick2 .shadow-img {
@@ -2501,10 +2703,10 @@ body {
 
 .cn-dish .shadow-img {
     position: absolute;
-    left: 0.5vw;
-    top: 0.5vw;
+    left: -0.8vw;
+    top: -0.1vw;
     z-index: -1;
-    transform: scale(0.98);
+    transform: scale(0.85);
 }
 
 .cn-chopstickspot .shadow-img,
@@ -3074,12 +3276,27 @@ body {
 
 /* 프랑스 스테이지 와인잔 드랍존 */
 #drop-wineglass {
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 8vw;
+    left: 50vw;
+    top: 13.8vw;
+    transform: translate(-50%, 0);
+    width: 10vw;
     height: 12vw;
-    /* 크기는 나중에 이미지 크기에 맞게 조정 가능 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* 와인잔 위치에 맞춰 배치 (CSS에서 편집 가능) */
+}
+
+#drop-waterglass {
+    left: 60vw;
+    top: 22vw;
+    transform: translate(-50%, 0);
+    width: 9vw;
+    height: 12vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* 물잔 위치에 맞춰 배치 (CSS에서 편집 가능) */
 }
 
 #drop-napkin {
@@ -3137,12 +3354,31 @@ body {
     display: block;
 }
 
+/* 와인/물잔 드랍존 텍스트 중앙 정렬 */
+#drop-wineglass .drop-zone-text,
+#drop-waterglass .drop-zone-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+}
+
 #drop-dish1 {
     left: 28vw;
     top: 26vw;
     width: 15vw;
     height: 15vw;
     /* 접시 1 위치에 맞춰 배치 */
+    display: none; /* 처음에는 숨김 */
+}
+
+#drop-dessert {
+    left: 27.2vw;
+    top: 25vw;
+    width: 16vw;
+    height: 16vw;
+    /* 디저트 위치에 맞춰 배치 */
     display: none; /* 처음에는 숨김 */
 }
 
@@ -3229,6 +3465,52 @@ body {
 .drop-zone-meat-half.highlight-pulse {
     animation: dropZoneScalePulse 1.5s ease-in-out infinite;
     transform-origin: center;
+}
+
+/* 디저트 원형 드랍존 */
+#drop-dessert-utensils,
+.drop-dessert-utensils {
+    position: absolute;
+    left: 27.2vw;
+    top: 23.6vw;
+    width: 16vw;
+    height: 16vw;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    border-radius: 50%;
+    border: 2px dashed #F5F3E5;
+    background: rgba(255, 255, 255, 0.15);
+    overflow: visible;
+    box-sizing: border-box;
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#drop-dessert-utensils.highlight-pulse {
+    animation: dropZoneScalePulse 1.5s ease-in-out infinite;
+    transform-origin: center;
+}
+
+/* 디저트 숟가락 하이라이팅 */
+.france-desertspoon.highlight-pulse {
+    animation: dropZoneScalePulse 1.5s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.france-desertspoon.highlight-pulse img {
+    animation: none;
+}
+
+/* 디저트 포크 하이라이팅 */
+.france-desertfork.highlight-pulse {
+    animation: dropZoneScalePulse 1.5s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.france-desertfork.highlight-pulse img {
+    animation: none;
 }
 
 /* 슬롯 메뉴 */
@@ -3443,15 +3725,21 @@ body {
     text-align: center;
 }
 
+.info-menu-scroll-content h3 {
+    position: relative;
+    left: calc(50% + 7.5px);
+    transform: translateX(-50%);
+}
+
 .info-menu-image {
     width: 100%;
-    margin-bottom: 25px;
+    margin-bottom: 15px;
     margin-top: 15px;
     text-align: center;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-left: 10px;
+    padding-left: 15px;
     position: relative;
     min-height: 200px;
 }
@@ -3460,33 +3748,35 @@ body {
     content: '';
     display: block;
     width: 100%;
-    max-width: 180px;
-    aspect-ratio: 5 / 4;
+    max-width: 320px;
+    aspect-ratio: 3 / 1.8;
     background: white;
     border-radius: 8px;
     position: absolute;
-    left: 50%;
+    left: calc(50% + 7.5px);
     top: 50%;
     transform: translate(-50%, -50%);
     z-index: 0;
 }
 
 .info-menu-image img {
-    max-width: 140px;
-    max-height: 140px;
+    max-width: 300px;
+    max-height: 180px;
     width: auto;
     height: auto;
     border-radius: 8px;
     position: relative;
     z-index: 1;
     transform: none;
+    margin: 0 auto;
+    display: block;
 }
 
 .info-menu-content {
     color: #F5F3E5;
     line-height: 1.6;
     margin-top: 10px;
-    padding-left: 20px;
+    padding-left: calc(50% - 150px + 7.5px);
 }
 
 .info-menu-content p {
@@ -3502,9 +3792,9 @@ body {
     position: sticky;
     top: 0;
     background: inherit;
-    padding: 20px;
-    padding-top: 20px;
-    padding-bottom: 15px;
+    padding: 12px 20px;
+    padding-top: 12px;
+    padding-bottom: 10px;
     margin-bottom: 0;
     z-index: 10;
     display: flex;
@@ -3553,12 +3843,12 @@ body {
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
-    margin-top: 11px;
+    margin-top: 8.5px;
 }
 
 .info-menu .menu-header h3 {
     color: #F5F3E5;
-    margin-top: 11px;
+    margin-top: 8.5px;
 }
 
 /* 빵 배치 예절 인포 메뉴 z-index 조정 (다른 인포 메뉴보다 아래에 표시) */
@@ -3913,6 +4203,20 @@ body {
     transform: translateX(-1vw);
 }
 
+/* 프랑스 스테이지 디저트 드랍존에 드롭된 디저트 이미지 크기 조정 */
+#drop-dessert .dropped-item img:not(.shadow-img) {
+    width: 16vw !important;
+    height: auto !important;
+    transform: none;
+}
+
+/* 프랑스 스테이지 디저트 드랍존에 드롭된 디저트 그림자 이미지 크기 조정 */
+#drop-dessert .dropped-item .shadow-img {
+    width: 16vw !important;
+    height: auto !important;
+    transform: none;
+}
+
 .dropped-item img {
     display: block;
     width: auto;
@@ -4065,13 +4369,12 @@ body {
 /* China Stage Drop Zones */
 .cn-cup-drop-zone {
     position: absolute;
-    left: 44.5vw !important;
-    top: 33.0vw !important;
-    width: 8vw;
-    height: 8vw;
+    left: 44.5vw;
+    top: 33.0vw;
+    width: 9vw;
+    height: 9vw;
+    border-radius: 50%;
     z-index: 20;
-    transform: rotate(0deg);
-    /* 드랍존 위치는 cn_cup 이미지와 독립적으로 설정 */
 }
 
 .cn-teapot-drop-zone {
@@ -4117,7 +4420,8 @@ body {
     top: 50%;
     left: 50%;
     width: 100%;
-    height: 100%;
+    height: auto;
+    aspect-ratio: 1;
     transform: translate(-50%, -50%);
     border: 3px dashed #F5F3E5;
     border-radius: 50%;
@@ -4135,6 +4439,7 @@ body {
     font-size: 1.5vw;
     font-weight: bold;
     text-shadow: 0 0 5px black;
+    /* 항상 원형 유지: aspect-ratio로 강제 */
 }
 
 .circular-drop-zone.drag-over {

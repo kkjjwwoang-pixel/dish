@@ -110,9 +110,24 @@
                                 <img src="resource/fr/fr_maindish1.png" alt="프랑스 메인 디시 1">
                             </div>
                             
+                            <!-- 프랑스 디저트 -->
+                            <div class="france-dessert" id="france-dessert-draggable" style="display: none;">
+                                <img src="resource/fr/fr_dessert.png" alt="프랑스 디저트">
+                            </div>
+                            
+                            <!-- 프랑스 식사 마무리 접시 (dishon) -->
+                            <div class="france-dishon" style="display: none;">
+                                <img src="resource/fr/fr_dishon.png" alt="프랑스 식사 마무리 접시">
+                            </div>
+                            
                             <!-- 프랑스 와인잔 -->
                             <div class="france-wineglass">
                                 <img src="resource/fr/fr_wineglass.png" alt="프랑스 와인잔">
+                            </div>
+                            
+                            <!-- 프랑스 와인병 -->
+                            <div class="france-winebottle" style="display: none;">
+                                <img src="resource/fr/fr_winebottle.png" alt="프랑스 와인병">
                             </div>
                             
                             <!-- 프랑스 물잔 -->
@@ -153,6 +168,9 @@
                             <!-- 와인잔 드랍존 -->
                             <div id="drop-wineglass" class="drop-zone" data-zone="wineglass"></div>
                             
+                            <!-- 물잔 드랍존 -->
+                            <div id="drop-waterglass" class="drop-zone" data-zone="waterglass" style="display: none;"></div>
+                            
                             <!-- 냅킨 드랍존 -->
                             <div id="drop-napkin" class="drop-zone" data-zone="napkin"></div>
                             
@@ -173,6 +191,11 @@
                             
                             <!-- 접시 1 드랍존 -->
                             <div id="drop-dish1" class="drop-zone" data-zone="dish1"></div>
+                            
+                            <!-- 디저트 드랍존 -->
+                            <div id="drop-dessert" class="drop-zone" data-zone="dessert" style="display: none;">
+                                <span class="drop-zone-text">놓기</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -189,12 +212,12 @@
         <div class="slot-menu-tab"></div>
         <div class="menu-header">
             <div class="menu-icon">☰</div>
-            <h3>INVENTORY</h3>
+            <h3>Inventory</h3>
         </div>
         <div class="slot-items">
-            <div class="slot-item" data-item="wineglass" data-image="resource/fr/fr_wineglass.png">
-                <div class="item-icon" style="background-image: url('resource/fr/fr_wineglass.png');"></div>
-                <span>와인잔</span>
+            <div class="slot-item" data-item="wineglass" data-image="resource/fr/fr_winebottle.png">
+                <div class="item-icon" style="background-image: url('resource/fr/fr_winebottle.png');"></div>
+                <span>와인병</span>
             </div>
             <div class="slot-item" data-item="dish1" data-image="resource/fr/fr_dish1.png">
                 <div class="item-icon" style="background-image: url('resource/fr/fr_dish1.png');"></div>
@@ -211,17 +234,17 @@
         <div class="info-menu-tab"></div>
         <div class="menu-header">
             <div class="menu-icon">☰</div>
-            <h3>INFO</h3>
+                        <h3>Info</h3>
             <button class="info-menu-close" onclick="closeBreadEtiquetteInfoMenuFrance()">×</button>
         </div>
         <div class="info-menu-scroll-content">
             <h3>빵을 먹을 때 예절</h3>
             <div class="info-menu-image">
+                <img src="resource/fr/frinfo_2.png" alt="빵을 먹을 때 예절">
             </div>
             <div class="info-menu-content">
-                <p>프랑스에서는 빵을 먹을 때 손을 사용하는 것이 올바른 예절입니다.</p>
-                <p>포크나 나이프를 사용하여 빵을 먹는 것은 적절하지 않습니다.</p>
-                <p>빵은 작은 조각으로 떼어서 손으로 집어 먹는 것이 전통적인 방식입니다.</p>
+                <p>프랑스에서는 빵을 먹을 때<br>손을 사용하는 것이 올바른 예절입니다.</p>
+                <p>포크나 나이프를 사용하는 것은<br>적절하지 않습니다. 작은 조각으로<br>떼어서 손으로 드세요!</p>
             </div>
         </div>
     </div>
@@ -231,16 +254,16 @@
         <div class="info-menu-tab"></div>
         <div class="menu-header">
             <div class="menu-icon">☰</div>
-            <h3>INFO</h3>
+                        <h3>Info</h3>
             <button class="info-menu-close" onclick="closeBreadPlacementInfoMenuFrance()">×</button>
         </div>
         <div class="info-menu-scroll-content">
             <h3>빵 배치 예절</h3>
             <div class="info-menu-image">
+                <img src="resource/fr/frinfo_3.png" alt="빵 배치 예절">
             </div>
             <div class="info-menu-content">
-                <p>프랑스 식사 예절에서 빵은 접시 위가 아닌 테이블보 위에 직접 놓아야 합니다.</p>
-                <p>테이블의 왼쪽 상단에 배치하는 것이 전통적인 방식입니다.</p>
+                <p>빵은 접시 위가 아닌<br>테이블보 위에 직접 놓아야 합니다.</p>
                 <p>위생은 신경쓰지 마세요!</p>
             </div>
         </div>
@@ -251,17 +274,18 @@
         <div class="info-menu-tab"></div>
         <div class="menu-header">
             <div class="menu-icon">☰</div>
-            <h3>INFO</h3>
+                        <h3>Info</h3>
             <button class="info-menu-close" onclick="closeKnifeEtiquetteInfoMenuFrance()">×</button>
         </div>
         <div class="info-menu-scroll-content">
             <h3>나이프 사용 예절</h3>
             <div class="info-menu-image">
+                <img src="resource/fr/frinfo_4.png" alt="나이프 사용 예절">
             </div>
             <div class="info-menu-content">
-                <p>고기를 자를 때는 육류 전용 나이프를 사용해야 합니다.</p>
+                <p>고기를 자를 때는 육류 전용 나이프를<br>사용해야 합니다.</p>
                 <p>접시에서 가장 가까운 위치에 있는 나이프가 육류 전용 나이프입니다.</p>
-                <p>식기는 기본적으로 맨 바깥쪽에서부터 안쪽의 순서로 사용한다는 것을 기억하세요.</p>
+                <p>식기는 기본적으로 맨 바깥쪽에서부터<br>안쪽의 순서로 사용한다는 것을 기억하세요.</p>
             </div>
         </div>
     </div>
@@ -271,15 +295,96 @@
         <div class="info-menu-tab"></div>
         <div class="menu-header">
             <div class="menu-icon">☰</div>
-            <h3>INFO</h3>
+                        <h3>Info</h3>
             <button class="info-menu-close" onclick="closeMeatCuttingEtiquetteInfoMenuFrance()">×</button>
         </div>
         <div class="info-menu-scroll-content">
             <h3>고기 자르기 예절</h3>
             <div class="info-menu-image">
+                <img src="resource/fr/frinfo_5.png" alt="고기 자르기 예절">
             </div>
             <div class="info-menu-content">
-                <p>고기를 미리 전부 잘라놓으면 말라서 육즙이 부족해지니, 먹을 때마다 조금씩 잘라먹는 것이 좋습니다.</p>
+                <p>고기를 미리 전부 잘라놓으면, 말라서<br>육즙이 부족해지니, 먹을 때마다 조금씩<br>잘라먹는 것이 좋습니다.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 디저트 먹기 예절 정보 메뉴 -->
+    <div id="dessert-etiquette-info-menu-france" class="info-menu">
+        <div class="info-menu-tab"></div>
+        <div class="menu-header">
+            <div class="menu-icon">☰</div>
+                        <h3>Info</h3>
+            <button class="info-menu-close" onclick="closeDessertEtiquetteInfoMenuFrance()">×</button>
+        </div>
+        <div class="info-menu-scroll-content">
+            <h3>디저트 먹기 예절</h3>
+            <div class="info-menu-image">
+                <img src="resource/fr/frinfo_6.png" alt="디저트 먹기 예절">
+            </div>
+            <div class="info-menu-content">
+                <p>디저트를 먹을 때는 디저트 포크와 디저트 스푼을 사용해야 합니다.</p>
+                <p>일반 포크나 나이프를 사용하는 것은 적절하지 않습니다.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 와인잔과 물잔 예절 정보 메뉴 -->
+    <div id="wineglass-etiquette-info-menu-france" class="info-menu">
+        <div class="info-menu-tab"></div>
+        <div class="menu-header">
+            <div class="menu-icon">☰</div>
+                        <h3>Info</h3>
+            <button class="info-menu-close" onclick="closeWineglassEtiquetteInfoMenuFrance()">×</button>
+        </div>
+        <div class="info-menu-scroll-content">
+            <h3>와인잔과 물잔 예절</h3>
+            <div class="info-menu-image">
+                <img src="resource/fr/frinfo_7.png" alt="와인잔과 물잔 예절">
+            </div>
+            <div class="info-menu-content">
+                <p>와인잔과 물잔이 따로 있습니다.</p>
+                <p>와인잔에 와인을 마셔야 합니다.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 와인잔 잡는 법 예절 정보 메뉴 -->
+    <div id="wineglass-holding-etiquette-info-menu-france" class="info-menu">
+        <div class="info-menu-tab"></div>
+        <div class="menu-header">
+            <div class="menu-icon">☰</div>
+                        <h3>Info</h3>
+            <button class="info-menu-close" onclick="closeWineglassHoldingEtiquetteInfoMenuFrance()">×</button>
+        </div>
+        <div class="info-menu-scroll-content">
+            <h3>와인잔 잡는 법</h3>
+            <div class="info-menu-image">
+                <img src="resource/fr/frinfo_8.png" alt="와인잔 잡는 법">
+            </div>
+            <div class="info-menu-content">
+                <p>와인잔을 잡을 때는 잔의 다리 부분을<br>잡는 것이 올바른 예절입니다.</p>
+                <p>잔의 본체를 손으로 감싸는 것은 와인의<br>온도에 영향을 주므로 피해야 합니다.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 식사 마무리 예절 정보 메뉴 -->
+    <div id="meal-end-etiquette-info-menu-france" class="info-menu">
+        <div class="info-menu-tab"></div>
+        <div class="menu-header">
+            <div class="menu-icon">☰</div>
+                        <h3>Info</h3>
+            <button class="info-menu-close" onclick="closeMealEndEtiquetteInfoMenuFrance()">×</button>
+        </div>
+        <div class="info-menu-scroll-content">
+            <h3>식사 마무리 예절</h3>
+            <div class="info-menu-image">
+                <img src="resource/fr/frinfo_9.png" alt="식사 마무리 예절">
+            </div>
+            <div class="info-menu-content">
+                <p>식사를 마칠 때는 포크와 나이프를<br>접시 가장자리에 걸쳐둡니다.</p>
+                <p>이렇게 하면 식사가 끝났음을 알릴 수 있습니다.</p>
             </div>
         </div>
     </div>

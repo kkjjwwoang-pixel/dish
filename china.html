@@ -131,7 +131,7 @@
                     <div class="info-menu-tab"></div>
                     <div class="menu-header">
                         <div class="menu-icon">☰</div>
-                        <h3>INFO</h3>
+                        <h3>Info</h3>
                         <button class="info-menu-close" onclick="closeChopsticksInfoMenuChina()">×</button>
                     </div>
                     <div class="info-menu-scroll-content">
@@ -151,7 +151,7 @@
                     <div class="info-menu-tab"></div>
                     <div class="menu-header">
                         <div class="menu-icon">☰</div>
-                        <h3>INFO</h3>
+                        <h3>Info</h3>
                         <button class="info-menu-close" onclick="closeUtensilHoldingInfoMenuChina()">×</button>
                     </div>
                     <div class="info-menu-scroll-content">
@@ -171,17 +171,18 @@
                     <div class="info-menu-tab"></div>
                     <div class="menu-header">
                         <div class="menu-icon">☰</div>
-                        <h3>INFO</h3>
+                        <h3>Info</h3>
                         <button class="info-menu-close" onclick="closeFoodOrderInfoMenuChina()">×</button>
                     </div>
                     <div class="info-menu-scroll-content">
                         <h3>음식 주문 예절</h3>
                         <div class="info-menu-image">
+                            <img src="resource/cn/cninfo_1.png" alt="음식 주문 예절">
                         </div>
                         <div class="info-menu-content">
                             <p>중국에서는 보통 음식을 짝수로 시킵니다.</p>
-                            <p>짝수는 행운과 조화를 상징하며, 특히 2, 4, 6, 8개가 선호됩니다.</p>
-                            <p>홀수 개의 음식을 주문하는 것은 피하는 것이 좋습니다.</p>
+                            <p>짝수는 행운과 조화를 상징하며,<br>특히 2, 4, 6, 8개가 선호됩니다.</p>
+                            <p>홀수 개의 음식을 주문하는 것은 피하는 것이<br>좋습니다.</p>
                         </div>
                     </div>
                 </div>
@@ -191,27 +192,181 @@
                     <div class="info-menu-tab"></div>
                     <div class="menu-header">
                         <div class="menu-icon">☰</div>
-                        <h3>INFO</h3>
+                        <h3>Info</h3>
                         <button class="info-menu-close" onclick="closeTableRotationInfoMenuChina()">×</button>
                     </div>
                     <div class="info-menu-scroll-content">
                         <h3>테이블 회전 예절</h3>
                         <div class="info-menu-image">
+                            <img src="resource/cn/cninfo_2.png" alt="테이블 회전 예절">
                         </div>
                         <div class="info-menu-content">
-                            <p>중국에서는 원탁을 시계방향으로 회전시키는 것이 예절입니다.</p>
-                            <p>반시계방향으로 회전시키는 것은 피해야 하며, 이는 불길한 의미로 여겨집니다.</p>
-                            <p>음식을 돌릴 때는 천천히, 시계방향으로 회전시켜야 합니다.</p>
+                            <p>회전 테이블은 시계방향으로 회전시키는 것이<br>예절입니다.</p>
+                            <p>반시계방향으로 회전시키는 것은 피해야 하며,<br>이는 불길한 의미로 여겨집니다.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- 일반 정보 메뉴 (동적 콘텐츠용) -->
-                <div id="info-menu-china" class="info-menu">
+                <!-- 공용 젓가락 사용 정보 메뉴 -->
+                <div id="public-chopsticks-info-menu-china" class="info-menu">
                     <div class="info-menu-tab"></div>
                     <div class="menu-header">
                         <div class="menu-icon">☰</div>
-                        <h3>INFO</h3>
+                        <h3>Info</h3>
+                        <button class="info-menu-close" onclick="closeInfoMenuChina()">×</button>
+                    </div>
+                    <div class="info-menu-scroll-content">
+                        <h3>공용 젓가락 사용</h3>
+                        <div class="info-menu-image">
+                            <img src="resource/cn/cninfo_3.png" alt="공용 젓가락 사용">
+                        </div>
+                        <div class="info-menu-content">
+                            <p>음식을 덜어먹을 때는<br>개인 젓가락이 아닌<br>공용 젓가락(긴 젓가락)을 사용해야 합니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 개인 젓가락 사용 정보 메뉴 -->
+                <div id="personal-chopsticks-info-menu-china" class="info-menu">
+                    <div class="info-menu-tab"></div>
+                    <div class="menu-header">
+                        <div class="menu-icon">☰</div>
+                        <h3>Info</h3>
+                        <button class="info-menu-close" onclick="closeInfoMenuChina()">×</button>
+                    </div>
+                    <div class="info-menu-scroll-content">
+                        <h3>개인 젓가락 사용</h3>
+                        <div class="info-menu-image">
+                            <img src="resource/cn/cninfo_3_1.png" alt="개인 젓가락 사용">
+                        </div>
+                        <div class="info-menu-content">
+                            <p>내 앞에 있는 음식은 개인 식기로 먹어야 합니다.<br>공용 젓가락이 아닌 개인 젓가락(짧은 젓가락)을<br>사용하세요.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 개인 식기 사용 정보 메뉴 -->
+                <div id="personal-utensils-info-menu-china" class="info-menu">
+                    <div class="info-menu-tab"></div>
+                    <div class="menu-header">
+                        <div class="menu-icon">☰</div>
+                        <h3>Info</h3>
+                        <button class="info-menu-close" onclick="closeInfoMenuChina()">×</button>
+                    </div>
+                    <div class="info-menu-scroll-content">
+                        <h3>개인 식기 사용</h3>
+                        <div class="info-menu-image">
+                            <img src="resource/cn/cninfo_3_1.png" alt="개인 식기 사용">
+                        </div>
+                        <div class="info-menu-content">
+                            <p>내 앞에 있는 음식은 개인 식기로 먹어야 합니다.<br>공용 젓가락이 아닌 개인 젓가락(짧은 젓가락)을<br>사용하세요.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 숟가락 사용 금지 정보 메뉴 -->
+                <div id="spoon-forbidden-info-menu-china" class="info-menu">
+                    <div class="info-menu-tab"></div>
+                    <div class="menu-header">
+                        <div class="menu-icon">☰</div>
+                        <h3>Info</h3>
+                        <button class="info-menu-close" onclick="closeInfoMenuChina()">×</button>
+                    </div>
+                    <div class="info-menu-scroll-content">
+                        <h3>숟가락 사용 예절</h3>
+                        <div class="info-menu-image">
+                            <img src="resource/cn/cninfo_5.png" alt="숟가락 사용 금지">
+                        </div>
+                        <div class="info-menu-content">
+                            <p>중국에서는 밥을 먹을 때<br>숟가락을 사용하지 않습니다.<br>젓가락으로 먹는 것이 올바른 방법입니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 계산 예절 정보 메뉴 -->
+                <div id="calculation-etiquette-info-menu-china" class="info-menu">
+                    <div class="info-menu-tab"></div>
+                    <div class="menu-header">
+                        <div class="menu-icon">☰</div>
+                        <h3>Info</h3>
+                        <button class="info-menu-close" onclick="closeInfoMenuChina()">×</button>
+                    </div>
+                    <div class="info-menu-scroll-content">
+                        <h3>계산 예절</h3>
+                        <div class="info-menu-image">
+                            <img src="resource/cn/cninfo_6.png" alt="계산 예절">
+                        </div>
+                        <div class="info-menu-content">
+                            <p>중국에서는 초대한 손님이 계산하는 것이<br>예의입니다.<br>초대받은 사람이 계산하려고 하는 것은<br>호의로 받아들이지만, 일반적으로는<br>초대한 사람이 계산을 담당합니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 차 따라주는 예절 정보 메뉴 -->
+                <div id="tea-pouring-etiquette-info-menu-china" class="info-menu">
+                    <div class="info-menu-tab"></div>
+                    <div class="menu-header">
+                        <div class="menu-icon">☰</div>
+                        <h3>Info</h3>
+                        <button class="info-menu-close" onclick="closeInfoMenuChina()">×</button>
+                    </div>
+                    <div class="info-menu-scroll-content">
+                        <h3>차 따르는 예절</h3>
+                        <div class="info-menu-image">
+                            <img src="resource/cn/cninfo_4.png" alt="차 따르는 예절">
+                        </div>
+                        <div class="info-menu-content">
+                            <p>친구나 손님에게 차를 따라줄 때<br>예의를 지켜야 합니다.<br>주전자를 친구의 찻잔 쪽으로 기울여<br>차를 따라주는 것이 올바른 예절입니다.<br>상대방의 찻잔에 정확히 따라주는 것은<br>배려와 존중을 나타내는 행동입니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 식사 예절 정보 메뉴 (남김없이 먹기 선택 시) -->
+                <div id="meal-etiquette-empty-info-menu-china" class="info-menu">
+                    <div class="info-menu-tab"></div>
+                    <div class="menu-header">
+                        <div class="menu-icon">☰</div>
+                        <h3>Info</h3>
+                        <button class="info-menu-close" onclick="closeInfoMenuChina()">×</button>
+                    </div>
+                    <div class="info-menu-scroll-content">
+                        <h3>식사 마무리 예절</h3>
+                        <div class="info-menu-image">
+                            <img src="resource/cn/cninfo_7.png" alt="식사 예절">
+                        </div>
+                        <div class="info-menu-content">
+                            <p>중국에서는 음식을 남기면 부족했다는 뜻으로<br>여겨져서 실례가 됩니다.<br>충분히 대접하지 못했다는 의미로<br>받아들여질 수 있습니다.</p>
+                            <p><br>따라서 중국에서는 음식을 조금 남기는 것이<br>올바른 예절입니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 식사 예절 정보 메뉴 (조금 남기기 선택 시) -->
+                <div id="meal-etiquette-leave-info-menu-china" class="info-menu">
+                    <div class="info-menu-tab"></div>
+                    <div class="menu-header">
+                        <div class="menu-icon">☰</div>
+                        <h3>Info</h3>
+                        <button class="info-menu-close" onclick="closeInfoMenuChina()">×</button>
+                    </div>
+                    <div class="info-menu-scroll-content">
+                        <h3>식사 마무리 예절</h3>
+                        <div class="info-menu-image">
+                            <img src="resource/cn/cninfo_7.png" alt="식사 마무리 예절">
+                        </div>
+                        <div class="info-menu-content">
+                            <p>중국에서는 음식을 남기면 부족했다는 뜻으로<br>여겨져서 실례가 됩니다.<br>충분히 대접하지 못했다는 의미로<br>받아들여질 수 있습니다.</p>
+                            <p>따라서 중국에서는 음식을 조금 남기는 것이<br>올바른 예절입니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 일반 정보 메뉴 (동적 콘텐츠용 - 호환성 유지) -->
+                <div id="info-menu-china" class="info-menu" style="display: none;">
+                    <div class="info-menu-tab"></div>
+                    <div class="menu-header">
+                        <div class="menu-icon">☰</div>
+                        <h3>Info</h3>
                         <button class="info-menu-close" onclick="closeInfoMenuChina()">×</button>
                     </div>
                     <div class="info-menu-scroll-content">
@@ -280,7 +435,7 @@
         <div class="slot-menu-tab"></div>
         <div class="menu-header">
             <div class="menu-icon">☰</div>
-            <h3>INVENTORY</h3>
+            <h3>Inventory</h3>
         </div>
         <div class="slot-items">
             <div class="slot-item disabled" draggable="false" data-item="cup" data-image="resource/cn/cn_cup.png">

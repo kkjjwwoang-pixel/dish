@@ -302,6 +302,38 @@ let currentScreen = 'title';
 let japanCompleted = false;
 let chinaCompleted = false;
 let franceCompleted = false;
+
+// localStorage에서 클리어 상태 불러오기
+function loadCompletionStatus() {
+    const savedJapan = localStorage.getItem('japanCompleted');
+    const savedChina = localStorage.getItem('chinaCompleted');
+    const savedFrance = localStorage.getItem('franceCompleted');
+    
+    if (savedJapan === 'true') japanCompleted = true;
+    if (savedChina === 'true') chinaCompleted = true;
+    if (savedFrance === 'true') franceCompleted = true;
+    
+    // 지도 화면이 있으면 타이틀 이미지 업데이트
+    updateMapTitleImages();
+}
+
+// 지도 화면의 타이틀 이미지 업데이트
+function updateMapTitleImages() {
+    const mapScreen = document.getElementById('map-screen');
+    if (!mapScreen) return;
+    
+    const franceTitleImg = mapScreen.querySelector('.france-title');
+    if (franceTitleImg && franceCompleted) {
+        franceTitleImg.src = 'resource/title/TitleFr_F.png';
+    }
+}
+
+// 페이지 로드 시 클리어 상태 불러오기
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadCompletionStatus);
+} else {
+    loadCompletionStatus();
+}
 let riceBowlEatState = 0; // 밥그릇 먹기 상태: 0=grab.png, 1=grab1.png, 2=grab2.png, 3=grab3.png, 4=grab4.png, 5=dishFinished.png
 
 // ============================================
@@ -385,6 +417,7 @@ const correctPositionsFrance = {
     'napkin': 'drop-napkin',
     'rbread': 'drop-rbread',
     'dish2': 'drop-dish2',
+    'dessert': 'drop-dessert',
     'dish1': 'drop-dish1'
 };
 
@@ -467,6 +500,9 @@ function showScreen(screenName) {
         if (screenName === 'map') {
             const mapScreen = screens[screenName];
             const header = mapScreen.querySelector('.top-header');
+
+            // 프랑스 스테이지 클리어 상태에 따라 타이틀 이미지 변경
+            updateMapTitleImages();
 
             // 먼저 기존 애니메이션 클래스 제거
             const mapContainer = mapScreen.querySelector('.map-container');
@@ -1578,7 +1614,7 @@ function adjustDropZonesToImageSize() {
             // 모든 이미지가 로드되면 위치 조정
             if (loadedCount === totalImages) {
                 // 기본 위치 설정 (디버그 위치가 없을 때만)
-                adjustDropZonePositions(images);
+                    adjustDropZonePositions(images);
                 // 저장된 디버그 위치 적용 (기본 위치를 덮어씀)
                 setTimeout(() => {
                     applyDebugPositions();
@@ -1970,12 +2006,12 @@ function adjustDropZonePositions(images) {
 
     // 젓가락 2: vw 단위 고정 위치 및 크기 (디버그 위치가 없을 때만)
     if (chopsticks2 && !debugPositions['drop-zone-chopsticks-2-japan']) {
-        chopsticks2.style.left = '20vw';
-        chopsticks2.style.top = '20vw';
-        chopsticks2.style.transform = 'none';
-        chopsticks2.style.transformOrigin = '';
-        chopsticks2.style.marginTop = '';
-        chopsticks2.style.marginLeft = '';
+            chopsticks2.style.left = '20vw';
+            chopsticks2.style.top = '20vw';
+            chopsticks2.style.transform = 'none';
+            chopsticks2.style.transformOrigin = '';
+            chopsticks2.style.marginTop = '';
+            chopsticks2.style.marginLeft = '';
         // 크기는 이미 adjustDropZonesToImageSize에서 설정됨
     }
 }
@@ -2644,44 +2680,130 @@ function handleDragStart(e) {
                 };
             }
         }
-    } else if (this.classList.contains('france-fork0') || this.classList.contains('france-fork1') || 
-               this.classList.contains('france-fork2') || this.classList.contains('france-knife1') || 
-               this.classList.contains('france-knife2') || this.classList.contains('france-hand')) {
-        // 스테이지에 배치된 포크, 나이프, 손인 경우
+    } else if (this.id === 'france-dessert-draggable' || this.classList.contains('france-dessert')) {
+        // 스테이지에 배치된 디저트인 경우
         e.dataTransfer.setData('source', 'stage');
         
-        // 실제 화면에 표시되는 크기에 맞춰 드래그 이미지 설정
+        // 디저트의 실제 이미지 크기에 맞춰 드래그 이미지 설정
         const img = this.querySelector('img');
         if (img) {
-            const rect = this.getBoundingClientRect();
-            const computedStyle = window.getComputedStyle(this);
-            const width = parseFloat(computedStyle.width);
-            const height = parseFloat(computedStyle.height);
+            const createDragImage = (naturalWidth, naturalHeight) => {
+                // 원본 크기를 vw로 변환
+                const widthVw = pxToVw(naturalWidth);
+                const heightVw = pxToVw(naturalHeight);
+                const widthPx = vwToPx(widthVw);
+                const heightPx = vwToPx(heightVw);
                 
                 // 임시 이미지 요소 생성
                 const dragImage = document.createElement('div');
                 dragImage.style.position = 'absolute';
                 dragImage.style.top = '-1000px';
-            dragImage.style.width = width + 'px';
-            dragImage.style.height = height + 'px';
+                dragImage.style.width = widthPx + 'px';
+                dragImage.style.height = heightPx + 'px';
                 dragImage.style.backgroundImage = `url('${img.src}')`;
                 dragImage.style.backgroundSize = 'contain';
                 dragImage.style.backgroundPosition = 'center';
                 dragImage.style.backgroundRepeat = 'no-repeat';
                 document.body.appendChild(dragImage);
-            
-            // 클릭한 위치와 요소의 중심점 사이의 오프셋 계산
-            const offsetX = e.clientX - rect.left;
-            const offsetY = e.clientY - rect.top;
                 
                 // 드래그 이미지 설정
-            e.dataTransfer.setDragImage(dragImage, offsetX, offsetY);
+                e.dataTransfer.setDragImage(dragImage, widthPx / 2, heightPx / 2);
                 
                 setTimeout(() => {
                     if (document.body.contains(dragImage)) {
                         document.body.removeChild(dragImage);
                     }
                 }, 0);
+            };
+            
+            if (img.complete && img.naturalWidth > 0) {
+                createDragImage(img.naturalWidth, img.naturalHeight);
+            } else {
+                img.onload = function() {
+                    createDragImage(this.naturalWidth, this.naturalHeight);
+                };
+            }
+        }
+    } else if (this.classList.contains('france-fork0') || this.classList.contains('france-fork1') || 
+               this.classList.contains('france-fork2') || this.classList.contains('france-knife1') || 
+               this.classList.contains('france-knife2') || this.classList.contains('france-hand') ||
+               this.classList.contains('france-desertspoon') || this.classList.contains('france-desertfork')) {
+        // 스테이지에 배치된 포크, 나이프, 손, 디저트 포크/숟가락인 경우 (투명한 잔상 처리)
+        e.dataTransfer.setData('source', 'stage');
+        
+        // 포크 0, 1, 2, 디저트 포크/스푼은 투명한 잔상 처리 (원본 크기)
+        const isForkOrDessertUtensil = this.classList.contains('france-fork0') || 
+                                       this.classList.contains('france-fork1') || 
+                                       this.classList.contains('france-fork2') ||
+                                       this.classList.contains('france-desertspoon') || 
+                                       this.classList.contains('france-desertfork');
+        
+        const img = this.querySelector('img');
+        if (img) {
+            if (isForkOrDessertUtensil) {
+                // 포크나 디저트 포크/스푼: 실제 화면 크기로 투명한 잔상 처리
+                const rect = this.getBoundingClientRect();
+                const computedStyle = window.getComputedStyle(this);
+                const width = parseFloat(computedStyle.width);
+                const height = parseFloat(computedStyle.height);
+                
+                // 임시 이미지 요소 생성 (투명한 잔상)
+                const dragImage = document.createElement('div');
+                dragImage.style.position = 'absolute';
+                dragImage.style.top = '-1000px';
+                dragImage.style.width = width + 'px';
+                dragImage.style.height = height + 'px';
+                dragImage.style.backgroundImage = `url('${img.src}')`;
+                dragImage.style.backgroundSize = 'contain';
+                dragImage.style.backgroundPosition = 'center';
+                dragImage.style.backgroundRepeat = 'no-repeat';
+                dragImage.style.opacity = '0.5'; // 투명한 잔상 효과
+                document.body.appendChild(dragImage);
+                
+                // 클릭한 위치와 요소의 중심점 사이의 오프셋 계산
+                const offsetX = e.clientX - rect.left;
+                const offsetY = e.clientY - rect.top;
+                
+                // 드래그 이미지 설정
+                e.dataTransfer.setDragImage(dragImage, offsetX, offsetY);
+                
+                setTimeout(() => {
+                    if (document.body.contains(dragImage)) {
+                        document.body.removeChild(dragImage);
+                    }
+                }, 0);
+            } else {
+                // 나이프, 손: 기존 방식 (실제 화면 크기)
+                const rect = this.getBoundingClientRect();
+                const computedStyle = window.getComputedStyle(this);
+                const width = parseFloat(computedStyle.width);
+                const height = parseFloat(computedStyle.height);
+                    
+                    // 임시 이미지 요소 생성
+                    const dragImage = document.createElement('div');
+                    dragImage.style.position = 'absolute';
+                    dragImage.style.top = '-1000px';
+                dragImage.style.width = width + 'px';
+                dragImage.style.height = height + 'px';
+                    dragImage.style.backgroundImage = `url('${img.src}')`;
+                    dragImage.style.backgroundSize = 'contain';
+                    dragImage.style.backgroundPosition = 'center';
+                    dragImage.style.backgroundRepeat = 'no-repeat';
+                    document.body.appendChild(dragImage);
+                
+                // 클릭한 위치와 요소의 중심점 사이의 오프셋 계산
+                const offsetX = e.clientX - rect.left;
+                const offsetY = e.clientY - rect.top;
+                    
+                    // 드래그 이미지 설정
+                e.dataTransfer.setDragImage(dragImage, offsetX, offsetY);
+                    
+                    setTimeout(() => {
+                        if (document.body.contains(dragImage)) {
+                            document.body.removeChild(dragImage);
+                        }
+                    }, 0);
+            }
         }
     } else {
         e.dataTransfer.setData('source', 'slot');
@@ -2833,6 +2955,55 @@ function handleDragOver(e) {
         }
     }
     
+    // 프랑스 스테이지 디저트 원형 드랍존에 포크, 디저트 포크/스푼 드래그 오버 시 텍스트 변경
+    if (this.id === 'drop-dessert-utensils' && draggedElement) {
+        const isFork = draggedElement.classList.contains('france-fork0') || 
+                      draggedElement.classList.contains('france-fork1') || 
+                      draggedElement.classList.contains('france-fork2');
+        const isDessertUtensil = draggedElement.classList.contains('france-desertspoon') || 
+                                 draggedElement.classList.contains('france-desertfork');
+        
+        if (isFork || isDessertUtensil) {
+            // 텍스트 요소가 없으면 생성
+            let dropZoneText = this.querySelector('.drop-zone-text');
+            if (!dropZoneText) {
+                dropZoneText = document.createElement('span');
+                dropZoneText.className = 'drop-zone-text';
+                this.appendChild(dropZoneText);
+            }
+            dropZoneText.textContent = '먹기';
+        }
+    }
+    
+    // 프랑스 스테이지 와인/물잔 드랍존에 와인병 드래그 오버 시 "붓기" 텍스트 표시
+    if ((this.id === 'drop-wineglass' || this.id === 'drop-waterglass') && draggedElement) {
+        const itemType = draggedElement.getAttribute('data-item');
+        const isWinebottle = itemType === 'wineglass';
+        const isHand = draggedElement.classList.contains('france-hand');
+        
+        if (isWinebottle) {
+            // 텍스트 요소가 없으면 생성
+            let dropZoneText = this.querySelector('.drop-zone-text');
+            if (!dropZoneText) {
+                dropZoneText = document.createElement('span');
+                dropZoneText.className = 'drop-zone-text';
+                this.appendChild(dropZoneText);
+            }
+            dropZoneText.textContent = '붓기';
+            dropZoneText.style.color = '#905431';
+        } else if (isHand && this.id === 'drop-wineglass') {
+            // 손을 와인잔 드랍존에 드래그 오버 시 "집기" 텍스트 표시
+            let dropZoneText = this.querySelector('.drop-zone-text');
+            if (!dropZoneText) {
+                dropZoneText = document.createElement('span');
+                dropZoneText.className = 'drop-zone-text';
+                this.appendChild(dropZoneText);
+            }
+            dropZoneText.textContent = '집기';
+            dropZoneText.style.color = '#F5F3E5';
+        }
+    }
+    
     return false;
 }
 
@@ -2844,6 +3015,22 @@ function handleDragLeave(e) {
         const dropZoneText = this.querySelector('.drop-zone-text');
         if (dropZoneText) {
             dropZoneText.textContent = '놓기';
+        }
+    }
+    
+    // 프랑스 스테이지 디저트 원형 드랍존에서 드래그 리브 시 텍스트 제거
+    if (this.id === 'drop-dessert-utensils') {
+        const dropZoneText = this.querySelector('.drop-zone-text');
+        if (dropZoneText) {
+            dropZoneText.textContent = '';
+        }
+    }
+    
+    // 프랑스 스테이지 와인/물잔 드랍존에서 드래그 리브 시 텍스트 제거
+    if (this.id === 'drop-wineglass' || this.id === 'drop-waterglass') {
+        const dropZoneText = this.querySelector('.drop-zone-text');
+        if (dropZoneText) {
+            dropZoneText.textContent = '';
         }
     }
 }
@@ -2905,7 +3092,7 @@ function handleDrop(e) {
             if (img) {
                 imageSrc = img.src;
             }
-            // 포크, 나이프, 손의 itemType 설정
+            // 포크, 나이프, 손, 디저트의 itemType 설정
             if (draggedElement.classList.contains('france-fork0')) {
                 itemType = 'fork0';
             } else if (draggedElement.classList.contains('france-fork1')) {
@@ -2918,6 +3105,12 @@ function handleDrop(e) {
                 itemType = 'knife2';
             } else if (draggedElement.classList.contains('france-hand')) {
                 itemType = 'hand';
+            } else if (draggedElement.classList.contains('france-dessert') || draggedElement.id === 'france-dessert-draggable') {
+                itemType = 'dessert';
+            } else if (draggedElement.classList.contains('france-desertspoon')) {
+                itemType = 'desertspoon';
+            } else if (draggedElement.classList.contains('france-desertfork')) {
+                itemType = 'desertfork';
             }
         }
     } else {
@@ -2931,11 +3124,177 @@ function handleDrop(e) {
 
     const dropZoneId = this.id;
     
+    // 디저트 원형 드랍존에 포크나 스푼 드롭 처리 (배치되지 않게)
+    if (dropZoneId === 'drop-dessert-utensils' && 
+        (itemType === 'fork0' || itemType === 'fork1' || itemType === 'fork2' || 
+         itemType === 'desertspoon' || itemType === 'desertfork')) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // 식기류 사운드 재생
+        try {
+            const cutleryAudio = new Audio('resource/sound/cutlery.mp3');
+            cutleryAudio.volume = 0.5;
+            cutleryAudio.currentTime = 0;
+            cutleryAudio.play().catch(err => {
+                console.log('식기류 사운드 재생 실패:', err);
+            });
+        } catch (err) {
+            console.log('식기류 사운드 재생 오류:', err);
+        }
+        
+        const currentStage = document.getElementById('france-stage')?.classList.contains('active') ? 'france' : null;
+        if (currentStage === 'france') {
+            // 포크나 스푼이 디저트 원형 드랍존에 드롭된 경우 처리
+            if (itemType === 'fork0' || itemType === 'fork1' || itemType === 'fork2') {
+                // 일반 포크를 드롭한 경우
+                showSpeechBubbleFrance('흠... 그 포크가 아닌 것 같은데요', 3000, false, null, null, null, null);
+                showDessertEtiquetteInfoMenuFrance();
+            } else if (itemType === 'desertspoon' || itemType === 'desertfork') {
+                // 디저트 포크나 스푼을 드롭한 경우
+                showSpeechBubbleFrance('좋습니다!', 3000, false, null, null, null, null);
+                
+                // 식기 하이라이팅 제거
+                const desertspoon = document.querySelector('.france-desertspoon');
+                const desertfork = document.querySelector('.france-desertfork');
+                const fork0 = document.querySelector('.france-fork0');
+                const fork1 = document.querySelector('.france-fork1');
+                const fork2 = document.querySelector('.france-fork2');
+                
+                if (desertspoon) desertspoon.classList.remove('highlight-pulse');
+                if (desertfork) desertfork.classList.remove('highlight-pulse');
+                if (fork0) fork0.classList.remove('highlight-pulse');
+                if (fork1) fork1.classList.remove('highlight-pulse');
+                if (fork2) fork2.classList.remove('highlight-pulse');
+                
+                // 원형 드랍존 하이라이팅 제거 및 비활성화 (눈에 안보이게)
+                const dessertUtensilsDropZone = document.getElementById('drop-dessert-utensils');
+                if (dessertUtensilsDropZone) {
+                    dessertUtensilsDropZone.classList.remove('highlight-pulse');
+                    dessertUtensilsDropZone.style.pointerEvents = 'none';
+                    dessertUtensilsDropZone.style.display = 'none';
+                }
+                
+                // fr_dessert.png를 fr_dessert_b.png로 변경 (페이드 인/아웃 애니메이션)
+                const dessertDropZone = document.getElementById('drop-dessert');
+                if (dessertDropZone) {
+                    const droppedDessert = dessertDropZone.querySelector('.dropped-item');
+                    if (droppedDessert) {
+                        // 메인 이미지 찾기 (shadow-img가 아닌 이미지)
+                        const allImgs = droppedDessert.querySelectorAll('img');
+                        const mainImg = Array.from(allImgs).find(img => !img.classList.contains('shadow-img'));
+                        if (mainImg && mainImg.src.includes('fr_dessert.png')) {
+                            // transition 설정
+                            mainImg.style.transition = 'opacity 0.5s ease-in-out';
+                            
+                            // 이미지 미리 로드
+                            const newImg = new Image();
+                            newImg.src = 'resource/fr/fr_dessert_b.png';
+                            
+                            // 이미지 로드 완료 후 fade-out과 동시에 이미지 교체 및 fade-in
+                            const changeImage = () => {
+                                // fade-out 시작
+                                mainImg.style.opacity = '0';
+                                
+                                // fade-out이 절반 진행될 때 이미지 교체 (동시에 진행)
+                                setTimeout(() => {
+                                    mainImg.src = 'resource/fr/fr_dessert_b.png';
+                                    
+                                    // 바로 fade-in 시작
+                                    setTimeout(() => {
+                                        mainImg.style.opacity = '1';
+                                        
+                                        // 애니메이션 완료 후 transition 제거 및 말풍선 표시
+                                        setTimeout(() => {
+                                            mainImg.style.transition = '';
+                                            
+                                            // 딜레이 후 말풍선 표시
+                                            setTimeout(() => {
+                                                // "별말씀을요" 버튼 클릭 시 다음 말풍선 표시하는 콜백
+                                                const nextCallback = () => {
+                                                    // "이제 식사의 끝이 보이는군요" 말풍선 + "이제 뭐죠?" 버튼
+                                                    showSpeechBubbleFrance('이제 식사의 끝이 보이는군요', 0, true, () => {
+                                                    // "이제 뭐죠?" 버튼 클릭 시 다음 말풍선 표시 및 와인/물잔 드랍존 활성화
+                                                    showSpeechBubbleFrance('식후주를 준비했습니다. 어서 드셔 보세요', 3000, false, null, () => {
+                                                        // 모든 인포 메뉴 닫기
+                                                        closeBreadEtiquetteInfoMenuFrance();
+                                                        closeBreadPlacementInfoMenuFrance();
+                                                        closeKnifeEtiquetteInfoMenuFrance();
+                                                        closeMeatCuttingEtiquetteInfoMenuFrance();
+                                                        closeDessertEtiquetteInfoMenuFrance();
+                                                        closeWineglassEtiquetteInfoMenuFrance();
+                                                        closeWineglassHoldingEtiquetteInfoMenuFrance();
+                                                        closeMealEndEtiquetteInfoMenuFrance();
+                                                        
+                                                        // 와인 드랍존 활성화 및 하이라이팅
+                                                        const wineglassDropZone = document.getElementById('drop-wineglass');
+                                                        if (wineglassDropZone) {
+                                                            wineglassDropZone.style.display = 'block';
+                                                            wineglassDropZone.style.pointerEvents = 'auto';
+                                                            wineglassDropZone.classList.add('highlight-pulse');
+                                                        }
+                                                        
+                                                        // 물잔 드랍존 활성화 및 하이라이팅
+                                                        const waterglassDropZone = document.getElementById('drop-waterglass');
+                                                        if (waterglassDropZone) {
+                                                            waterglassDropZone.style.display = 'block';
+                                                            waterglassDropZone.style.pointerEvents = 'auto';
+                                                            waterglassDropZone.classList.add('highlight-pulse');
+                                                        }
+                                                        
+                                                        // 인벤토리의 와인병 활성화 및 하이라이팅
+                                                        const winebottleSlotItem = document.querySelector('#slot-menu-france .slot-item[data-item="wineglass"]');
+                                                        if (winebottleSlotItem) {
+                                                            winebottleSlotItem.setAttribute('draggable', 'true');
+                                                            winebottleSlotItem.classList.remove('disabled');
+                                                            winebottleSlotItem.style.opacity = '1';
+                                                            winebottleSlotItem.style.pointerEvents = 'auto';
+                                                            winebottleSlotItem.classList.add('highlight-pulse');
+                                                        }
+                                                    }, null, null);
+                                                    }, null, '이제 뭐죠?', null);
+                                                };
+                                                
+                                                showSpeechBubbleFrance('디저트까지 식사를 마치셨네요. 잘 하고 계십니다', 0, true, nextCallback, null, '별말씀을요', null);
+                                            }, 2000);
+                                        }, 500);
+                                    }, 10);
+                                }, 250);
+                            };
+                            
+                            // 이미지가 이미 로드된 경우
+                            if (newImg.complete) {
+                                setTimeout(changeImage, 10);
+                            } else {
+                                newImg.onload = changeImage;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        // 배치하지 않고 종료
+        return false;
+    }
+    
     // 원형 드랍존에 나이프 드롭 방지 (배치되지 않게)
     if ((dropZoneId === 'drop-dish1-meat-full' || dropZoneId === 'drop-dish1-meat-partial') && 
         (itemType === 'knife1' || itemType === 'knife2')) {
         e.preventDefault();
         e.stopPropagation();
+        
+        // 식기류 사운드 재생
+        try {
+            const cutleryAudio = new Audio('resource/sound/cutlery.mp3');
+            cutleryAudio.volume = 0.5;
+            cutleryAudio.currentTime = 0;
+            cutleryAudio.play().catch(err => {
+                console.log('식기류 사운드 재생 실패:', err);
+            });
+        } catch (err) {
+            console.log('식기류 사운드 재생 오류:', err);
+        }
         
         const currentStage = document.getElementById('france-stage')?.classList.contains('active') ? 'france' : null;
         if (currentStage === 'france') {
@@ -2951,7 +3310,120 @@ function handleDrop(e) {
             }
             // knife2가 조금만 자르기 드랍존에 드롭된 경우
             else if (itemType === 'knife2' && dropZoneId === 'drop-dish1-meat-partial') {
-                showSpeechBubbleFrance('저희 식당에서 제일 유명한 뵈프 부르기뇽입니다.', 3000, false, null, null, null, null);
+                // "맛있네요" 버튼을 누르면 다음 말풍선으로 넘어가는 콜백
+                const nextToDessertCallback = () => {
+                    // "좋아요!" 버튼 클릭 시 fr_dish1과 fr_maindish1이 사라지는 콜백
+                    const removeDish1AndMaindish1Callback = () => {
+                        // fr_dish1 (drop-dish1 드롭존의 dropped-item) - 먼저 시작
+                        const dish1DropZone = document.getElementById('drop-dish1');
+                        if (dish1DropZone) {
+                            const droppedDish1 = dish1DropZone.querySelector('.dropped-item');
+                            if (droppedDish1) {
+                                // 현재 위치 저장
+                                const currentTransform = window.getComputedStyle(droppedDish1).transform;
+                                const baseTransform = currentTransform !== 'none' ? currentTransform : '';
+                                
+                                // fade-out과 위로 올라가는 애니메이션 적용
+                                droppedDish1.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+                                droppedDish1.style.opacity = '0';
+                                droppedDish1.style.transform = `${baseTransform} translateY(-80px)`;
+                                
+                                // 모든 이미지에도 fade-out 적용
+                                const allImgs = droppedDish1.querySelectorAll('img');
+                                allImgs.forEach(img => {
+                                    img.style.transition = 'opacity 0.6s ease-out';
+                                    img.style.opacity = '0';
+                                });
+                                
+                                // 애니메이션 완료 후 요소 제거
+                                setTimeout(() => {
+                                    droppedDish1.remove();
+                                }, 600);
+                            }
+                        }
+                        
+                        // fr_maindish1 - 약간의 딜레이 후 시작 (200ms 후)
+                        setTimeout(() => {
+                            const maindish1 = document.querySelector('.france-maindish1');
+                            if (maindish1) {
+                                // 현재 위치 저장
+                                const currentTransform = window.getComputedStyle(maindish1).transform;
+                                const baseTransform = currentTransform !== 'none' ? currentTransform : '';
+                                
+                                // fade-out과 위로 올라가는 애니메이션 적용
+                                maindish1.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+                                maindish1.style.opacity = '0';
+                                maindish1.style.transform = `${baseTransform} translateY(-80px)`;
+                                
+                                // 애니메이션 완료 후 요소 제거
+                                setTimeout(() => {
+                                    maindish1.style.display = 'none';
+                                    
+                                    // 모든 애니메이션 완료 후 fr_dessert 나타나기
+                                    // fr_dish1: 600ms, fr_maindish1: 200ms + 600ms = 800ms
+                                    // 약간의 여유를 두고 850ms 후에 시작
+                                    setTimeout(() => {
+                                        const dessert = document.querySelector('.france-dessert');
+                                        if (dessert) {
+                                            // 초기 위치: 위에서 시작 (translateY(-80px))
+                                            dessert.style.display = 'flex';
+                                            dessert.style.opacity = '0';
+                                            dessert.style.transform = 'translateY(-80px)';
+                                            dessert.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+                                            
+                                            // 리플로우 강제
+                                            void dessert.offsetHeight;
+                                            
+                                            // 아래로 내려오면서 나타나는 애니메이션
+                                            setTimeout(() => {
+                                                dessert.style.opacity = '1';
+                                                dessert.style.transform = 'translateY(0)';
+                                                
+                                                // 애니메이션 완료 후 (0.6초 후) 하이라이팅 및 드래그 활성화
+                                                setTimeout(() => {
+                                                    // fr_dessert 하이라이팅
+                                                    dessert.classList.add('highlight-pulse');
+                                                    
+                                                    // fr_dessert 드래그 활성화
+                                                    dessert.setAttribute('draggable', 'true');
+                                                    dessert.setAttribute('data-item', 'dessert');
+                                                    dessert.style.cursor = 'grab';
+                                                    dessert.style.pointerEvents = 'auto';
+                                                    
+                                                    // 이벤트 리스너 추가
+                                                    if (!dessert.hasAttribute('data-drag-listener-added')) {
+                                                        dessert.addEventListener('dragstart', handleDragStart);
+                                                        dessert.addEventListener('dragend', handleDragEnd);
+                                                        dessert.setAttribute('data-drag-listener-added', 'true');
+                                                    }
+                                                    
+                                                    // 디저트 드랍존 표시 및 하이라이팅
+                                                    const dessertDropZone = document.getElementById('drop-dessert');
+                                                    if (dessertDropZone) {
+                                                        dessertDropZone.style.display = 'flex';
+                                                        dessertDropZone.classList.add('highlight-pulse');
+                                                        
+                                                        // 드랍존에 이벤트 리스너 추가
+                                                        const franceStage = document.getElementById('france-stage');
+                                                        if (franceStage && !dessertDropZone.hasAttribute('data-event-listener-added')) {
+                                                            dessertDropZone.addEventListener('dragover', handleDragOver);
+                                                            dessertDropZone.addEventListener('dragleave', handleDragLeave);
+                                                            dessertDropZone.addEventListener('drop', handleDrop);
+                                                            dessertDropZone.setAttribute('data-event-listener-added', 'true');
+                                                        }
+                                                    }
+                                                }, 600);
+                                            }, 10);
+                                        }
+                                    }, 50);
+                                }, 600);
+                            }
+                        }, 200);
+                    };
+                    
+                    showSpeechBubbleFrance('Dessert 단계로 넘어가볼까요?', 0, true, removeDish1AndMaindish1Callback, null, '좋아요!', null);
+                };
+                showSpeechBubbleFrance('저희 식당에서 제일 유명한 뵈프 부르기뇽입니다!.', 0, true, nextToDessertCallback, null, '맛있네요', null);
                 showMeatCuttingEtiquetteInfoMenuFrance();
                 
                 // fr_dish1_a.png를 fr_dish1_b.png로 변경 (페이드 인/아웃 애니메이션)
@@ -3058,6 +3530,17 @@ function handleDrop(e) {
          itemType === 'knife1' || itemType === 'knife2' || itemType === 'hand')) {
         // 손이 아닌 경우 (포크나 나이프) 말풍선 및 인포 메뉴 표시
         if (itemType !== 'hand') {
+            // 식기류 사운드 재생
+            try {
+                const cutleryAudio = new Audio('resource/sound/cutlery.mp3');
+                cutleryAudio.volume = 0.5;
+                cutleryAudio.currentTime = 0;
+                cutleryAudio.play().catch(err => {
+                    console.log('식기류 사운드 재생 실패:', err);
+                });
+            } catch (err) {
+                console.log('식기류 사운드 재생 오류:', err);
+            }
             setTimeout(() => {
                 showSpeechBubbleFrance('빵을 먹을 때는 손을 사용해야 해요!', 3000, false, null, null, null, null);
                 showBreadEtiquetteInfoMenuFrance();
@@ -3071,6 +3554,18 @@ function handleDrop(e) {
         }
         
         // 손인 경우 하이라이팅 제거 및 인포 메뉴 표시
+        // 손 사운드 재생
+        try {
+            const grabAudio = new Audio('resource/sound/grab.mp3');
+            grabAudio.volume = 0.5;
+            grabAudio.currentTime = 0;
+            grabAudio.play().catch(err => {
+                console.log('손 사운드 재생 실패:', err);
+            });
+        } catch (err) {
+            console.log('손 사운드 재생 오류:', err);
+        }
+        
         const fork0 = document.querySelector('.france-fork0');
         const fork1 = document.querySelector('.france-fork1');
         const fork2 = document.querySelector('.france-fork2');
@@ -3248,7 +3743,7 @@ function handleDrop(e) {
         }, 250);
         
         // 스테이지에 배치된 요소를 드롭존에 드롭하려고 했지만 취소하는 경우 원본 요소 다시 표시
-        if (source === 'stage' && draggedElement) {
+    if (source === 'stage' && draggedElement) {
             draggedElement.style.display = '';
         }
         
@@ -3256,8 +3751,276 @@ function handleDrop(e) {
         return false;
     }
 
+    // 프랑스 스테이지에서 손이 와인잔 드랍존에 드롭된 경우 처리
+    if (currentStage === 'france' && itemType === 'hand' && dropZoneId === 'drop-wineglass') {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // 손 사운드 재생
+        try {
+            const grabAudio = new Audio('resource/sound/grab.mp3');
+            grabAudio.volume = 0.5;
+            grabAudio.currentTime = 0;
+            grabAudio.play().catch(err => {
+                console.log('손 사운드 재생 실패:', err);
+            });
+        } catch (err) {
+            console.log('손 사운드 재생 오류:', err);
+        }
+        
+        // 와인잔 잡는 법 인포 메뉴 표시
+        showWineglassHoldingEtiquetteInfoMenuFrance();
+        
+        // 와인잔 드랍존 비활성화
+        const wineglassDropZone = document.getElementById('drop-wineglass');
+        if (wineglassDropZone) {
+            wineglassDropZone.classList.remove('highlight-pulse');
+            wineglassDropZone.style.display = 'none';
+            wineglassDropZone.style.pointerEvents = 'none';
+        }
+        
+        // 손 하이라이팅 비활성화
+        const handElement = document.querySelector('.france-hand');
+        if (handElement) {
+            handElement.classList.remove('highlight-pulse');
+            handElement.setAttribute('draggable', 'false');
+            handElement.style.cursor = 'default';
+            handElement.style.pointerEvents = 'none';
+        }
+        
+        // 와인글래스 이미지를 fr_waterglass.png로 변경 (페이드 인/아웃 애니메이션)
+        const wineglassElement = document.querySelector('.france-wineglass');
+        if (wineglassElement) {
+            const wineglassImg = wineglassElement.querySelector('img');
+            if (wineglassImg) {
+                // transition 설정
+                wineglassImg.style.transition = 'opacity 0.5s ease-in-out';
+                
+                // 이미지 미리 로드
+                const newImg = new Image();
+                newImg.src = 'resource/fr/fr_waterglass.png';
+                
+                // 이미지 로드 완료 후 fade-out과 동시에 이미지 교체 및 fade-in (1000ms 딜레이)
+                const changeImage = () => {
+                    setTimeout(() => {
+                        // fade-out 시작
+                        wineglassImg.style.opacity = '0';
+                        
+                        // fade-out이 절반 진행될 때 이미지 교체 (동시에 진행)
+                        setTimeout(() => {
+                            wineglassImg.src = 'resource/fr/fr_waterglass.png';
+                            
+                            // 바로 fade-in 시작
+                            setTimeout(() => {
+                                wineglassImg.style.opacity = '1';
+                                
+                                // 애니메이션 완료 후 transition 제거 및 말풍선 표시
+                                setTimeout(() => {
+                                    wineglassImg.style.transition = '';
+                                    
+                                // 말풍선 표시
+                                showSpeechBubbleFrance('맛있게 드셔주셔서 감사합니다', 0, true, () => {
+                                    // "확실히 좋았습니다." 버튼 클릭 시 다음 말풍선 표시 (큰 버튼 두 개)
+                                    showSpeechBubbleFrance('이제 식사를 마무리할 시간이네요,\n포크랑 나이프를 접시 위에 놓아볼까요?', 0, false, null, null, null, null);
+                                    // 말풍선 확장 및 큰 버튼 두 개 표시
+                                    setTimeout(() => {
+                                        expandSpeechBubbleForMealEndSelectionFrance();
+                                    }, 100);
+                                }, null, '확실히 좋았습니다.', null);
+                                }, 500);
+                            }, 10);
+                        }, 250);
+                    }, 1000); // 1000ms 딜레이
+                };
+                
+                // 이미지가 이미 로드된 경우
+                if (newImg.complete) {
+                    setTimeout(changeImage, 10);
+                } else {
+                    newImg.onload = changeImage;
+                }
+            }
+        }
+        
+        // 배치하지 않고 종료
+        return false;
+    }
+    
+    // 프랑스 스테이지에서 와인병이 waterglass나 wineglass 드랍존에 드롭된 경우 처리
+    if (currentStage === 'france' && itemType === 'wineglass' && 
+        (dropZoneId === 'drop-waterglass' || dropZoneId === 'drop-wineglass')) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (dropZoneId === 'drop-waterglass') {
+            // 물잔 드랍존에 드롭한 경우 인포 메뉴만 표시
+            showWineglassEtiquetteInfoMenuFrance();
+            return false;
+        } else if (dropZoneId === 'drop-wineglass') {
+            // 와인글래스 드랍존에 드롭한 경우 와인병 애니메이션 표시
+            // 와인글래스, 워터글래스 드랍존 비활성화 (드롭 직후)
+            const wineglassDropZone = document.getElementById('drop-wineglass');
+            const waterglassDropZone = document.getElementById('drop-waterglass');
+            if (wineglassDropZone) {
+                wineglassDropZone.classList.remove('highlight-pulse');
+                wineglassDropZone.style.display = 'none';
+                wineglassDropZone.style.pointerEvents = 'none';
+            }
+            if (waterglassDropZone) {
+                waterglassDropZone.classList.remove('highlight-pulse');
+                waterglassDropZone.style.display = 'none';
+                waterglassDropZone.style.pointerEvents = 'none';
+            }
+            
+            const winebottleElement = document.querySelector('.france-winebottle');
+            const wineglassElement = document.querySelector('.france-wineglass');
+            
+            if (!winebottleElement) {
+                // 와인병 요소가 없으면 생성
+                if (wineglassElement && wineglassElement.parentElement) {
+                    const winebottle = document.createElement('div');
+                    winebottle.className = 'france-winebottle';
+                    const winebottleImg = document.createElement('img');
+                    winebottleImg.src = 'resource/fr/fr_winebottle.png';
+                    winebottleImg.alt = '프랑스 와인병';
+                    winebottle.appendChild(winebottleImg);
+                    wineglassElement.parentElement.insertBefore(winebottle, wineglassElement.nextSibling);
+                }
+            }
+            
+            const winebottle = document.querySelector('.france-winebottle');
+            if (winebottle && wineglassElement) {
+                // 초기 상태 설정
+                winebottle.style.display = 'flex';
+                winebottle.classList.remove('pour-wine');
+                
+                // 리플로우 강제
+                void winebottle.offsetHeight;
+                
+                // CSS 애니메이션 시작
+                winebottle.classList.add('pour-wine');
+                
+                // 와인 사운드 재생 (딜레이 추가)
+                setTimeout(() => {
+                    try {
+                        const wineAudio = new Audio('resource/sound/wine.mp3');
+                        wineAudio.volume = 0.5;
+                        wineAudio.currentTime = 0;
+                        wineAudio.play().catch(err => {
+                            console.log('와인 사운드 재생 실패:', err);
+                        });
+                    } catch (err) {
+                        console.log('와인 사운드 재생 오류:', err);
+                    }
+                }, 500); // 500ms 딜레이
+                
+                // 와인글래스 이미지 교체 (페이드 인/아웃 애니메이션) - 딜레이 후 시작
+                setTimeout(() => {
+                    const wineglassImg = wineglassElement.querySelector('img');
+                    if (wineglassImg && wineglassImg.src.includes('fr_wineglass.png')) {
+                        // transition 설정
+                        wineglassImg.style.transition = 'opacity 0.5s ease-in-out';
+                        
+                        // 이미지 미리 로드
+                        const newImg = new Image();
+                        newImg.src = 'resource/fr/fr_wineglass_a.png';
+                        
+                        // 이미지 로드 완료 후 fade-out과 동시에 이미지 교체 및 fade-in
+                        const changeImage = () => {
+                            // fade-out 시작
+                            wineglassImg.style.opacity = '0';
+                            
+                            // fade-out이 절반 진행될 때 이미지 교체 (동시에 진행)
+                            setTimeout(() => {
+                                wineglassImg.src = 'resource/fr/fr_wineglass_a.png';
+                                
+                                // 바로 fade-in 시작
+                                setTimeout(() => {
+                                    wineglassImg.style.opacity = '1';
+                                    
+                                    // 애니메이션 완료 후 transition 제거
+                                    setTimeout(() => {
+                                        wineglassImg.style.transition = '';
+                                    }, 500);
+                                }, 10);
+                            }, 250);
+                        };
+                        
+                        // 이미지가 이미 로드된 경우
+                        if (newImg.complete) {
+                            setTimeout(changeImage, 10);
+                        } else {
+                            newImg.onload = changeImage;
+                        }
+                    }
+                }, 1000); // 1000ms 딜레이
+                
+                // 애니메이션 완료 후 숨김 및 말풍선 표시, 드랍존 활성화
+                setTimeout(() => {
+                    winebottle.style.display = 'none';
+                    winebottle.classList.remove('pour-wine');
+                    
+                    // 말풍선 먼저 표시 (1000ms 딜레이)
+                    setTimeout(() => {
+                        showSpeechBubbleFrance('향이 참 좋죠?', 3000, false, null, () => {
+                            // 말풍선 표시 후 와인글래스 드랍존 표시 및 하이라이팅
+                            const wineglassDropZoneAfter = document.getElementById('drop-wineglass');
+                            if (wineglassDropZoneAfter) {
+                                wineglassDropZoneAfter.style.display = 'flex';
+                                wineglassDropZoneAfter.style.pointerEvents = 'auto';
+                                wineglassDropZoneAfter.classList.add('highlight-pulse');
+                            }
+                            
+                            // 손 하이라이팅 및 드래그 활성화
+                            const handElement = document.querySelector('.france-hand');
+                            if (handElement) {
+                                handElement.classList.add('highlight-pulse');
+                                handElement.setAttribute('draggable', 'true');
+                                handElement.style.cursor = 'grab';
+                                handElement.style.pointerEvents = 'auto';
+                                handElement.setAttribute('data-item', 'hand');
+                                
+                                // 이벤트 리스너 추가 (중복 방지)
+                                if (!handElement.hasAttribute('data-drag-listener-added')) {
+                                    handElement.addEventListener('dragstart', handleDragStart);
+                                    handElement.addEventListener('dragend', handleDragEnd);
+                                    handElement.setAttribute('data-drag-listener-added', 'true');
+                                }
+                            }
+                        }, null, null, null);
+                    }, 1000);
+                    
+                    // 인벤토리의 와인병 비활성화
+                    const winebottleSlotItem = document.querySelector('#slot-menu-france .slot-item[data-item="wineglass"]');
+                    if (winebottleSlotItem) {
+                        winebottleSlotItem.setAttribute('draggable', 'false');
+                        winebottleSlotItem.classList.add('disabled');
+                        winebottleSlotItem.style.opacity = '0.3';
+                        winebottleSlotItem.style.pointerEvents = 'none';
+                        winebottleSlotItem.classList.remove('highlight-pulse');
+                    }
+                }, 2500);
+            }
+        }
+        
+        // 배치하지 않고 종료
+        return false;
+    }
+    
     // 프랑스 스테이지에서 냅킨이 드랍존에 드롭되면 무릎 이미지 변경 및 다음 말풍선 표시 (배치하지 않음)
     if (currentStage === 'france' && itemType === 'napkin' && dropZoneId === 'drop-napkin') {
+        // 냅킨 사운드 재생
+        try {
+            const napkinAudio = new Audio('resource/sound/napkinsound.mp3');
+            napkinAudio.volume = 0.5;
+            napkinAudio.currentTime = 0;
+            napkinAudio.play().catch(err => {
+                console.log('냅킨 사운드 재생 실패:', err);
+            });
+        } catch (err) {
+            console.log('냅킨 사운드 재생 오류:', err);
+        }
+        
         // 스테이지에 배치된 요소를 드롭존에 드롭하면 원본 요소 숨기기
         if (source === 'stage' && draggedElement) {
             draggedElement.style.display = 'none';
@@ -3280,7 +4043,8 @@ function handleDrop(e) {
             napkinDropZone.style.pointerEvents = 'none';
         }
         
-        // 다음 말풍선 표시
+        // 다음 말풍선 표시 (냅킨 펼치기 말풍선 다음인 아페리티프 말풍선)
+        // 냅킨은 인덱스 3 말풍선 이후에만 드롭 가능하므로, 항상 인덱스 4로 이동
         currentSpeechIndexFrance = 4; // 아페리티프 말풍선 인덱스
         setTimeout(() => {
             showNextSpeechFrance();
@@ -3299,12 +4063,151 @@ function handleDrop(e) {
     }
     
     placeItemInZone(itemType, imageSrc, this, dropZoneId, correctZoneId, slotElement);
+    
+    // 프랑스 스테이지에서 디저트가 디저트 드랍존에 드롭된 경우
+    if (currentStage === 'france' && itemType === 'dessert' && dropZoneId === 'drop-dessert') {
+        // 디저트 사운드 재생
+        try {
+            const dessertAudio = new Audio('resource/sound/dish.mp3');
+            dessertAudio.volume = 0.5;
+            dessertAudio.currentTime = 0;
+            dessertAudio.play().catch(err => {
+                console.log('디저트 사운드 재생 실패:', err);
+            });
+        } catch (err) {
+            console.log('디저트 사운드 재생 오류:', err);
+        }
+        
+        // 하이라이팅 제거
+        const dessertElement = document.getElementById('france-dessert-draggable');
+        const dessertDropZone = document.getElementById('drop-dessert');
+        if (dessertElement) {
+            dessertElement.classList.remove('highlight-pulse');
+        }
+        if (dessertDropZone) {
+            dessertDropZone.classList.remove('highlight-pulse');
+            // 디저트 드랍존 비활성화
+            dessertDropZone.style.pointerEvents = 'none';
+        }
+        
+        // 말풍선 표시 및 하이라이팅
+        setTimeout(() => {
+            showSpeechBubbleFrance('좋습니다, Bon Appétit!', 3000, false, null, null, null, null);
+            
+            // 디저트 숟가락과 포크 드래그 활성화 및 하이라이팅
+            const desertspoon = document.querySelector('.france-desertspoon');
+            const desertfork = document.querySelector('.france-desertfork');
+            
+            if (desertspoon) {
+                desertspoon.setAttribute('draggable', 'true');
+                desertspoon.style.cursor = 'grab';
+                desertspoon.style.pointerEvents = 'auto';
+                desertspoon.classList.add('highlight-pulse');
+                
+                // 이벤트 리스너 추가
+                if (!desertspoon.hasAttribute('data-drag-listener-added')) {
+                    desertspoon.addEventListener('dragstart', handleDragStart);
+                    desertspoon.addEventListener('dragend', handleDragEnd);
+                    desertspoon.setAttribute('data-drag-listener-added', 'true');
+                }
+            }
+            
+            if (desertfork) {
+                desertfork.setAttribute('draggable', 'true');
+                desertfork.style.cursor = 'grab';
+                desertfork.style.pointerEvents = 'auto';
+                desertfork.classList.add('highlight-pulse');
+                
+                // 이벤트 리스너 추가
+                if (!desertfork.hasAttribute('data-drag-listener-added')) {
+                    desertfork.addEventListener('dragstart', handleDragStart);
+                    desertfork.addEventListener('dragend', handleDragEnd);
+                    desertfork.setAttribute('data-drag-listener-added', 'true');
+                }
+            }
+            
+            // 포크 0, 1, 2 드래그 활성화 및 하이라이팅
+            const fork0 = document.querySelector('.france-fork0');
+            const fork1 = document.querySelector('.france-fork1');
+            const fork2 = document.querySelector('.france-fork2');
+            
+            const forks = [fork0, fork1, fork2];
+            forks.forEach(fork => {
+                if (fork) {
+                    fork.setAttribute('draggable', 'true');
+                    fork.style.cursor = 'grab';
+                    fork.style.pointerEvents = 'auto';
+                    fork.classList.add('highlight-pulse');
+                    
+                    // 이벤트 리스너 추가
+                    if (!fork.hasAttribute('data-drag-listener-added')) {
+                        fork.addEventListener('dragstart', handleDragStart);
+                        fork.addEventListener('dragend', handleDragEnd);
+                        fork.setAttribute('data-drag-listener-added', 'true');
+                    }
+                }
+            });
+            
+            // 디저트 원형 드랍존 생성 및 하이라이팅
+            const dessertDropZone = document.getElementById('drop-dessert');
+            if (dessertDropZone) {
+                const droppedDessert = dessertDropZone.querySelector('.dropped-item');
+                if (droppedDessert) {
+                    // 기존 원형 드랍존이 있으면 제거
+                    const existingCircularDropZone = document.getElementById('drop-dessert-utensils');
+                    if (existingCircularDropZone) {
+                        existingCircularDropZone.remove();
+                    }
+                    
+                    // drop-zone-area 찾기
+                    const dropZoneArea = dessertDropZone.closest('.drop-zone-area');
+                    if (dropZoneArea) {
+                    // 원형 드랍존 컨테이너 생성
+                    const container = document.createElement('div');
+                    container.id = 'drop-dessert-utensils';
+                    container.className = 'drop-zone drop-dessert-utensils';
+                    container.setAttribute('data-zone', 'dessert-utensils');
+                    
+                    // 텍스트 요소 생성
+                    const dropZoneText = document.createElement('span');
+                    dropZoneText.className = 'drop-zone-text';
+                    dropZoneText.textContent = '';
+                    container.appendChild(dropZoneText);
+                        
+                    // 드랍존에 이벤트 리스너 추가
+                    container.addEventListener('dragover', handleDragOver);
+                    container.addEventListener('dragleave', handleDragLeave);
+                    container.addEventListener('drop', handleDrop);
+                        
+                    dropZoneArea.appendChild(container);
+                        
+                    // 하이라이팅
+                    container.classList.add('highlight-pulse');
+                    }
+                }
+            }
+        }, 500);
+        
+        return false;
+    }
 
     // 그림자 이미지 표시 업데이트 (새 위치에 배치됨)
     updateShadowVisibility();
     
     // 프랑스 스테이지에서 라운드 빵이 드랍존에 드롭되면 하이라이팅 제거 및 인포 메뉴 표시
     if (currentStage === 'france' && itemType === 'rbread') {
+        // 빵 사운드 재생
+        try {
+            const breadAudio = new Audio('resource/sound/napkinsound.mp3');
+            breadAudio.volume = 0.5;
+            breadAudio.currentTime = 0;
+            breadAudio.play().catch(err => {
+                console.log('빵 사운드 재생 실패:', err);
+            });
+        } catch (err) {
+            console.log('빵 사운드 재생 오류:', err);
+        }
+        
         // 하이라이팅 제거
         const rbreadElement = document.getElementById('france-rbread-draggable');
         const rbreadDropZone = document.getElementById('drop-rbread');
@@ -3348,6 +4251,18 @@ function handleDrop(e) {
     
     // 프랑스 스테이지에서 접시1이 드롭존에 드롭되면 하이라이팅 제거 및 말풍선 표시
     if (currentStage === 'france' && itemType === 'dish1' && dropZoneId === 'drop-dish1') {
+        // 접시 사운드 재생
+        try {
+            const dishAudio = new Audio('resource/sound/dish.mp3');
+            dishAudio.volume = 0.5;
+            dishAudio.currentTime = 0;
+            dishAudio.play().catch(err => {
+                console.log('접시 사운드 재생 실패:', err);
+            });
+        } catch (err) {
+            console.log('접시 사운드 재생 오류:', err);
+        }
+        
         // 드랍존 하이라이팅 제거
         const dish1DropZone = document.getElementById('drop-dish1');
         if (dish1DropZone) {
@@ -3533,7 +4448,8 @@ function placeItemInZone(itemType, imageSrc, dropZone, dropZoneId, correctZoneId
 
     // China stage items: add shadow image
     if (itemType === 'cup' || itemType === 'teapot') {
-        droppedItem.style.position = 'relative'; // Ensure relative positioning for shadow
+        // droppedItem은 CSS에서 absolute로 설정되므로 position을 설정하지 않음
+        // shadow 이미지는 droppedItem을 기준으로 absolute로 배치됨
 
         const shadowImg = document.createElement('img');
         shadowImg.className = 'shadow-img';
@@ -3553,7 +4469,7 @@ function placeItemInZone(itemType, imageSrc, dropZone, dropZoneId, correctZoneId
     }
     
     // France stage items: add shadow image
-    if (itemType === 'rbread') {
+    if (itemType === 'rbread' || itemType === 'dessert') {
         droppedItem.style.position = 'relative'; // Ensure relative positioning for shadow
 
         const shadowImg = document.createElement('img');
@@ -3596,8 +4512,8 @@ function placeItemInZone(itemType, imageSrc, dropZone, dropZoneId, correctZoneId
     droppedItem.addEventListener('click', function (e) {
         // 드래그가 아닌 클릭인 경우에만 실행
         if (!this.classList.contains('dragging')) {
-            // rbread는 클릭해도 사라지지 않음
-            if (itemType === 'rbread') {
+            // rbread와 dessert는 클릭해도 사라지지 않음
+            if (itemType === 'rbread' || itemType === 'dessert') {
                 return;
             }
             // 올바른 위치에 놓인 아이템은 클릭해도 인벤토리로 돌아가지 않음
@@ -3700,6 +4616,20 @@ function placeItemInZone(itemType, imageSrc, dropZone, dropZoneId, correctZoneId
             if (itemType === 'cup' || itemType === 'teapot') {
                 if (currentStage === 'china') {
                     stopHighlightUtensilsChina();
+                    // 주전자가 주전자 드랍존에 배치된 경우 드롭된 주전자 하이라이팅도 제거
+                    if (itemType === 'teapot' && dropZoneId === 'drop-zone-cn-teapot') {
+                        const teapotDropZone = document.getElementById('drop-zone-cn-teapot');
+                        if (teapotDropZone && teapotDropZone.classList.contains('filled')) {
+                            const droppedTeapot = teapotDropZone.querySelector('.dropped-item[data-item-type="teapot"]');
+                            if (droppedTeapot) {
+                                droppedTeapot.classList.remove('highlight-pulse');
+                            }
+                        }
+                        // 주전자 드랍존 하이라이팅도 제거
+                        if (teapotDropZone) {
+                            teapotDropZone.classList.remove('highlight-pulse');
+                        }
+                    }
                 }
             }
 
@@ -4300,7 +5230,7 @@ function initializeHandDragging() {
     document.addEventListener('mouseup', () => {
         if (isDragging) {
             isDragging = false;
-            handElement.style.transition = 'transform 0.2s ease-out';
+            handElement.style.transition = 'transform 0.1s ease-out';
 
             // 밥그릇 드롭존 안에서 드래그가 끝났는지 확인
             // "식사를 시작해볼까요" 단계(UTENSILS_PLACED)에서만 상호작용
@@ -5345,6 +6275,22 @@ function initializeChinaMainspoonDrag() {
                     dropZone.classList.remove('drag-over');
                     dropZone.textContent = '';
 
+                    // 식기류 사운드 재생 (젓가락 또는 mainspoon 드랍 시)
+                    if (draggedDroppedItem && (draggedDroppedItem.classList.contains('cn-chopstick') || 
+                        draggedDroppedItem.classList.contains('cn-chopstick2') ||
+                        draggedDroppedItem.classList.contains('cn-mainspoon'))) {
+                        try {
+                            const cutleryAudio = new Audio('resource/sound/cutlery.mp3');
+                            cutleryAudio.volume = 0.5;
+                            cutleryAudio.currentTime = 0;
+                            cutleryAudio.play().catch(err => {
+                                console.log('식기류 사운드 재생 실패:', err);
+                            });
+                        } catch (err) {
+                            console.log('식기류 사운드 재생 오류:', err);
+                        }
+                    }
+
                     // mainspoon을 드롭한 경우
                     if (draggedDroppedItem && draggedDroppedItem.classList.contains('cn-mainspoon')) {
                         // cn_dish2 이미지를 cn_dish2_a.png로 변경
@@ -5384,7 +6330,7 @@ function initializeChinaMainspoonDrag() {
 
                             // dish2 드롭존 다시 표시 (젓가락용)
                             dropZone.style.display = 'flex';
-                            dropZone.textContent = '담기';
+                            dropZone.textContent = '';
 
                             // 젓가락 두 개 하이라이트
                             const chopstick1 = document.querySelector('.cn-chopstick');
@@ -5406,6 +6352,96 @@ function initializeChinaMainspoonDrag() {
                     // 개인 젓가락(cn_chopstick)을 드롭한 경우 - 정답
                     else if (draggedDroppedItem && draggedDroppedItem.classList.contains('cn-chopstick')) {
                         console.log('개인 젓가락을 dish2에 드롭했습니다 - 정답');
+
+                        // cn_dish2 이미지를 cn_dish2_b.png로 크로스페이드 애니메이션과 함께 변경
+                        const dish2 = document.querySelector('.cn-dish2');
+                        if (dish2) {
+                            const dish2Img = dish2.querySelector('img:not(.shadow-img)');
+                            if (dish2Img) {
+                                // 기존 이미지의 스타일 속성 복사
+                                const computedStyle = window.getComputedStyle(dish2Img);
+                                const imgRect = dish2Img.getBoundingClientRect();
+                                const elementRect = dish2.getBoundingClientRect();
+                                
+                                // dish2를 relative로 설정 (이미 relative가 아닌 경우)
+                                const currentPosition = window.getComputedStyle(dish2).position;
+                                if (currentPosition !== 'relative' && currentPosition !== 'absolute') {
+                                    dish2.style.position = 'relative';
+                                }
+                                
+                                // 새 이미지 미리 로드
+                                const newDish2Img = new Image();
+                                newDish2Img.src = 'resource/cn/cn_dish2_b.png';
+                                
+                                newDish2Img.onload = function() {
+                                    // 새 이미지 요소 생성
+                                    const newImgElement = document.createElement('img');
+                                    newImgElement.src = 'resource/cn/cn_dish2_b.png';
+                                    newImgElement.alt = '볶음밥';
+                                    
+                                    // 기존 이미지와 정확히 동일한 크기와 위치 적용
+                                    newImgElement.style.position = 'absolute';
+                                    newImgElement.style.top = `${imgRect.top - elementRect.top}px`;
+                                    newImgElement.style.left = `${imgRect.left - elementRect.left}px`;
+                                    newImgElement.style.width = `${imgRect.width}px`;
+                                    newImgElement.style.height = `${imgRect.height}px`;
+                                    newImgElement.style.objectFit = computedStyle.objectFit || 'contain';
+                                    newImgElement.style.opacity = '0';
+                                    newImgElement.style.transition = 'opacity 0.6s ease-in-out';
+                                    newImgElement.style.pointerEvents = 'none';
+                                    newImgElement.style.zIndex = '1';
+                                    
+                                    // 기존 이미지 스타일 설정
+                                    dish2Img.style.position = 'relative';
+                                    dish2Img.style.zIndex = '0';
+                                    dish2Img.style.transition = 'opacity 0.6s ease-in-out';
+                                    
+                                    // 새 이미지를 기존 이미지 위에 추가
+                                    dish2.appendChild(newImgElement);
+                                    
+                                    // 크로스페이드 애니메이션 시작
+                                    setTimeout(() => {
+                                        dish2Img.style.opacity = '0';
+                                        newImgElement.style.opacity = '1';
+                                    }, 50);
+                                    
+                                    // 애니메이션 완료 후 기존 이미지 제거 및 새 이미지로 교체
+                                    setTimeout(() => {
+                                        dish2Img.remove();
+                                        newImgElement.style.position = computedStyle.position || 'static';
+                                        newImgElement.style.top = '';
+                                        newImgElement.style.left = '';
+                                        newImgElement.style.width = '';
+                                        newImgElement.style.height = '';
+                                        newImgElement.style.zIndex = '';
+                                        newImgElement.style.transition = '';
+                                        newImgElement.style.opacity = '1';
+                                    }, 650);
+                                };
+                            }
+                        }
+
+                        // 인포 메뉴 표시
+                        const infoMenu = document.getElementById('personal-utensils-info-menu-china');
+                        if (infoMenu) {
+                            playInfoSound();
+                            infoMenu.style.display = 'block';
+                            infoMenu.style.top = '300px';
+                            infoMenu.style.right = '-25vw';
+                            setTimeout(() => {
+                                infoMenu.style.transition = 'right 0.5s ease-out';
+                                infoMenu.style.right = '20px';
+                            }, 50);
+
+                            // 7초 후 자동으로 닫기
+                            setTimeout(() => {
+                                infoMenu.style.transition = 'right 0.5s ease-in';
+                                infoMenu.style.right = '-25vw';
+                                setTimeout(() => {
+                                    infoMenu.style.display = 'none';
+                                }, 500);
+                            }, 7000);
+                        }
 
                         // 드롭존 숨기기
                         dropZone.style.display = 'none';
@@ -5446,13 +6482,9 @@ function initializeChinaMainspoonDrag() {
                         console.log('공용 젓가락을 dish2에 드롭했습니다 - 오답');
 
                         // 인포 메뉴 표시
-                        const infoMenu = document.getElementById('info-menu-china');
-                        const infoTitle = document.getElementById('info-title-china');
-                        const infoDesc = document.getElementById('info-desc-china');
-
-                        if (infoMenu && infoTitle && infoDesc) {
-                            infoTitle.textContent = '개인 식기 사용';
-                            infoDesc.innerHTML = '내 앞에 있는 음식은<br>개인 식기로 먹어야 합니다.<br>공용 젓가락이 아닌<br>개인 젓가락을 사용하세요.';
+                        const infoMenu = document.getElementById('personal-utensils-info-menu-china');
+                        if (infoMenu) {
+                            playInfoSound();
                             infoMenu.style.display = 'block';
                             infoMenu.style.top = '300px';
                             infoMenu.style.right = '-25vw';
@@ -5535,13 +6567,9 @@ function initializeChinaSoupspoonDrag() {
         console.log('국자를 클릭했습니다 - 에러 표시');
 
         // 인포 메뉴 표시
-        const infoMenu = document.getElementById('info-menu-china');
-        const infoTitle = document.getElementById('info-title-china');
-        const infoDesc = document.getElementById('info-desc-china');
-
-        if (infoMenu && infoTitle && infoDesc) {
-            infoTitle.textContent = '숟가락 사용 금지';
-            infoDesc.innerHTML = '중국에서는 밥을 먹을 때<br>숟가락을 사용하지 않습니다.<br>젓가락으로 먹어야 합니다.';
+        const infoMenu = document.getElementById('spoon-forbidden-info-menu-china');
+        if (infoMenu) {
+            playInfoSound();
             infoMenu.style.display = 'block';
             infoMenu.style.top = '300px';
             infoMenu.style.right = '-25vw';
@@ -5558,14 +6586,16 @@ function initializeChinaSoupspoonDrag() {
 
 // 공용 젓가락 정보 메뉴 표시 함수
 function showPublicChopsticksInfoMenuChina() {
-    const infoMenu = document.getElementById('info-menu-china');
-    const infoTitle = document.getElementById('info-title-china');
-    const infoDesc = document.getElementById('info-desc-china');
-
-    if (infoMenu && infoTitle && infoDesc) {
-        infoTitle.textContent = '공용 젓가락 사용';
-        infoDesc.innerHTML = '중국에서는 음식을 덜어먹을 때<br>개인 젓가락이 아닌<br>공용 젓가락(긴 젓가락)을 사용해야 합니다.';
-        infoMenu.classList.add('show');
+    const infoMenu = document.getElementById('public-chopsticks-info-menu-china');
+    if (infoMenu) {
+        playInfoSound();
+        infoMenu.style.display = 'block';
+        infoMenu.style.top = '300px';
+        infoMenu.style.right = '-25vw';
+        setTimeout(() => {
+            infoMenu.style.transition = 'right 0.5s ease-out';
+            infoMenu.style.right = '20px';
+        }, 50);
     }
 }
 
@@ -5630,6 +6660,15 @@ function expandSpeechBubbleForLeftoversSelectionChina() {
     leftImageContainer.style.display = 'flex';
     leftImageContainer.style.alignItems = 'center';
     leftImageContainer.style.justifyContent = 'center';
+    
+    // 이미지 추가
+    const leftImage = document.createElement('img');
+    leftImage.src = 'resource/cn/cnbutton_1.png';
+    leftImage.style.width = '100%';
+    leftImage.style.height = '100%';
+    leftImage.style.objectFit = 'contain';
+    leftImageContainer.appendChild(leftImage);
+    
     leftButton.appendChild(leftImageContainer);
 
     // 텍스트
@@ -5668,6 +6707,15 @@ function expandSpeechBubbleForLeftoversSelectionChina() {
     rightImageContainer.style.display = 'flex';
     rightImageContainer.style.alignItems = 'center';
     rightImageContainer.style.justifyContent = 'center';
+    
+    // 이미지 추가
+    const rightImage = document.createElement('img');
+    rightImage.src = 'resource/cn/cnbutton_2.png';
+    rightImage.style.width = '100%';
+    rightImage.style.height = '100%';
+    rightImage.style.objectFit = 'contain';
+    rightImageContainer.appendChild(rightImage);
+    
     rightButton.appendChild(rightImageContainer);
 
     // 텍스트
@@ -5720,24 +6768,20 @@ function handleLeftoversSelectionChina(choice) {
         resetSpeechBubbleToDefaultChina();
 
         // 새로운 말풍선 표시: "음식이 모자랐어...?"
-        // 다시하기 버튼 클릭 시 이전 말풍선으로 돌아가기
+        // ◀ 버튼 클릭 시 이전 말풍선으로 돌아가기
         showSpeechBubbleChina('음식이 모자랐어...?', -1, true, () => {
-            // 다시하기 버튼 클릭 시 이전 말풍선으로 돌아가기
+            // ◀ 버튼 클릭 시 이전 말풍선으로 돌아가기
             showSpeechBubbleChina('더 먹을거지?', -1, false, null, () => {
                 setTimeout(() => {
                     expandSpeechBubbleForLeftoversSelectionChina();
                 }, 100);
             }, null, null);
-        }, null, '다시하기', null);
+        }, null, '◀', null);
 
         // 인포 메뉴 표시
-        const infoMenu = document.getElementById('info-menu-china');
-        const infoTitle = document.getElementById('info-title-china');
-        const infoDesc = document.getElementById('info-desc-china');
-
-        if (infoMenu && infoTitle && infoDesc) {
-            infoTitle.textContent = '식사 예절';
-            infoDesc.innerHTML = '중국에서는 음식을 남기면 부족했다는 뜻으로<br>여겨져서 실례가 됩니다.<br><br>음식을 남기면 주인이 충분히 대접하지 못했다는<br>의미로 받아들여질 수 있습니다.<br><br>따라서 중국에서는 음식을 조금 남기는 것이<br>올바른 예절입니다.';
+        const infoMenu = document.getElementById('meal-etiquette-empty-info-menu-china');
+        if (infoMenu) {
+            playInfoSound();
             infoMenu.style.display = 'flex';
             infoMenu.style.top = '300px';
             infoMenu.style.right = '-25vw';
@@ -5763,13 +6807,9 @@ function handleLeftoversSelectionChina(choice) {
     resetSpeechBubbleToDefaultChina();
 
     // 공통: 인포 메뉴 표시
-    const infoMenu = document.getElementById('info-menu-china');
-    const infoTitle = document.getElementById('info-title-china');
-    const infoDesc = document.getElementById('info-desc-china');
-
-    if (infoMenu && infoTitle && infoDesc) {
-        infoTitle.textContent = '식사 예절';
-        infoDesc.innerHTML = '중국에서는 음식을 조금 남기는 것이<br>올바른 예절입니다.<br><br>음식을 조금 남기면 주인이 충분히<br>대접했다는 의미로 받아들입니다.<br><br>반대로 음식을 전부 다 먹으면<br>더 달라는 신호로 여겨질 수 있습니다.';
+    const infoMenu = document.getElementById('meal-etiquette-leave-info-menu-china');
+    if (infoMenu) {
+        playInfoSound();
         infoMenu.style.display = 'block';
         infoMenu.style.top = '300px';
         infoMenu.style.right = '-25vw';
@@ -5844,14 +6884,14 @@ function handleLeftoversSelectionChina(choice) {
 
             if (cupDropZone) {
                 cupDropZone.style.display = 'block';
+                cupDropZone.classList.add('highlight-pulse');
                 cupDropZone.style.opacity = '1';
-                // 찻잔 드랍존은 하이라이팅하지 않음
             }
             if (teapotDropZone) {
                 teapotDropZone.style.display = 'block';
                 teapotDropZone.style.opacity = '1';
-                // 하이라이팅 효과 추가 (커졌다 작아졌다) - 주전자만
-                teapotDropZone.classList.add('highlight-scale');
+                // 컵과 동일한 하이라이팅 효과 사용 (싱크 맞춤)
+                teapotDropZone.classList.add('highlight-pulse');
             }
         }, null, '나야말로');
     }
@@ -5999,6 +7039,7 @@ function initializeChinaTable1Rotation() {
                         buttonsContainer.style.display = 'none';
                     }
 
+                    playBubbleSound();
                     speechText.textContent = '';
                     speechBubble.classList.add('show');
 
@@ -6092,6 +7133,18 @@ function initializeChinaTable1Rotation() {
                                                     dropZone.textContent = '';
 
                                                     if (draggedDroppedItem) {
+                                                        // 식기류 사운드 재생
+                                                        try {
+                                                            const cutleryAudio = new Audio('resource/sound/cutlery.mp3');
+                                                            cutleryAudio.volume = 0.5;
+                                                            cutleryAudio.currentTime = 0;
+                                                            cutleryAudio.play().catch(err => {
+                                                                console.log('식기류 사운드 재생 실패:', err);
+                                                            });
+                                                        } catch (err) {
+                                                            console.log('식기류 사운드 재생 오류:', err);
+                                                        }
+                                                        
                                                         // 짧은 젓가락(개인용)을 사용한 경우
                                                         if (draggedDroppedItem.classList.contains('cn-chopstick')) {
                                                             showSpeechBubbleChina('긴 젓가락을 써야 해!');
@@ -6101,6 +7154,9 @@ function initializeChinaTable1Rotation() {
                                                         else if (draggedDroppedItem.classList.contains('cn-chopstick2')) {
                                                             // 정답 처리
                                                             console.log('Correct chopsticks used');
+                                                            
+                                                            // 인포 메뉴 표시
+                                                            showPublicChopsticksInfoMenuChina();
 
                                                             // 1. cn_maindish4 이미지 변경
                                                             const maindish4Img = maindish4.querySelector('img:not(.shadow-img)');
@@ -6158,16 +7214,24 @@ function initializeChinaTable1Rotation() {
 
                                                                     // 젓가락을 드래그한 경우 처리
                                                                     if (draggedDroppedItem) {
+                                                                        // 식기류 사운드 재생
+                                                                        try {
+                                                                            const cutleryAudio = new Audio('resource/sound/cutlery.mp3');
+                                                                            cutleryAudio.volume = 0.5;
+                                                                            cutleryAudio.currentTime = 0;
+                                                                            cutleryAudio.play().catch(err => {
+                                                                                console.log('식기류 사운드 재생 실패:', err);
+                                                                            });
+                                                                        } catch (err) {
+                                                                            console.log('식기류 사운드 재생 오류:', err);
+                                                                        }
+                                                                        
                                                                         // cn-chopstick2 (긴 공용 젓가락)을 사용한 경우 - 오류
                                                                         if (draggedDroppedItem.classList.contains('cn-chopstick2')) {
                                                                             // 인포 메뉴 표시
-                                                                            const infoMenu = document.getElementById('info-menu-china');
-                                                                            const infoTitle = document.getElementById('info-title-china');
-                                                                            const infoDesc = document.getElementById('info-desc-china');
-
-                                                                            if (infoMenu && infoTitle && infoDesc) {
-                                                                                infoTitle.textContent = '개인 젓가락 사용';
-                                                                                infoDesc.innerHTML = '음식을 덜 때가 아닌<br>먹을 때는<br>개인 젓가락을 사용해야 합니다.';
+                                                                            const infoMenu = document.getElementById('personal-chopsticks-info-menu-china');
+                                                                            if (infoMenu) {
+                                                                                playInfoSound();
                                                                                 infoMenu.style.display = 'block';
                                                                                 infoMenu.style.top = '300px';
                                                                                 infoMenu.style.right = '-25vw';
@@ -6182,6 +7246,19 @@ function initializeChinaTable1Rotation() {
                                                                         }
                                                                         // cn-chopstick (짧은 개인 젓가락)을 사용한 경우 - 정답, 진행
                                                                         else if (draggedDroppedItem.classList.contains('cn-chopstick')) {
+                                                                            // 인포 메뉴 표시
+                                                                            const infoMenu = document.getElementById('personal-chopsticks-info-menu-china');
+                                                                            if (infoMenu) {
+                                                                                playInfoSound();
+                                                                                infoMenu.style.display = 'block';
+                                                                                infoMenu.style.top = '300px';
+                                                                                infoMenu.style.right = '-25vw';
+                                                                                setTimeout(() => {
+                                                                                    infoMenu.style.transition = 'right 0.5s ease-out';
+                                                                                    infoMenu.style.right = '20px';
+                                                                                }, 50);
+                                                                            }
+                                                                            
                                                                             // 드롭존 제거
                                                                             dishDropZone.remove();
 
@@ -6226,21 +7303,24 @@ function initializeChinaTable1Rotation() {
 
                                                                                     // 2단계: 짧은 시간 후 만두 사라짐 (다 먹음)
                                                                                     setTimeout(() => {
-                                                                                        manduImg.style.transition = 'opacity 0.4s ease-out';
-                                                                                        manduImg.style.opacity = '0';
-                                                                                        // 크기 변화 없이 페이드 아웃만
-
-                                                                                        // 만두 그림자도 함께 사라짐
+                                                                                        // 만두 그림자를 먼저 사라지게 함
                                                                                         const manduShadow = dish.querySelector('.mandu-shadow');
                                                                                         if (manduShadow) {
                                                                                             manduShadow.style.transition = 'opacity 0.4s ease-out';
                                                                                             manduShadow.style.opacity = '0';
                                                                                         }
 
-                                                                                        // 애니메이션 완료 후 요소 제거
+                                                                                        // 그림자 사라진 후 만두 사라짐
                                                                                         setTimeout(() => {
-                                                                                            manduImg.remove();
+                                                                                            manduImg.style.transition = 'opacity 0.4s ease-out';
+                                                                                            manduImg.style.opacity = '0';
+                                                                                            // 크기 변화 없이 페이드 아웃만
+                                                                                        }, 200); // 그림자 사라진 후 200ms 뒤에 만두 사라짐
+
+                                                                                        // 애니메이션 완료 후 요소 제거 (만두가 사라진 후)
+                                                                                        setTimeout(() => {
                                                                                             if (manduShadow) manduShadow.remove();
+                                                                                            manduImg.remove();
 
                                                                                             // 성공 메시지 - 질문 형식 (다른 이벤트 완료를 위한 짧은 딜레이)
                                                                                             setTimeout(() => {
@@ -6859,8 +7939,23 @@ function setupTeapotToCupDropZone() {
     const cupDropZone = document.getElementById('drop-zone-cn-cup');
 
     // 찻잔이 드롭된 경우 드롭존을 찾아서 그 안의 드롭된 아이템을 찾음
+    // 주전자와 컵이 모두 테이블 드랍존에 드랍되었는지 확인
+    const teapotDropZone = document.getElementById('drop-zone-cn-teapot');
+    const isCupDropped = cupDropZone && cupDropZone.classList.contains('filled');
+    const isTeapotDropped = teapotDropZone && teapotDropZone.classList.contains('filled');
+    
+    // 둘 다 드랍되지 않았으면 초기 드랍존 생성하지 않음
+    if (!isCupDropped || !isTeapotDropped) {
+        // 기존 드랍존 제거
+        const existingDropZone = document.getElementById('teapot-to-cup-drop-zone');
+        if (existingDropZone) {
+            existingDropZone.remove();
+        }
+        return;
+    }
+
     let targetElement = cupElement;
-    if (cupDropZone && cupDropZone.classList.contains('filled')) {
+    if (isCupDropped) {
         const droppedCup = cupDropZone.querySelector('.dropped-item');
         if (droppedCup) {
             targetElement = droppedCup;
@@ -6875,10 +7970,11 @@ function setupTeapotToCupDropZone() {
         existingDropZone.remove();
     }
 
-    // 원형 드랍존 생성
+    // 원형 드랍존 생성 (초기에는 숨김)
     const dropZone = document.createElement('div');
     dropZone.id = 'teapot-to-cup-drop-zone';
     dropZone.className = 'drop-zone circular-drop-zone';
+    dropZone.style.display = 'none'; // 초기에는 숨김
     targetElement.appendChild(dropZone);
 
     // 드래그 시작 시 드랍존 표시
@@ -6894,11 +7990,22 @@ function setupTeapotToCupDropZone() {
                 return; // friendcup이 있으면 cup 드랍존 표시하지 않음
             }
 
-            // 찻잔 요소를 동적으로 찾기 (드롭된 찻잔도 포함)
+            // 주전자와 컵이 모두 테이블 드랍존에 드랍되었는지 확인
             const cupDropZone = document.getElementById('drop-zone-cn-cup');
+            const teapotDropZone = document.getElementById('drop-zone-cn-teapot');
+            
+            const isCupDropped = cupDropZone && cupDropZone.classList.contains('filled');
+            const isTeapotDropped = teapotDropZone && teapotDropZone.classList.contains('filled');
+            
+            // 둘 다 드랍되지 않았으면 드랍존 표시하지 않음
+            if (!isCupDropped || !isTeapotDropped) {
+                return;
+            }
+
+            // 찻잔 요소를 동적으로 찾기 (드롭된 찻잔도 포함)
             let targetElement = document.querySelector('#china-stage .cn-cup');
 
-            if (cupDropZone && cupDropZone.classList.contains('filled')) {
+            if (isCupDropped) {
                 const droppedCup = cupDropZone.querySelector('.dropped-item');
                 if (droppedCup) {
                     targetElement = droppedCup;
@@ -6984,6 +8091,20 @@ function setupTeapotToCupDropZone() {
             }
 
             if (teapotElement) {
+                // wine.mp3 사운드 재생 (딜레이 추가)
+                setTimeout(() => {
+                    try {
+                        const wineAudio = new Audio('resource/sound/wine.mp3');
+                        wineAudio.volume = 0.5;
+                        wineAudio.currentTime = 0;
+                        wineAudio.play().catch(err => {
+                            console.log('와인 사운드 재생 실패:', err);
+                        });
+                    } catch (err) {
+                        console.log('와인 사운드 재생 오류:', err);
+                    }
+                }, 500); // 500ms 딜레이
+                
                 // 주전자 이미지 찾기 (shadow-img가 아닌 일반 img)
                 const teapotImg = teapotElement.querySelector('img:not(.shadow-img)');
                 if (teapotImg) {
@@ -7005,7 +8126,13 @@ function setupTeapotToCupDropZone() {
 
                             // 주전자 드랍존 하이라이팅 제거
                             if (teapotDropZone) {
-                                teapotDropZone.classList.remove('highlight-scale');
+                            teapotDropZone.classList.remove('highlight-pulse');
+                        }
+
+                            // 컵 드랍존 하이라이팅 제거
+                            const cupDropZone = document.getElementById('drop-zone-cn-cup');
+                            if (cupDropZone) {
+                                cupDropZone.classList.remove('highlight-pulse');
                             }
 
                             // transform 초기화
@@ -7329,6 +8456,20 @@ function setupTeapotToFriendCupDropZone() {
                         }, 300);
                     }
 
+                    // wine.mp3 사운드 재생 (딜레이 추가)
+                    setTimeout(() => {
+                        try {
+                            const wineAudio = new Audio('resource/sound/wine.mp3');
+                            wineAudio.volume = 0.5;
+                            wineAudio.currentTime = 0;
+                            wineAudio.play().catch(err => {
+                                console.log('와인 사운드 재생 실패:', err);
+                            });
+                        } catch (err) {
+                            console.log('와인 사운드 재생 오류:', err);
+                        }
+                    }, 500); // 500ms 딜레이
+                    
                     // 주전자 이미지 찾기 (shadow-img가 아닌 일반 img)
                     const teapotImg = teapotElement.querySelector('img:not(.shadow-img)');
                     if (teapotImg) {
@@ -7360,7 +8501,7 @@ function setupTeapotToFriendCupDropZone() {
                                 // 주전자 드랍존 하이라이팅 제거
                                 const teapotDropZone = document.getElementById('drop-zone-cn-teapot');
                                 if (teapotDropZone) {
-                                    teapotDropZone.classList.remove('highlight-scale');
+                                    teapotDropZone.classList.remove('highlight-pulse');
                                 }
 
                                 // transform 초기화
@@ -7994,7 +9135,7 @@ function showSpeechBubbleFrance(text, duration = 3000, showNextButton = false, n
 
     // 기존 버튼 컨테이너 제거
     if (speechBubbleContent) {
-        const existingButtons = speechBubbleContent.querySelectorAll('.next-btn, .next-buttons-container');
+        const existingButtons = speechBubbleContent.querySelectorAll('.next-btn, .next-buttons-container, .meal-end-selection-buttons, .dish-selection-buttons');
         existingButtons.forEach(btn => btn.remove());
 
         // 말풍선 크기 초기화 (버튼이 없는 경우)
@@ -8002,6 +9143,7 @@ function showSpeechBubbleFrance(text, duration = 3000, showNextButton = false, n
             speechBubbleContent.style.minHeight = '';
             speechBubbleContent.style.maxWidth = '';
             speechBubbleContent.style.padding = '';
+            speechBubbleContent.style.minWidth = '';
         }
     }
 
@@ -8010,6 +9152,9 @@ function showSpeechBubbleFrance(text, duration = 3000, showNextButton = false, n
     }
 
     onNextCallback = nextCallback;
+
+    // 말풍선 사운드 재생
+    playBubbleSound();
 
     speechText.textContent = '';
     speechBubble.classList.add('show');
@@ -8029,17 +9174,31 @@ function showSpeechBubbleFrance(text, duration = 3000, showNextButton = false, n
             nextBtn.style.display = 'none';
         }
 
+        // 말풍선 크기 확대
+        if (speechBubbleContent) {
+            speechBubbleContent.style.transition = 'min-height 0.5s ease-in-out, max-width 0.5s ease-in-out, padding 0.5s ease-in-out';
+            speechBubbleContent.style.minHeight = '400px';
+            speechBubbleContent.style.maxWidth = '600px';
+            speechBubbleContent.style.padding = '40px 40px 100px 40px';
+        }
+
         // 버튼 컨테이너에 버튼 생성 (타이핑 완료 후 표시됨)
         if (buttonsContainer) {
             buttonsContainer.innerHTML = ''; // 기존 버튼 제거
             buttonsContainer.style.display = 'none'; // 타이핑 완료 전까지 숨김
+            buttonsContainer.style.flexDirection = 'column';
+            buttonsContainer.style.gap = '20px';
+            buttonsContainer.style.width = '100%';
 
             buttons.forEach((btn, index) => {
                 const button = document.createElement('button');
                 button.className = 'next-btn';
                 button.textContent = btn.text;
                 button.style.whiteSpace = 'nowrap';
-                button.style.flex = '0 0 auto';
+                button.style.width = '100%';
+                button.style.padding = '20px 30px';
+                button.style.fontSize = '1.5rem';
+                button.style.minHeight = '60px';
                 button.onclick = () => {
                     // 말풍선 숨기기 (버튼 클릭 시)
                     speechBubble.classList.remove('show');
@@ -8097,8 +9256,12 @@ function showSpeechBubbleFrance(text, duration = 3000, showNextButton = false, n
             if ((showNextButton || (buttonText && buttonText !== null)) && nextBtn && !buttons) {
                 nextBtn.style.display = 'block';
                 nextBtn.onclick = () => {
+                    speechBubble.classList.remove('show');
+                    // onNextCallback과 nextCallback은 같은 콜백이므로 한 번만 호출
                     if (onNextCallback) {
                         onNextCallback();
+                    } else if (nextCallback) {
+                        nextCallback();
                     }
                 };
             }
@@ -8171,6 +9334,9 @@ function showSpeechBubbleChina(text, duration = 3000, showNextButton = false, ne
     }
 
     onNextCallback = nextCallback;
+
+    // 말풍선 사운드 재생
+    playBubbleSound();
 
     speechText.textContent = '';
     speechBubble.classList.add('show');
@@ -8295,6 +9461,7 @@ function showSpeechBubbleChina(text, duration = 3000, showNextButton = false, ne
 function showChopsticksInfoMenuChina() {
     const infoMenu = document.getElementById('chopsticks-info-menu-china');
     if (!infoMenu) return;
+    playInfoSound();
     infoMenu.style.display = 'block';
     infoMenu.style.top = '300px';
     infoMenu.style.right = '-25vw';
@@ -8317,6 +9484,7 @@ function closeChopsticksInfoMenuChina() {
 function showUtensilHoldingInfoMenuChina() {
     const infoMenu = document.getElementById('utensil-holding-info-menu-china');
     if (!infoMenu) return;
+    playInfoSound();
     infoMenu.style.display = 'block';
     infoMenu.style.top = '300px';
     infoMenu.style.right = '-25vw';
@@ -8340,6 +9508,7 @@ function closeUtensilHoldingInfoMenuChina() {
 function showFoodOrderInfoMenuChina() {
     const infoMenu = document.getElementById('food-order-info-menu-china');
     if (!infoMenu) return;
+    playInfoSound();
     infoMenu.style.display = 'block';
     infoMenu.style.top = '300px';
     infoMenu.style.right = '-25vw';
@@ -8364,6 +9533,7 @@ function closeFoodOrderInfoMenuChina() {
 function showTableRotationInfoMenuChina() {
     const infoMenu = document.getElementById('table-rotation-info-menu-china');
     if (!infoMenu) return;
+    playInfoSound();
     infoMenu.style.display = 'block';
     infoMenu.style.top = '300px';
     infoMenu.style.right = '-25vw';
@@ -8373,10 +9543,62 @@ function showTableRotationInfoMenuChina() {
     }, 50);
 }
 
+// 인포 메뉴 표시 시 사운드 재생
+function playInfoSound() {
+    try {
+        const audio = new Audio('resource/sound/infosound.mp3');
+        audio.volume = 0.5;
+        audio.currentTime = 0; // 처음부터 재생
+        audio.preload = 'auto'; // 미리 로드
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                // 재생 성공
+            }).catch(err => {
+                console.log('인포 사운드 재생 실패:', err);
+                // 재생 실패 시 즉시 다시 시도
+                audio.currentTime = 0;
+                audio.play().catch(e => {
+                    console.log('인포 사운드 재시도 실패:', e);
+                });
+            });
+        }
+    } catch (err) {
+        console.log('인포 사운드 재생 오류:', err);
+    }
+}
+
+// 말풍선 표시 시 사운드 재생
+function playBubbleSound() {
+    try {
+        const audio = new Audio('resource/sound/bubble1.mp3');
+        audio.volume = 0.2; // 볼륨 낮춤
+        audio.currentTime = 0; // 처음부터 재생
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                // 재생 성공
+            }).catch(err => {
+                console.log('말풍선 사운드 재생 실패:', err);
+                // 재생 실패 시 다시 시도
+                setTimeout(() => {
+                    audio.currentTime = 0;
+                    audio.play().catch(e => {
+                        console.log('말풍선 사운드 재시도 실패:', e);
+                    });
+                }, 100);
+            });
+        }
+    } catch (err) {
+        console.log('말풍선 사운드 재생 오류:', err);
+    }
+}
+
 // 프랑스 스테이지 빵 먹기 예절 정보 메뉴 표시
 function showBreadEtiquetteInfoMenuFrance() {
     const infoMenu = document.getElementById('bread-etiquette-info-menu-france');
     if (!infoMenu) return;
+    playInfoSound();
     infoMenu.style.display = 'block';
     infoMenu.style.top = '300px';
     infoMenu.style.right = '-25vw';
@@ -8401,6 +9623,7 @@ function closeBreadEtiquetteInfoMenuFrance() {
 function showBreadPlacementInfoMenuFrance() {
     const infoMenu = document.getElementById('bread-placement-info-menu-france');
     if (!infoMenu) return;
+    playInfoSound();
     infoMenu.style.display = 'block';
     infoMenu.style.top = '300px';
     infoMenu.style.right = '-25vw';
@@ -8425,6 +9648,7 @@ function closeBreadPlacementInfoMenuFrance() {
 function showKnifeEtiquetteInfoMenuFrance() {
     const infoMenu = document.getElementById('knife-etiquette-info-menu-france');
     if (!infoMenu) return;
+    playInfoSound();
     infoMenu.style.display = 'block';
     infoMenu.style.top = '300px';
     infoMenu.style.right = '-25vw';
@@ -8449,6 +9673,7 @@ function closeKnifeEtiquetteInfoMenuFrance() {
 function showMeatCuttingEtiquetteInfoMenuFrance() {
     const infoMenu = document.getElementById('meat-cutting-etiquette-info-menu-france');
     if (!infoMenu) return;
+    playInfoSound();
     infoMenu.style.display = 'block';
     infoMenu.style.top = '300px';
     infoMenu.style.right = '-25vw';
@@ -8461,6 +9686,106 @@ function showMeatCuttingEtiquetteInfoMenuFrance() {
 // 프랑스 스테이지 고기 자르기 예절 정보 메뉴 닫기
 function closeMeatCuttingEtiquetteInfoMenuFrance() {
     const infoMenu = document.getElementById('meat-cutting-etiquette-info-menu-france');
+    if (!infoMenu) return;
+    infoMenu.style.transition = 'right 0.5s ease-in';
+    infoMenu.style.right = '-25vw';
+    setTimeout(() => {
+        infoMenu.style.display = 'none';
+    }, 500);
+}
+
+// 프랑스 스테이지 디저트 먹기 예절 정보 메뉴 표시
+function showDessertEtiquetteInfoMenuFrance() {
+    const infoMenu = document.getElementById('dessert-etiquette-info-menu-france');
+    if (!infoMenu) return;
+    playInfoSound();
+    infoMenu.style.display = 'block';
+    infoMenu.style.top = '300px';
+    infoMenu.style.right = '-25vw';
+    setTimeout(() => {
+        infoMenu.style.transition = 'right 0.5s ease-out';
+        infoMenu.style.right = '20px';
+    }, 50);
+}
+
+// 프랑스 스테이지 디저트 먹기 예절 정보 메뉴 닫기
+function closeDessertEtiquetteInfoMenuFrance() {
+    const infoMenu = document.getElementById('dessert-etiquette-info-menu-france');
+    if (!infoMenu) return;
+    infoMenu.style.transition = 'right 0.5s ease-in';
+    infoMenu.style.right = '-25vw';
+    setTimeout(() => {
+        infoMenu.style.display = 'none';
+    }, 500);
+}
+
+// 프랑스 스테이지 와인잔과 물잔 예절 정보 메뉴 표시
+function showWineglassEtiquetteInfoMenuFrance() {
+    const infoMenu = document.getElementById('wineglass-etiquette-info-menu-france');
+    if (!infoMenu) return;
+    playInfoSound();
+    infoMenu.style.display = 'block';
+    infoMenu.style.top = '300px';
+    infoMenu.style.right = '-25vw';
+    setTimeout(() => {
+        infoMenu.style.transition = 'right 0.5s ease-out';
+        infoMenu.style.right = '20px';
+    }, 50);
+}
+
+// 프랑스 스테이지 와인잔과 물잔 예절 정보 메뉴 닫기
+function closeWineglassEtiquetteInfoMenuFrance() {
+    const infoMenu = document.getElementById('wineglass-etiquette-info-menu-france');
+    if (!infoMenu) return;
+    infoMenu.style.transition = 'right 0.5s ease-in';
+    infoMenu.style.right = '-25vw';
+    setTimeout(() => {
+        infoMenu.style.display = 'none';
+    }, 500);
+}
+
+// 프랑스 스테이지 와인잔 잡는 법 예절 정보 메뉴 표시
+function showWineglassHoldingEtiquetteInfoMenuFrance() {
+    const infoMenu = document.getElementById('wineglass-holding-etiquette-info-menu-france');
+    if (!infoMenu) return;
+    playInfoSound();
+    infoMenu.style.display = 'block';
+    infoMenu.style.top = '300px';
+    infoMenu.style.right = '-25vw';
+    setTimeout(() => {
+        infoMenu.style.transition = 'right 0.5s ease-out';
+        infoMenu.style.right = '20px';
+    }, 50);
+}
+
+// 프랑스 스테이지 와인잔 잡는 법 예절 정보 메뉴 닫기
+function closeWineglassHoldingEtiquetteInfoMenuFrance() {
+    const infoMenu = document.getElementById('wineglass-holding-etiquette-info-menu-france');
+    if (!infoMenu) return;
+    infoMenu.style.transition = 'right 0.5s ease-in';
+    infoMenu.style.right = '-25vw';
+    setTimeout(() => {
+        infoMenu.style.display = 'none';
+    }, 500);
+}
+
+// 프랑스 스테이지 식사 마무리 예절 정보 메뉴 표시
+function showMealEndEtiquetteInfoMenuFrance() {
+    const infoMenu = document.getElementById('meal-end-etiquette-info-menu-france');
+    if (!infoMenu) return;
+    playInfoSound();
+    infoMenu.style.display = 'block';
+    infoMenu.style.top = '300px';
+    infoMenu.style.right = '-25vw';
+    setTimeout(() => {
+        infoMenu.style.transition = 'right 0.5s ease-out';
+        infoMenu.style.right = '20px';
+    }, 50);
+}
+
+// 프랑스 스테이지 식사 마무리 예절 정보 메뉴 닫기
+function closeMealEndEtiquetteInfoMenuFrance() {
+    const infoMenu = document.getElementById('meal-end-etiquette-info-menu-france');
     if (!infoMenu) return;
     infoMenu.style.transition = 'right 0.5s ease-in';
     infoMenu.style.right = '-25vw';
@@ -8539,7 +9864,7 @@ function showCalculationSelectionChina() {
     leftButton.style.position = 'relative';
     leftButton.style.zIndex = '10012';
 
-    // 이미지 컨테이너 (나중에 이미지 추가 예정)
+    // 이미지 컨테이너
     const leftImageContainer = document.createElement('div');
     leftImageContainer.style.width = '200px';
     leftImageContainer.style.height = '200px';
@@ -8547,6 +9872,15 @@ function showCalculationSelectionChina() {
     leftImageContainer.style.display = 'flex';
     leftImageContainer.style.alignItems = 'center';
     leftImageContainer.style.justifyContent = 'center';
+    
+    // 이미지 추가
+    const leftImage = document.createElement('img');
+    leftImage.src = 'resource/cn/cnbutton_3.png';
+    leftImage.style.width = '100%';
+    leftImage.style.height = '100%';
+    leftImage.style.objectFit = 'contain';
+    leftImageContainer.appendChild(leftImage);
+    
     leftButton.appendChild(leftImageContainer);
 
     // 텍스트 (이미지 아래로)
@@ -8562,17 +9896,19 @@ function showCalculationSelectionChina() {
         resetSpeechBubbleToDefaultChina();
 
         // 새로운 말풍선 표시: "정말 좋은 식사였어!"
-        // 다시하기 버튼 클릭 시 이전 말풍선으로 돌아가기
-        showSpeechBubbleChina('정말 좋은 식사였어!', -1, true, () => {
-            // 다시하기 버튼 클릭 시 이전 말풍선으로 돌아가기
-            showCalculationSelectionChina();
-        }, null, '다시하기', null);
+        // 버튼 없이 표시하고, 딜레이 후 스테이지 클리어 화면 표시
+        showSpeechBubbleChina('정말 좋은 식사였어!', -1, false, null, null, null, null);
 
         // 말풍선과 버튼이 완전히 표시된 후 인포 메뉴 표시
         // 타이핑 효과 시간 + 약간의 여유 시간을 고려하여 딜레이 추가
         setTimeout(() => {
             showCalculationEtiquetteInfoMenuChina();
         }, 500);
+
+        // 말풍선이 표시된 후 딜레이를 주고 스테이지 클리어 화면 표시
+        setTimeout(() => {
+            showStageClearEffect('china');
+        }, 2000);
     };
     calculationButtonsContainer.appendChild(leftButton);
 
@@ -8592,7 +9928,7 @@ function showCalculationSelectionChina() {
     rightButton.style.position = 'relative';
     rightButton.style.zIndex = '10012';
 
-    // 이미지 컨테이너 (나중에 이미지 추가 예정)
+    // 이미지 컨테이너
     const rightImageContainer = document.createElement('div');
     rightImageContainer.style.width = '200px';
     rightImageContainer.style.height = '200px';
@@ -8600,6 +9936,15 @@ function showCalculationSelectionChina() {
     rightImageContainer.style.display = 'flex';
     rightImageContainer.style.alignItems = 'center';
     rightImageContainer.style.justifyContent = 'center';
+    
+    // 이미지 추가
+    const rightImage = document.createElement('img');
+    rightImage.src = 'resource/cn/cnbutton_4.png';
+    rightImage.style.width = '100%';
+    rightImage.style.height = '100%';
+    rightImage.style.objectFit = 'contain';
+    rightImageContainer.appendChild(rightImage);
+    
     rightButton.appendChild(rightImageContainer);
 
     // 텍스트 (이미지 아래로)
@@ -8619,7 +9964,7 @@ function showCalculationSelectionChina() {
         showSpeechBubbleChina('당연히 초대한 사람이 사야지!', -1, true, () => {
             // 다시하기 버튼 클릭 시 이전 말풍선으로 돌아가기
             showCalculationSelectionChina();
-        }, null, '다시하기', null);
+        }, null, '◀', null);
 
         // 말풍선과 버튼이 완전히 표시된 후 인포 메뉴 표시
         // 타이핑 효과 시간 + 약간의 여유 시간을 고려하여 딜레이 추가
@@ -8635,13 +9980,9 @@ function showCalculationSelectionChina() {
 
 // 중국 스테이지 계산 예절 정보 메뉴 표시
 function showCalculationEtiquetteInfoMenuChina() {
-    const infoMenu = document.getElementById('info-menu-china');
-    const infoTitle = document.getElementById('info-title-china');
-    const infoDesc = document.getElementById('info-desc-china');
-
-    if (infoMenu && infoTitle && infoDesc) {
-        infoTitle.textContent = '계산 예절';
-        infoDesc.innerHTML = '중국에서는 초대한 손님이 계산하는 것이 예의입니다.<br><br>식사에 초대한 사람이 계산을 하는 것이<br>중국 문화에서 올바른 예절입니다.<br><br>초대받은 사람이 계산하려고 하는 것은<br>호의로 받아들이지만, 일반적으로는<br>초대한 사람이 계산을 담당합니다.';
+    const infoMenu = document.getElementById('calculation-etiquette-info-menu-china');
+    if (infoMenu) {
+        playInfoSound();
         infoMenu.style.display = 'block';
         infoMenu.style.top = '300px';
         infoMenu.style.right = '-25vw';
@@ -8663,13 +10004,9 @@ function showCalculationEtiquetteInfoMenuChina() {
 
 // 중국 스테이지 차 따라주는 예절 정보 메뉴 표시
 function showTeaPouringEtiquetteInfoMenuChina() {
-    const infoMenu = document.getElementById('info-menu-china');
-    const infoTitle = document.getElementById('info-title-china');
-    const infoDesc = document.getElementById('info-desc-china');
-
-    if (infoMenu && infoTitle && infoDesc) {
-        infoTitle.textContent = '차 따라주는 예절';
-        infoDesc.innerHTML = '중국에서는 친구나 손님에게 차를 따라줄 때<br>예의를 지켜야 합니다.<br><br>주전자를 친구의 찻잔 쪽으로 기울여<br>차를 따라주는 것이 올바른 예절입니다.<br><br>상대방의 찻잔에 정확히 따라주는 것은<br>배려와 존중을 나타내는 행동입니다.';
+    const infoMenu = document.getElementById('tea-pouring-etiquette-info-menu-china');
+    if (infoMenu) {
+        playInfoSound();
         infoMenu.style.display = 'block';
         infoMenu.style.top = '300px';
         infoMenu.style.right = '-25vw';
@@ -8691,13 +10028,29 @@ function showTeaPouringEtiquetteInfoMenuChina() {
 
 // 일반 정보 메뉴 닫기
 function closeInfoMenuChina() {
-    const infoMenu = document.getElementById('info-menu-china');
-    if (!infoMenu) return;
-    infoMenu.style.transition = 'right 0.5s ease-in';
-    infoMenu.style.right = '-25vw';
-    setTimeout(() => {
-        infoMenu.style.display = 'none';
-    }, 500);
+    // 모든 인포 메뉴 닫기
+    const infoMenus = [
+        'info-menu-china',
+        'public-chopsticks-info-menu-china',
+        'personal-chopsticks-info-menu-china',
+        'personal-utensils-info-menu-china',
+        'spoon-forbidden-info-menu-china',
+        'calculation-etiquette-info-menu-china',
+        'tea-pouring-etiquette-info-menu-china',
+        'meal-etiquette-empty-info-menu-china',
+        'meal-etiquette-leave-info-menu-china'
+    ];
+    
+    infoMenus.forEach(menuId => {
+        const infoMenu = document.getElementById(menuId);
+        if (infoMenu) {
+            infoMenu.style.transition = 'right 0.5s ease-in';
+            infoMenu.style.right = '-25vw';
+            setTimeout(() => {
+                infoMenu.style.display = 'none';
+            }, 500);
+        }
+    });
 }
 
 // 대사 배열 (대사와 버튼 텍스트를 함께 관리)
@@ -8720,6 +10073,7 @@ const speechSequenceChina = [
                     const speechBubble = document.getElementById('speech-bubble-china');
                     const speechText = document.getElementById('speech-text-china');
                     if (speechBubble && speechText) {
+                        playBubbleSound();
                         speechText.textContent = '';
                         speechBubble.classList.add('show');
 
@@ -8763,6 +10117,7 @@ const speechSequenceChina = [
                             buttonsContainer.style.display = 'none';
                         }
 
+                        playBubbleSound();
                         speechText.textContent = '';
                         speechBubble.classList.add('show');
 
@@ -8805,6 +10160,7 @@ const speechSequenceChina = [
                                                     buttonsContainer.style.display = 'none';
                                                 }
 
+                                                playBubbleSound();
                                                 speechText.textContent = '';
                                                 speechBubble.classList.add('show');
 
@@ -9091,6 +10447,9 @@ function showSpeechBubble(text, duration = 3000, showNextButton = false, nextCal
 
     // 다음 버튼 콜백 저장
     onNextCallback = nextCallback;
+
+    // 말풍선 사운드 재생
+    playBubbleSound();
 
     // 텍스트 설정
     speechText.textContent = '';
@@ -10084,68 +11443,45 @@ function showStageClearEffect(stage) {
     // 스탬프 업데이트
     if (stage === 'japan') {
         japanCompleted = true;
+        localStorage.setItem('japanCompleted', 'true');
         updateStamp('japan');
     } else if (stage === 'china') {
         chinaCompleted = true;
+        localStorage.setItem('chinaCompleted', 'true');
         updateStamp('china');
+    } else if (stage === 'france') {
+        franceCompleted = true;
+        localStorage.setItem('franceCompleted', 'true');
+        updateStamp('france');
+        
+        // 지도 화면의 프랑스 타이틀 이미지를 클리어 버전으로 변경 (현재 페이지에 있는 경우)
+        const franceTitleImg = document.querySelector('.france-title');
+        if (franceTitleImg) {
+            franceTitleImg.src = 'resource/title/TitleFr_F.png';
+        }
     }
 
     // 클리어 오버레이 생성
     const overlay = document.createElement('div');
     overlay.className = 'stage-clear-overlay';
-    overlay.style.position = 'fixed';
-    overlay.style.top = '0';
-    overlay.style.left = '0';
-    overlay.style.width = '100%';
-    overlay.style.height = '100%';
-    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-    overlay.style.display = 'flex';
-    overlay.style.flexDirection = 'column';
-    overlay.style.alignItems = 'center';
-    overlay.style.justifyContent = 'center';
-    overlay.style.zIndex = '30000';
     overlay.style.opacity = '0';
     overlay.style.transition = 'opacity 1s ease-in-out';
 
     // 클리어 텍스트
     const clearText = document.createElement('div');
+    clearText.className = 'stage-clear-text';
     clearText.textContent = 'STAGE CLEAR!';
-    clearText.style.color = '#fff';
-    clearText.style.fontSize = '5rem';
-    clearText.style.fontWeight = 'bold';
-    clearText.style.marginBottom = '2rem';
-    clearText.style.textShadow = '0 0 20px rgba(255, 215, 0, 0.8)';
     clearText.style.transform = 'scale(0.5)';
-    clearText.style.transition = 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
     overlay.appendChild(clearText);
 
     // 지도로 돌아가기 버튼 생성
     const backToMapBtn = document.createElement('button');
+    backToMapBtn.className = 'stage-clear-button';
     backToMapBtn.textContent = '지도로 돌아가기';
-    backToMapBtn.style.padding = '15px 40px';
-    backToMapBtn.style.fontSize = '1.5rem';
-    backToMapBtn.style.fontWeight = 'bold';
-    backToMapBtn.style.color = '#fff';
-    backToMapBtn.style.backgroundColor = '#B56B41';
-    backToMapBtn.style.border = 'none';
-    backToMapBtn.style.borderRadius = '15px';
-    backToMapBtn.style.cursor = 'pointer';
-    backToMapBtn.style.marginTop = '2rem';
     backToMapBtn.style.opacity = '0';
     backToMapBtn.style.transform = 'translateY(20px)';
-    backToMapBtn.style.transition = 'all 0.5s ease-in-out 1s';
-    backToMapBtn.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.3)';
-    backToMapBtn.style.fontFamily = "'강원교육모두', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
 
-    // 버튼 호버 효과
-    backToMapBtn.addEventListener('mouseenter', () => {
-        backToMapBtn.style.backgroundColor = '#905431';
-        backToMapBtn.style.transform = 'translateY(0) scale(1.05)';
-    });
-    backToMapBtn.addEventListener('mouseleave', () => {
-        backToMapBtn.style.backgroundColor = '#B56B41';
-        backToMapBtn.style.transform = 'translateY(0) scale(1)';
-    });
+    // 버튼 호버 효과는 CSS에서 처리
 
     // 버튼 클릭 이벤트
     backToMapBtn.onclick = () => {
@@ -10167,11 +11503,18 @@ function showStageClearEffect(stage) {
     overlay.appendChild(backToMapBtn);
 
     // 기존 지도 돌아가기 버튼이 있으면 강조 (있는 경우)
-    const backBtnId = stage === 'japan' ? 'back-to-map-japan' : 'back-to-map-china';
+    let backBtnId = '';
+    if (stage === 'japan') {
+        backBtnId = 'back-to-map-japan';
+    } else if (stage === 'china') {
+        backBtnId = 'back-to-map-china';
+    } else if (stage === 'france') {
+        backBtnId = 'back-to-map-france';
+    }
     const backBtn = document.getElementById(backBtnId);
 
     if (backBtn) {
-        backBtn.style.position = 'relative';
+        // position은 변경하지 않고 z-index만 설정 (위치 변경 방지)
         backBtn.style.zIndex = '30001';
         backBtn.classList.add('highlight-pulse');
 
@@ -11446,6 +12789,11 @@ function updateElementSize(element, sizeVw) {
 
     // 드랍존은 직접 크기 조정 (width와 height 모두 조정)
     if (element.classList.contains('drop-zone')) {
+        // cn-cup-drop-zone과 cn-teapot-drop-zone은 크기 조정하지 않음
+        if (element.classList.contains('cn-cup-drop-zone') || element.classList.contains('cn-teapot-drop-zone')) {
+            return;
+        }
+        
         // 드랍존의 현재 높이 비율 유지
         const currentWidth = parseFloat(window.getComputedStyle(element).width) || 0;
         const currentHeight = parseFloat(window.getComputedStyle(element).height) || 0;
@@ -12682,5 +14030,187 @@ function setSpeechBubbleText(text, duration = 3000) {
             hideSpeechBubble();
         }, duration);
     }
+}
+
+// 프랑스 스테이지 말풍선 확장 및 식사 마무리 선택 버튼 표시
+function expandSpeechBubbleForMealEndSelectionFrance() {
+    const speechBubble = document.getElementById('speech-bubble-france');
+    const speechBubbleContent = speechBubble ? speechBubble.querySelector('.speech-bubble-content') : null;
+    const nextBtn = document.getElementById('next-speech-btn-france');
+
+    if (!speechBubble || !speechBubbleContent) return;
+
+    // 기존 버튼 숨기기
+    if (nextBtn) {
+        nextBtn.style.display = 'none';
+    }
+
+    // 기존 선택 버튼 컨테이너가 있으면 제거
+    const existingSelectionContainer = speechBubbleContent.querySelector('.meal-end-selection-buttons');
+    if (existingSelectionContainer) {
+        existingSelectionContainer.remove();
+    }
+
+    // 말풍선 세로로 더 넓게, 가로로도 더 넓게 확장 (이미지와 텍스트를 위한 공간 확보)
+    speechBubbleContent.style.transition = 'min-height 0.5s ease-in-out, max-width 0.5s ease-in-out, padding 0.5s ease-in-out';
+    speechBubbleContent.style.minHeight = '480px';
+    speechBubbleContent.style.maxWidth = '1280px';
+    speechBubbleContent.style.padding = '40px 40px 120px 40px';
+
+    // 좌우로 배치된 버튼 컨테이너 생성 (말풍선 안에 새로 만들기)
+    const buttonsContainer = document.createElement('div');
+    buttonsContainer.className = 'meal-end-selection-buttons';
+    buttonsContainer.style.display = 'flex';
+    buttonsContainer.style.flexDirection = 'row';
+    buttonsContainer.style.justifyContent = 'space-between';
+    buttonsContainer.style.gap = '40px';
+    buttonsContainer.style.marginTop = '40px';
+    buttonsContainer.style.width = '100%';
+    buttonsContainer.style.position = 'relative';
+    buttonsContainer.style.zIndex = '10011';
+
+    // 좌측 버튼
+    const leftButton = document.createElement('button');
+    leftButton.className = 'next-btn';
+    leftButton.style.flex = '1';
+    leftButton.style.margin = '0';
+    leftButton.style.minWidth = '280px';
+    leftButton.style.minHeight = '320px';
+    leftButton.style.display = 'flex';
+    leftButton.style.flexDirection = 'column';
+    leftButton.style.alignItems = 'center';
+    leftButton.style.justifyContent = 'center';
+    leftButton.style.gap = '16px';
+    leftButton.style.padding = '24px';
+    leftButton.style.position = 'relative';
+    leftButton.style.zIndex = '10012';
+
+    // 이미지 컨테이너
+    const leftImageContainer = document.createElement('div');
+    leftImageContainer.className = 'selection-button-image-container';
+    leftButton.appendChild(leftImageContainer);
+
+    // 이미지 추가
+    const leftImage = document.createElement('img');
+    leftImage.className = 'selection-button-image';
+    leftImage.src = 'resource/fr/frinfo_0.png';
+    leftImage.alt = '선택 버튼 이미지 1';
+    leftImageContainer.appendChild(leftImage);
+
+    leftButton.onclick = () => {
+        // "그건 식사 중이라는 의미예요" 말풍선 표시 (◀ 버튼 포함)
+        showSpeechBubbleFrance('그건 식사 중이라는 의미예요', 0, true, () => {
+            // ◀ 버튼 클릭 시 이전 말풍선으로 돌아가기
+            showSpeechBubbleFrance('이제 식사를 마무리할 시간이네요,\n포크랑 나이프를 접시 위에 놓아볼까요?', 0, false, null, null, null, null);
+            // 말풍선 확장 및 큰 버튼 두 개 다시 표시
+            setTimeout(() => {
+                expandSpeechBubbleForMealEndSelectionFrance();
+            }, 100);
+        }, null, '◀', null);
+        
+        // 식사 마무리 예절 인포 메뉴 표시
+        showMealEndEtiquetteInfoMenuFrance();
+    };
+    buttonsContainer.appendChild(leftButton);
+
+    // 우측 버튼
+    const rightButton = document.createElement('button');
+    rightButton.className = 'next-btn';
+    rightButton.style.flex = '1';
+    rightButton.style.margin = '0';
+    rightButton.style.minWidth = '280px';
+    rightButton.style.minHeight = '320px';
+    rightButton.style.display = 'flex';
+    rightButton.style.flexDirection = 'column';
+    rightButton.style.alignItems = 'center';
+    rightButton.style.justifyContent = 'center';
+    rightButton.style.gap = '16px';
+    rightButton.style.padding = '24px';
+    rightButton.style.position = 'relative';
+    rightButton.style.zIndex = '10012';
+
+    // 이미지 컨테이너
+    const rightImageContainer = document.createElement('div');
+    rightImageContainer.className = 'selection-button-image-container';
+    rightButton.appendChild(rightImageContainer);
+
+    // 이미지 추가
+    const rightImage = document.createElement('img');
+    rightImage.className = 'selection-button-image';
+    rightImage.src = 'resource/fr/frinfo_1.png';
+    rightImage.alt = '선택 버튼 이미지 2';
+    rightImageContainer.appendChild(rightImage);
+
+    rightButton.onclick = () => {
+        // 말풍선 숨기기
+        speechBubble.classList.remove('show');
+        
+        // fr_dessert_b 위에 fr_dishon.png 배치
+        const dessertDropZone = document.getElementById('drop-dessert');
+        const dishonElement = document.querySelector('.france-dishon');
+        
+        if (dessertDropZone && dishonElement) {
+            // fr_dessert_b 이미지 확인 (drop-dessert에 배치된 디저트)
+            const droppedDessert = dessertDropZone.querySelector('.dropped-item');
+            if (droppedDessert) {
+                const allImgs = droppedDessert.querySelectorAll('img');
+                const mainImg = Array.from(allImgs).find(img => !img.classList.contains('shadow-img'));
+                
+                if (mainImg && mainImg.src.includes('fr_dessert_b.png')) {
+                    // fork2와 knife2 애니메이션과 함께 사라지게
+                    const fork2Element = document.querySelector('.france-fork2');
+                    const knife2Element = document.querySelector('.france-knife2');
+                    
+                    if (fork2Element) {
+                        fork2Element.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+                        fork2Element.style.opacity = '0';
+                        fork2Element.style.transform = 'translateY(-20px)';
+                        setTimeout(() => {
+                            fork2Element.style.display = 'none';
+                        }, 500);
+                    }
+                    
+                    if (knife2Element) {
+                        knife2Element.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+                        knife2Element.style.opacity = '0';
+                        knife2Element.style.transform = 'translateY(-20px)';
+                        setTimeout(() => {
+                            knife2Element.style.display = 'none';
+                        }, 500);
+                    }
+                    
+                    // fr_dishon을 drop-dessert와 같은 위치에 배치 (CSS에서 수정 가능하도록 클래스만 사용)
+                    dishonElement.style.display = 'flex';
+                    dishonElement.classList.add('dishon-appear');
+                    
+                    // 식사 마무리 예절 인포 메뉴 표시
+                    showMealEndEtiquetteInfoMenuFrance();
+                    
+                    // 애니메이션 완료 후 말풍선 표시
+                    setTimeout(() => {
+                        showSpeechBubbleFrance('감사합니다. 정말 멋진 식사였습니다.', 0, false, null, null, null, null);
+                        
+                        // 딜레이 후 스테이지 클리어 표시
+                        setTimeout(() => {
+                            showStageClearEffect('france');
+                        }, 2000);
+                    }, 800);
+                } else {
+                    // fr_dessert_b가 아닌 경우 인포 메뉴 표시
+                    showMealEndEtiquetteInfoMenuFrance();
+                }
+            } else {
+                // 디저트가 배치되지 않은 경우 인포 메뉴 표시
+                showMealEndEtiquetteInfoMenuFrance();
+            }
+        } else {
+            // 요소가 없는 경우 인포 메뉴 표시
+            showMealEndEtiquetteInfoMenuFrance();
+        }
+    };
+    buttonsContainer.appendChild(rightButton);
+
+    // 버튼 컨테이너를 말풍선 내용 안에 추가
+    speechBubbleContent.appendChild(buttonsContainer);
 }
 
