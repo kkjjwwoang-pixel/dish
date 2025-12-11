@@ -2764,6 +2764,7 @@ body {
 
 /* 디버그 모드 */
 .debug-toggle-btn {
+    display: none !important;
     position: fixed;
     bottom: 20px;
     right: 20px;
@@ -3856,6 +3857,11 @@ body {
     z-index: 10001 !important;
 }
 
+/* 젓가락 놓기 예절 인포 메뉴 z-index 조정 (식기 사용 예절보다 아래에 표시) */
+#utensil-placement-info-menu {
+    z-index: 10001 !important;
+}
+
 /* 기획의도 모달 */
 .info-modal-overlay {
     position: fixed;
@@ -4085,6 +4091,14 @@ body {
 
 .hand-draggable.highlight-pulse img {
     animation: pulseHighlight 1.5s ease-in-out infinite;
+}
+
+.cheftable-bill {
+    position: absolute;
+    left: 50vw;
+    transform: translate(-50%, 0);
+    z-index: 100;
+    transition: opacity 0.5s ease-in, top 1s ease-out;
 }
 
 .cheftable-bill.highlight-pulse img {
