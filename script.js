@@ -2981,6 +2981,16 @@ function handleDragOver(e) {
     e.dataTransfer.dropEffect = 'move';
     this.classList.add('drag-over');
     
+    // 이미 아이템이 배치된 드랍존에는 텍스트를 표시하지 않음
+    const hasDroppedItem = this.querySelector('.dropped-item') !== null;
+    if (hasDroppedItem && this.id === 'drop-dish2') {
+        const dropZoneText = this.querySelector('.drop-zone-text');
+        if (dropZoneText) {
+            dropZoneText.textContent = '';
+        }
+        return false;
+    }
+    
     // 프랑스 스테이지 빵 드랍존에 손, 포크, 나이프 드래그 오버 시 텍스트 변경
     if (this.id === 'drop-rbread-utensils' && draggedElement) {
         const isHand = draggedElement.classList.contains('france-hand');
@@ -3193,13 +3203,29 @@ function handleDrop(e) {
     }
     
     // 디저트 원형 드랍존에 포크나 스푼 드롭 처리 (배치되지 않게)
-    if (dropZoneId === 'drop-dessert-utensils' && 
-        (itemType === 'fork0' || itemType === 'fork1' || itemType === 'fork2' || 
-         itemType === 'desertspoon' || itemType === 'desertfork')) {
-        e.preventDefault();
-        e.stopPropagation();
+    if (dropZoneId === 'drop-dessert-utensils') {
+        // 하이라이팅되지 않은 식기류는 드롭 불가
+        let draggedElement = null;
+        if (source === 'dropped' && draggedDroppedItem) {
+            draggedElement = draggedDroppedItem;
+        } else if (source === 'slot' || source === 'cheftable' || source === 'stage') {
+            draggedElement = draggedElement || document.querySelector(`.france-${itemType}`);
+        }
         
-        // 식기류 사운드 재생
+        // 하이라이팅 확인
+        const isHighlighted = draggedElement && draggedElement.classList.contains('highlight-pulse');
+        
+        // 하이라이팅되지 않은 식기류는 드롭 불가
+        if (!isHighlighted && (itemType === 'knife1' || itemType === 'knife2' || itemType === 'spoon')) {
+            return false;
+        }
+        
+        if (itemType === 'fork0' || itemType === 'fork1' || itemType === 'fork2' || 
+            itemType === 'desertspoon' || itemType === 'desertfork') {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // 식기류 사운드 재생
         try {
             const cutleryAudio = new Audio('resource/sound/cutlery.mp3');
             cutleryAudio.volume = 0.5;
@@ -3211,14 +3237,14 @@ function handleDrop(e) {
             console.log('식기류 사운드 재생 오류:', err);
         }
         
-        const currentStage = document.getElementById('france-stage')?.classList.contains('active') ? 'france' : null;
-        if (currentStage === 'france') {
-            // 포크나 스푼이 디저트 원형 드랍존에 드롭된 경우 처리
-            if (itemType === 'fork0' || itemType === 'fork1' || itemType === 'fork2') {
-                // 일반 포크를 드롭한 경우
-                showSpeechBubbleFrance('흠... 그 포크가 아닌 것 같은데요', 3000, false, null, null, null, null);
-                showDessertEtiquetteInfoMenuFrance();
-            } else if (itemType === 'desertspoon' || itemType === 'desertfork') {
+            const currentStage = document.getElementById('france-stage')?.classList.contains('active') ? 'france' : null;
+            if (currentStage === 'france') {
+                // 포크나 스푼이 디저트 원형 드랍존에 드롭된 경우 처리
+                if (itemType === 'fork0' || itemType === 'fork1' || itemType === 'fork2') {
+                    // 일반 포크를 드롭한 경우
+                    showSpeechBubbleFrance('흠... 그 포크가 아닌 것 같은데요', 3000, false, null, null, null, null);
+                    showDessertEtiquetteInfoMenuFrance();
+                } else if (itemType === 'desertspoon' || itemType === 'desertfork') {
                 // 디저트 포크나 스푼을 드롭한 경우
                 showSpeechBubbleFrance('좋습니다!', 3000, false, null, null, null, null);
                 
@@ -3344,6 +3370,7 @@ function handleDrop(e) {
         
         // 배치하지 않고 종료
         return false;
+        }
     }
     
     // 원형 드랍존에 나이프 드롭 방지 (배치되지 않게)
@@ -3871,6 +3898,18 @@ function handleDrop(e) {
                 // 이미지 로드 완료 후 fade-out과 동시에 이미지 교체 및 fade-in (1000ms 딜레이)
                 const changeImage = () => {
                     setTimeout(() => {
+                        // swallow.mp3 재생
+                        try {
+                            const swallowAudio = new Audio('resource/sound/swallow.mp3');
+                            swallowAudio.volume = 0.5;
+                            swallowAudio.currentTime = 0;
+                            swallowAudio.play().catch(err => {
+                                console.log('swallow 사운드 재생 실패:', err);
+                            });
+                        } catch (err) {
+                            console.log('swallow 사운드 재생 오류:', err);
+                        }
+                        
                         // fade-out 시작
                         wineglassImg.style.opacity = '0';
                         
@@ -3921,11 +3960,15 @@ function handleDrop(e) {
         e.stopPropagation();
         
         if (dropZoneId === 'drop-waterglass') {
-            // 물잔 드랍존에 드롭한 경우 말풍선 표시
+            // 물잔 드랍존에 드롭한 경우 말풍선 표시 및 인포 메뉴 표시
             showSpeechBubbleFrance('그 잔이 아니에요!', 3000);
+            showWineglassEtiquetteInfoMenuFrance();
             return false;
         } else if (dropZoneId === 'drop-wineglass') {
-            // 와인글래스 드랍존에 드롭한 경우 와인병 애니메이션 표시
+            // 와인글래스 드랍존에 드롭한 경우 와인잔과 물잔 예절 인포 메뉴 표시
+            showWineglassEtiquetteInfoMenuFrance();
+            
+            // 와인병 애니메이션 표시
             // 와인글래스, 워터글래스 드랍존 비활성화 (드롭 직후)
             const wineglassDropZone = document.getElementById('drop-wineglass');
             const waterglassDropZone = document.getElementById('drop-waterglass');
@@ -7191,14 +7234,25 @@ function initializeChinaTable1Rotation() {
             // 드롭존 텍스트 회전 (항상 정방향 유지)
             const dropZones = maindish.querySelectorAll('.drop-zone');
             dropZones.forEach(zone => {
-                let transform = '';
-                if (zone.classList.contains('circular-drop-zone')) {
-                    transform = `translate(-50%, -50%) rotate(${-rotation}deg)`;
+                // cn_maindish4의 드롭존은 회전값 고정 (위치만 변함)
+                if (maindish.classList.contains('cn-maindish4')) {
+                    // 드롭존 자체는 회전하지 않음 (위치는 부모의 회전에 따라 자동으로 변함)
+                    zone.style.transform = '';
+                    // 드롭존 내부 텍스트도 회전 고정
+                    const textElements = zone.querySelectorAll('*');
+                    textElements.forEach(textEl => {
+                        textEl.style.transform = '';
+                    });
                 } else {
-                    transform = `rotate(${-rotation}deg)`;
-                }
+                    let transform = '';
+                    if (zone.classList.contains('circular-drop-zone')) {
+                        transform = `translate(-50%, -50%) rotate(${-rotation}deg)`;
+                    } else {
+                        transform = `rotate(${-rotation}deg)`;
+                    }
 
-                zone.style.transform = transform;
+                    zone.style.transform = transform;
+                }
             });
 
             // mainspoon 회전 (컨테이너와 이미지 모두 정방향 유지)
