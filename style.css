@@ -3277,10 +3277,10 @@ body {
 
 /* 수저 드랍존 v2 - CSS에서 vw 단위로 직접 설정 */
 #drop-spoon[data-utensil-v2="true"] {
-    left: 58vw !important;
-    top: 20vw !important;
+    left: 64vw !important;
+    top: 30vw !important;
     width: 4vw !important;
-    height: 12vw !important;
+    height: 21vw !important;
     transform: translateY(-50%) !important;
     margin: 0 !important;
 }
@@ -3289,18 +3289,18 @@ body {
     left: 50vw !important;
     top: 50vw !important;
     width: 4vw !important;
-    height: 4vw !important;
+    height: 21vw !important;
     transform: none !important;
     transform-origin: center !important;
     margin: 0 !important;
 }
 
 #drop-chopsticks-2[data-utensil-v2="true"] {
-    left: 20vw !important;
-    top: 20vw !important;
+    left: 50vw !important;
+    top: 34vw !important;
     width: 4vw !important;
-    height: 4vw !important;
-    transform: none !important;
+    height: 21vw !important;
+    transform: rotate(-90deg) !important;
     transform-origin: center !important;
     margin: 0 !important;
 }
