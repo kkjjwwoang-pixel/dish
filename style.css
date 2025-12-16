@@ -3275,6 +3275,36 @@ body {
     /* 크기는 JavaScript에서 이미지 natural size에 맞게 동적으로 설정 */
 }
 
+/* 수저 드랍존 v2 - CSS에서 vw 단위로 직접 설정 */
+#drop-spoon[data-utensil-v2="true"] {
+    left: 58vw !important;
+    top: 20vw !important;
+    width: 4vw !important;
+    height: 12vw !important;
+    transform: translateY(-50%) !important;
+    margin: 0 !important;
+}
+
+#drop-chopsticks[data-utensil-v2="true"] {
+    left: 50vw !important;
+    top: 50vw !important;
+    width: 4vw !important;
+    height: 4vw !important;
+    transform: none !important;
+    transform-origin: center !important;
+    margin: 0 !important;
+}
+
+#drop-chopsticks-2[data-utensil-v2="true"] {
+    left: 20vw !important;
+    top: 20vw !important;
+    width: 4vw !important;
+    height: 4vw !important;
+    transform: none !important;
+    transform-origin: center !important;
+    margin: 0 !important;
+}
+
 /* 프랑스 스테이지 와인잔 드랍존 */
 #drop-wineglass {
     left: 50vw;

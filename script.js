@@ -1223,6 +1223,9 @@ function initializeJapanStage() {
     // 드롭 존 크기를 실제 이미지 사이즈에 맞게 조정
     adjustDropZonesToImageSize();
 
+    // 수저 드랍존 v2 초기화 (vw 단위로 직접 설정, 다른 코드와 간섭 없음)
+    initializeUtensilDropZonesV2();
+
     // 저장된 디버그 위치 적용 (이미지 로드 후 적용되도록 지연)
     setTimeout(() => {
         applyDebugPositions();
@@ -1606,10 +1609,8 @@ function initializeFranceStage() {
 // 드롭 존 크기를 실제 이미지 사이즈에 맞게 조정하고 위치 설정
 function adjustDropZonesToImageSize() {
     const imageMapping = {
-        'drop-rice-bowl': 'resource/jp/dish.png',
-        'drop-spoon': 'resource/jp/spoon.png',
-        'drop-chopsticks': 'resource/jp/chopsticks.png',
-        'drop-chopsticks-2': 'resource/jp/chopsticks.png'
+        'drop-rice-bowl': 'resource/jp/dish.png'
+        // drop-spoon, drop-chopsticks, drop-chopsticks-2는 initializeUtensilDropZonesV2()에서 처리
     };
 
     // 모든 이미지 로드 후 위치 조정
@@ -2011,40 +2012,30 @@ function syncShadowPositions() {
 
 // 드롭 존 위치를 vw 단위로 고정 배치
 function adjustDropZonePositions(images) {
+    // drop-spoon, drop-chopsticks, drop-chopsticks-2는 initializeUtensilDropZonesV2()에서 처리
+    // 여기서는 처리하지 않음
+}
+
+// 수저 드랍존 v2 초기화 (CSS에서 vw 단위로 직접 설정, 다른 코드와 간섭 없음)
+function initializeUtensilDropZonesV2() {
     const spoon = document.getElementById('drop-spoon');
     const chopsticks = document.getElementById('drop-chopsticks');
     const chopsticks2 = document.getElementById('drop-chopsticks-2');
 
-    if (!spoon || !chopsticks) return;
-
-    // 숟가락: vw 단위 고정 위치 (디버그 위치가 없을 때만)
-    if (!debugPositions['drop-zone-spoon-japan']) {
-        spoon.style.left = '58vw';
-        spoon.style.top = '50vw';
-        spoon.style.transform = 'translateY(-50%)';
-        spoon.style.marginLeft = '';
+    // 데이터 속성으로 v2 표시 (CSS에서 스타일 적용)
+    if (spoon) {
+        spoon.dataset.utensilV2 = 'true';
     }
 
-    // 젓가락: vw 단위 고정 위치 (디버그 위치가 없을 때만)
-    if (!debugPositions['drop-zone-chopsticks-japan']) {
-        chopsticks.style.left = '50vw';
-        chopsticks.style.top = '50vw';
-        chopsticks.style.transform = 'none';
-        chopsticks.style.transformOrigin = '';
-        chopsticks.style.marginTop = '';
-        chopsticks.style.marginLeft = '';
+    if (chopsticks) {
+        chopsticks.dataset.utensilV2 = 'true';
     }
 
-    // 젓가락 2: vw 단위 고정 위치 및 크기 (디버그 위치가 없을 때만)
-    if (chopsticks2 && !debugPositions['drop-zone-chopsticks-2-japan']) {
-            chopsticks2.style.left = '20vw';
-            chopsticks2.style.top = '20vw';
-            chopsticks2.style.transform = 'none';
-            chopsticks2.style.transformOrigin = '';
-            chopsticks2.style.marginTop = '';
-            chopsticks2.style.marginLeft = '';
-        // 크기는 이미 adjustDropZonesToImageSize에서 설정됨
+    if (chopsticks2) {
+        chopsticks2.dataset.utensilV2 = 'true';
     }
+    
+    // 스타일은 CSS에서 설정됨 (style.css의 [data-utensil-v2="true"] 선택자 참조)
 }
 
 // 드래그 앤 드롭 이벤트
@@ -10896,7 +10887,7 @@ function expandSpeechBubbleForDishSelection() {
     leftButton.style.position = 'relative';
     leftButton.style.zIndex = '10012'; // 최상단 레이어
 
-    // 이미지 컨테이너 (나중에 이미지 추가 예정)
+    // 이미지 컨테이너
     const leftImageContainer = document.createElement('div');
     leftImageContainer.style.width = '200px'; // 20% 감소
     leftImageContainer.style.height = '200px'; // 20% 감소
@@ -10904,7 +10895,15 @@ function expandSpeechBubbleForDishSelection() {
     leftImageContainer.style.display = 'flex';
     leftImageContainer.style.alignItems = 'center';
     leftImageContainer.style.justifyContent = 'center';
-    // 이미지는 나중에 추가
+    
+    // 이미지 추가
+    const leftImage = document.createElement('img');
+    leftImage.src = 'resource/jp/jpbutton_1.png';
+    leftImage.style.width = '100%';
+    leftImage.style.height = '100%';
+    leftImage.style.objectFit = 'contain';
+    leftImageContainer.appendChild(leftImage);
+    
     leftButton.appendChild(leftImageContainer);
 
     // 텍스트
@@ -10935,7 +10934,7 @@ function expandSpeechBubbleForDishSelection() {
     rightButton.style.position = 'relative';
     rightButton.style.zIndex = '10012'; // 최상단 레이어
 
-    // 이미지 컨테이너 (나중에 이미지 추가 예정)
+    // 이미지 컨테이너
     const rightImageContainer = document.createElement('div');
     rightImageContainer.style.width = '200px'; // 20% 감소
     rightImageContainer.style.height = '200px'; // 20% 감소
@@ -10943,7 +10942,15 @@ function expandSpeechBubbleForDishSelection() {
     rightImageContainer.style.display = 'flex';
     rightImageContainer.style.alignItems = 'center';
     rightImageContainer.style.justifyContent = 'center';
-    // 이미지는 나중에 추가
+    
+    // 이미지 추가
+    const rightImage = document.createElement('img');
+    rightImage.src = 'resource/jp/jpbutton_2.png';
+    rightImage.style.width = '100%';
+    rightImage.style.height = '100%';
+    rightImage.style.objectFit = 'contain';
+    rightImageContainer.appendChild(rightImage);
+    
     rightButton.appendChild(rightImageContainer);
 
     // 텍스트
@@ -11623,7 +11630,7 @@ function expandSpeechBubbleForPaymentSelection() {
     leftButton.style.position = 'relative';
     leftButton.style.zIndex = '10012';
 
-    // 이미지 컨테이너 (나중에 이미지 추가 예정)
+    // 이미지 컨테이너
     const leftImageContainer = document.createElement('div');
     leftImageContainer.style.width = '200px';
     leftImageContainer.style.height = '200px';
@@ -11631,7 +11638,15 @@ function expandSpeechBubbleForPaymentSelection() {
     leftImageContainer.style.display = 'flex';
     leftImageContainer.style.alignItems = 'center';
     leftImageContainer.style.justifyContent = 'center';
-    // 여기에 카드 이미지 추가 가능
+    
+    // 이미지 추가
+    const leftImage = document.createElement('img');
+    leftImage.src = 'resource/jp/jpbutton_3.png';
+    leftImage.style.width = '100%';
+    leftImage.style.height = '100%';
+    leftImage.style.objectFit = 'contain';
+    leftImageContainer.appendChild(leftImage);
+    
     leftButton.appendChild(leftImageContainer);
 
     // 텍스트
@@ -11662,7 +11677,7 @@ function expandSpeechBubbleForPaymentSelection() {
     rightButton.style.position = 'relative';
     rightButton.style.zIndex = '10012';
 
-    // 이미지 컨테이너 (나중에 이미지 추가 예정)
+    // 이미지 컨테이너
     const rightImageContainer = document.createElement('div');
     rightImageContainer.style.width = '200px';
     rightImageContainer.style.height = '200px';
@@ -11670,7 +11685,15 @@ function expandSpeechBubbleForPaymentSelection() {
     rightImageContainer.style.display = 'flex';
     rightImageContainer.style.alignItems = 'center';
     rightImageContainer.style.justifyContent = 'center';
-    // 여기에 현금 이미지 추가 가능
+    
+    // 이미지 추가
+    const rightImage = document.createElement('img');
+    rightImage.src = 'resource/jp/jpbutton_4.png';
+    rightImage.style.width = '100%';
+    rightImage.style.height = '100%';
+    rightImage.style.objectFit = 'contain';
+    rightImageContainer.appendChild(rightImage);
+    
     rightButton.appendChild(rightImageContainer);
 
     // 텍스트
