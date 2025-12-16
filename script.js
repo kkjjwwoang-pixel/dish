@@ -1113,14 +1113,14 @@ if (resetStageBtn) {
         const franceStage = document.getElementById('france-stage');
 
         if (japanStage && japanStage.classList.contains('active')) {
-            resetStage('japan');
-            initializeJapanStage();
+            // 일본 스테이지는 F5 새로고침
+            window.location.reload();
         } else if (chinaStage && chinaStage.classList.contains('active')) {
-            resetStage('china');
-            initializeChinaStage();
+            // 중국 스테이지는 F5 새로고침
+            window.location.reload();
         } else if (franceStage && franceStage.classList.contains('active')) {
-            resetStage('france');
-            initializeFranceStage();
+            // 프랑스 스테이지는 F5 새로고침
+            window.location.reload();
         }
     });
 }
@@ -5190,6 +5190,68 @@ function closeUtensilHoldingInfoMenu() {
     }, 500);
 }
 
+// 모든 인포 메뉴 닫기 (일본 스테이지, 특정 메뉴 제외 가능)
+function closeAllInfoMenusJapan(excludeMenuId = null) {
+    if (excludeMenuId !== 'chopsticks-info-menu') {
+        closeChopsticksInfoMenu();
+    }
+    if (excludeMenuId !== 'utensil-placement-info-menu') {
+        closeUtensilPlacementInfoMenu();
+    }
+    if (excludeMenuId !== 'spoon-forbidden-info-menu') {
+        closeSpoonForbiddenInfoMenu();
+    }
+    if (excludeMenuId !== 'utensil-holding-info-menu') {
+        closeUtensilHoldingInfoMenu();
+    }
+    if (excludeMenuId !== 'chopsticks-etiquette-2-info-menu') {
+        closeChopsticksEtiquette2InfoMenu();
+    }
+    if (excludeMenuId !== 'eating-etiquette-info-menu') {
+        closeEatingEtiquetteInfoMenu();
+    }
+    if (excludeMenuId !== 'after-meal-greeting-info-menu') {
+        closeAfterMealGreetingInfoMenu();
+    }
+}
+
+// 젓가락 사용 예절 2 정보 메뉴 표시
+function showChopsticksEtiquette2InfoMenu() {
+    // 이미 열려있는 모든 인포 메뉴 닫기 (자기 자신 제외)
+    closeAllInfoMenusJapan('chopsticks-etiquette-2-info-menu');
+
+    const infoMenu = document.getElementById('chopsticks-etiquette-2-info-menu');
+    if (!infoMenu) return;
+
+    playInfoSound();
+
+    // 오른쪽에서 왼쪽으로 등장하는 애니메이션
+    infoMenu.style.display = 'block';
+    infoMenu.style.top = '300px';
+    infoMenu.style.right = '-25vw'; // 초기 위치 (화면 밖 오른쪽)
+
+    // 애니메이션 시작
+    setTimeout(() => {
+        infoMenu.style.transition = 'right 0.5s ease-out';
+        infoMenu.style.right = '20px';
+    }, 50);
+}
+
+// 젓가락 사용 예절 2 정보 메뉴 닫기
+function closeChopsticksEtiquette2InfoMenu() {
+    const infoMenu = document.getElementById('chopsticks-etiquette-2-info-menu');
+    if (!infoMenu) return;
+
+    // 오른쪽으로 사라지는 애니메이션
+    infoMenu.style.transition = 'right 0.5s ease-in';
+    infoMenu.style.right = '-25vw';
+
+    // 애니메이션 완료 후 숨김
+    setTimeout(() => {
+        infoMenu.style.display = 'none';
+    }, 500);
+}
+
 // 젓가락 놓기 예절 정보 메뉴 표시
 function showUtensilPlacementInfoMenu() {
     const infoMenu = document.getElementById('utensil-placement-info-menu');
@@ -5226,6 +5288,9 @@ function closeUtensilPlacementInfoMenu() {
 
 // 숟가락 사용 금지 정보 메뉴 표시
 function showSpoonForbiddenInfoMenu() {
+    // 이미 열려있는 모든 인포 메뉴 닫기 (자기 자신 제외)
+    closeAllInfoMenusJapan('spoon-forbidden-info-menu');
+
     const infoMenu = document.getElementById('spoon-forbidden-info-menu');
     if (!infoMenu) return;
 
@@ -5277,8 +5342,13 @@ function closeSpoonForbiddenInfoMenu() {
 
 // 전부 먹는게 예의 정보 메뉴 표시 함수
 function showEatingEtiquetteInfoMenu() {
+    // 이미 열려있는 모든 인포 메뉴 닫기 (자기 자신 제외)
+    closeAllInfoMenusJapan('eating-etiquette-info-menu');
+
     const infoMenu = document.getElementById('eating-etiquette-info-menu');
     if (!infoMenu) return;
+
+    playInfoSound();
 
     // 오른쪽에서 왼쪽으로 등장하는 애니메이션
     infoMenu.style.display = 'block';
@@ -5706,10 +5776,16 @@ function replaceWithGrabImage() {
     const tableSetting = document.querySelector('.table-setting');
     if (!tableSetting) return;
 
-    // 이미 grab 이미지가 있으면 제거
+    // 이미 grab 이미지가 있으면 제거 (grab-drop-zone도 함께 제거됨)
     const existingGrab = document.getElementById('grab-image');
     if (existingGrab) {
         existingGrab.remove();
+    }
+
+    // grab-image 컨테이너 밖에 독립적으로 존재하는 grab-drop-zone도 제거 (중복 생성 방지)
+    const existingGrabDropZone = document.getElementById('grab-drop-zone');
+    if (existingGrabDropZone && !existingGrabDropZone.closest('#grab-image')) {
+        existingGrabDropZone.remove();
     }
 
     const grabImageContainer = document.createElement('div');
@@ -5788,6 +5864,9 @@ function replaceWithGrabImage() {
 
     // grab 드롭존에 드래그 이벤트 추가
     setupGrabDropZone(grabDropZone, leftZone, rightZone);
+
+    // 식기 사용 예절 인포 메뉴 표시
+    showUtensilHoldingInfoMenu();
 }
 
 // 손과 밥그릇 이미지를 grab4.png로 교체 (사이드 먹기 단계용)
@@ -5909,6 +5988,12 @@ function setupGrabDropZone(grabDropZone, leftZone, rightZone) {
         // 5단계(사이드 먹기)부터는 밥그릇에 수저 드롭 이벤트 비활성화
         if (riceBowlEatState === 4 || isSideDishPhase('japan')) {
             return;
+        }
+
+        // grab-image가 존재하는지 확인 (grab-drop-zone은 grab-image 내부에만 존재)
+        const grabImage = document.getElementById('grab-image');
+        if (!grabImage) {
+            return; // grab-image가 없으면 grab-drop-zone도 없으므로 표시하지 않음
         }
 
         const itemType = e.target.closest('.slot-item')?.getAttribute('data-item');
@@ -6060,7 +6145,7 @@ function handleGrabDrop(e, action, zone) {
     // 젓가락을 꽂기로 드롭한 경우 정보 메뉴만 표시하고 아이템은 유지
     if (itemType === 'chopsticks' && action === 'stick') {
         showSpeechBubble('그러면 안 돼요!', 3000);
-        showChopsticksInfoMenu();
+        showChopsticksEtiquette2InfoMenu();
         // 드롭존에서 드래그 오버 클래스 제거
         zone.classList.remove('drag-over');
         document.querySelector('.grab-zone-left')?.classList.remove('drag-over');
@@ -7235,14 +7320,14 @@ function initializeChinaTable1Rotation() {
                         textEl.style.transform = '';
                     });
                 } else {
-                    let transform = '';
-                    if (zone.classList.contains('circular-drop-zone')) {
-                        transform = `translate(-50%, -50%) rotate(${-rotation}deg)`;
-                    } else {
-                        transform = `rotate(${-rotation}deg)`;
-                    }
+                let transform = '';
+                if (zone.classList.contains('circular-drop-zone')) {
+                    transform = `translate(-50%, -50%) rotate(${-rotation}deg)`;
+                } else {
+                    transform = `rotate(${-rotation}deg)`;
+                }
 
-                    zone.style.transform = transform;
+                zone.style.transform = transform;
                 }
             });
 
@@ -11097,6 +11182,9 @@ function handleAfterMealSpeechSelection(choice) {
     if (choice === 'correct') {
         // 정답 처리
         resetSpeechBubbleToDefault();
+
+        // 식사 후 인사말 인포 메뉴 표시
+        showAfterMealGreetingInfoMenu();
 
         // "별 말씀을요, 그릇 치워드릴까요?" 말풍선 표시
         showSpeechBubble('별 말씀을요, 그릇 치워드릴까요?', -1, true, () => {

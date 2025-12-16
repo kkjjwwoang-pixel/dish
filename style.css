@@ -3892,6 +3892,26 @@ body {
     z-index: 10001 !important;
 }
 
+/* 식기 사용 예절 인포 메뉴 z-index 조정 (젓가락 놓기 예절보다 높고, 젓가락 사용 예절보다 낮게) */
+#utensil-holding-info-menu {
+    z-index: 10002 !important;
+}
+
+/* 젓가락 사용 예절 인포 메뉴 z-index 조정 (식기 사용 예절보다 높게) */
+#chopsticks-info-menu {
+    z-index: 10003 !important;
+}
+
+/* 젓가락 사용 예절 2 인포 메뉴 z-index 조정 (식기 사용 예절보다 높고, 다른 인포보다 낮게) */
+#chopsticks-etiquette-2-info-menu {
+    z-index: 10003 !important;
+}
+
+/* 숟가락 사용 금지 인포 메뉴 z-index 조정 (식기 사용 예절보다 높게) */
+#spoon-forbidden-info-menu {
+    z-index: 10004 !important;
+}
+
 /* 기획의도 모달 */
 .info-modal-overlay {
     position: fixed;
